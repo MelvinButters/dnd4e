@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lore & Gameplay - D&D 4E</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="container">
+  <h1>Lore & Gameplay</h1>
+
+  <h2>Lore</h2>
+  <p>Explore the rich worlds of D&D 4E, from the cosmology of the multiverse to iconic nations and factions. Discover epic histories and heroic tales that shape the adventure of every campaign.</p>
+
+  <h2>Gameplay</h2>
+  <p>D&D 4E focuses on tactical combat, balanced character roles, and cooperative storytelling. Learn about character creation, powers, feats, and the rules that bring your adventure to life.</p>
+
+  <h2>Character Creation</h2>
+  <p>Choose your race, class, and background to create a hero that suits your style. Each choice affects abilities, skills, and combat roles.</p>
+
+  <h2>Combat & Powers</h2>
+  <p>Combat in 4E emphasizes strategy with powers, movement, and positioning. Learn how to master encounters with your party.</p>
+</div>
+
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar').innerHTML = data;
+    });
+</script>
+
+</body>
+</html>
