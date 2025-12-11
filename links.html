@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Links - D&D 4E</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="container">
+  <h1>Useful Links</h1>
+  <p>Connect with the D&D 4E community and resources.</p>
+
+  <ul class="links-list">
+    <li><a href="https://discord.gg/dnd4e" target="_blank">Official D&D 4E Discord</a></li>
+    <li><a href="https://www.dandwiki.com/wiki/4e" target="_blank">D&D Wiki 4E</a></li>
+    <li><a href="https://www.enworld.org/" target="_blank">EN World Forums</a></li>
+    <li><a href="https://www.roll20.net/" target="_blank">Roll20 Virtual Tabletop</a></li>
+  </ul>
+</div>
+
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar').innerHTML = data;
+    });
+</script>
+
+</body>
+</html>
