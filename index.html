@@ -1,190 +1,26 @@
-<!--
-  dnd-4e-template.html
-  Simple single-file HTML template for a D&D 4E info page you can host on GitHub Pages.
-  Instructions: 
-  - Edit the placeholder text and duplicate the "link-card" <li> blocks to add more links.
-  - There are commented "TEMPLATES" below you can copy/paste into the sections.
-  - Save as index.html in your repo's root for GitHub Pages.
--->
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>D&D 4E Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:400,600&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#f3e9d6; /* parchment */
-      --paper:#fff8ec;
-      --ink:#1b0f00;
-      --accent:#5a3b13;
-      --muted:#6b5a4a;
-      --card-shadow: 0 6px 18px rgba(27,15,0,0.08);
-      --max-width:1000px;
-    }
-    *{box-sizing:border-box}
-    body{
-      font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: linear-gradient(180deg, var(--bg) 0%, #efe0c8 100%);
-      color:var(--ink);
-      margin:0; padding:40px 20px;
-      display:flex; justify-content:center;
-    }
-    .container{width:100%; max-width:var(--max-width)}
-    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    .logo{
-      width:84px;height:84px;border-radius:12px;background:linear-gradient(180deg,#d9c1a0,#b89465);
-      display:flex;align-items:center;justify-content:center;font-family:'Cinzel';font-size:18px;color:var(--paper);
-      box-shadow: var(--card-shadow);
-    }
-    h1{font-family:'Cinzel';margin:0;font-size:34px;line-height:1}
-    p.lead{margin:6px 0 18px;color:var(--muted)}
-
-    nav.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:20px}
-    .card{background:var(--paper);padding:14px;border-radius:10px;box-shadow:var(--card-shadow);}
-    .card h2{margin:0 0 8px;font-size:18px}
-    .card p{margin:0;color:var(--muted);font-size:14px}
-
-    ul.link-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
-    li.link-card{display:flex;gap:12px;align-items:flex-start}
-    .link-card .icon{width:48px;height:48;border-radius:8px;background:#e9d6b9;display:flex;align-items:center;justify-content:center;font-weight:700}
-    .link-card a{font-weight:600;color:var(--accent);text-decoration:none}
-    .link-card .desc{color:var(--muted);font-size:14px}
-
-    .section-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
-    @media (max-width:880px){.section-row{grid-template-columns:1fr}}
-
-    footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px}
-
-    /* small utility styles */
-    .muted{color:var(--muted)}
-    .small{font-size:13px}
-    .tag{display:inline-block;background:#efe0c8;padding:4px 8px;border-radius:999px;font-size:12px;margin-right:6px}
-
-    /* TEMPLATE hint box */
-    .hint{background:linear-gradient(180deg,#fff7ea,#f4e6cf);padding:10px;border-left:4px solid var(--accent);border-radius:6px;font-size:13px}
-  </style>
+  <meta charset="UTF-8">
+  <title>D&D 4E Home</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="logo">4E</div>
-      <div>
-        <h1>Dungeons & Dragons — 4th Edition</h1>
-        <p class="lead">A small hub for resources, communities, and homebrew templates for D&D 4E. Edit this file and replace placeholders with your links and notes.</p>
-      </div>
-    </header>
 
-    <nav class="grid">
-      <div class="card">
-        <h2>Community Links</h2>
-        <p class="muted">Add your Discord, forums, and favourite communities below. Duplicate the sample items to expand the list.</p>
-      </div>
-      <div class="card">
-        <h2>Quick Templates</h2>
-        <p class="muted">Ready-to-copy sections: NPC block, encounter stub, and link card template (see bottom of file).</p>
-      </div>
-    </nav>
+<div id="navbar"></div>
 
-    <section class="card">
-      <h2>Links & Communities</h2>
-      <p class="muted small">Replace the example entries with your actual community links and descriptions.</p>
+<div class="container">
+  <h1>Welcome to D&D 4th Edition</h1>
+  <p>Dungeons & Dragons 4th Edition is a tactical, heroic role-playing game where players explore epic adventures, battle fearsome foes, and craft unforgettable stories. This site will help you dive deep into its lore, rules, and resources.</p>
+</div>
 
-      <ul class="link-list" id="community-links">
-        <!-- Example link card - duplicate this <li> to add more -->
-        <li class="link-card">
-          <div class="icon">DC</div>
-          <div>
-            <a href="#" target="_blank" rel="noopener noreferrer">D&D 4E Discord (example)</a>
-            <div class="desc">Active community for finding games, rules discussion, and homebrew sharing. Replace with your invite link and short description.</div>
-          </div>
-        </li>
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar').innerHTML = data;
+    });
+</script>
 
-        <li class="link-card">
-          <div class="icon">RD</div>
-          <div>
-            <a href="#" target="_blank" rel="noopener noreferrer">Rules Discussion Forum</a>
-            <div class="desc">Long-form forum threads discussing rules rulings, tactics, and conversions for 4E.</div>
-          </div>
-        </li>
-
-      </ul>
-
-      <!-- TEMPLATED: Link card to copy
-
-      <li class="link-card">
-        <div class="icon">XX</div>
-        <div>
-          <a href="PUT-LINK-HERE" target="_blank" rel="noopener noreferrer">Title of Resource</a>
-          <div class="desc">Short 1-line description of the resource and why it's useful.</div>
-        </div>
-      </li>
-
-      -->
-    </section>
-
-    <div class="section-row">
-      <section class="card">
-        <h2>Homebrew & Encounters</h2>
-        <p class="muted small">Keep short encounter templates and stat-block fragments here for quick copy/paste into your notes.</p>
-
-        <div style="margin-top:10px">
-          <div class="hint">Encounter template: copy this and edit for each encounter.</div>
-          <pre style="margin-top:8px;padding:10px;background:#fff6e8;border-radius:6px;overflow:auto;font-family:monospace;font-size:13px">-- Encounter: NAME
-Level: 5 (adjust as needed)
-XP Budget: 1200
-Monsters: 2 Goblins (Minion), 1 Goblin Boss (Leader)
-Terrain: Narrow bridge, half cover
-Tactics: Boss keeps ranged, minions flank
-</pre>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="hint">NPC stat block (short)</div>
-          <pre style="margin-top:8px;padding:10px;background:#fff6e8;border-radius:6px;overflow:auto;font-family:monospace;font-size:13px">-- NPC: Brother Halan
-Role: Controller
-HP: 62, AC 19, Fort +7, Ref +6, Will +8
-Attack: Quarterstaff +9 (1d8+3)
-Skills: Religion +8, Diplomacy +7
-Notes: Uses area effect to herd enemies.
-</pre>
-        </div>
-
-      </section>
-
-      <aside class="card">
-        <h2>Resources</h2>
-        <p class="muted small">Shortcuts and files you might want to link to from GitHub (PDFs, character builder notes, maps).</p>
-        <ul style="padding-left:14px;margin-top:8px">
-          <li class="small"><span class="tag">PDF</span> <a href="#">Core Rules Pdf (example)</a></li>
-          <li class="small"><span class="tag">MAP</span> <a href="#">Default Battle Map</a></li>
-          <li class="small"><span class="tag">TOOLS</span> <a href="#">Encounter XP Calculator</a></li>
-        </ul>
-      </aside>
-    </div>
-
-    <section style="margin-top:16px" class="card">
-      <h2>Notes</h2>
-      <p class="muted small">Use this space for session notes, quick changelog, or to explain house rules. You can also paste Markdown exported from your notes app. This file is static HTML — edit directly or generate with a static site generator if you want automation.</p>
-
-      <!-- TEMPLATED: Add your own section by copying the block below -->
-      <!--
-      <section class="card">
-        <h2>Section Title</h2>
-        <p class="muted">Short description of the section</p>
-        <ul>
-          <li>Item 1</li>
-        </ul>
-      </section>
-      -->
-
-    </section>
-
-    <footer>
-      <div class="small muted">Made for D&D 4E fans • Save this file as <code>index.html</code> in a GitHub Pages repo to publish.</div>
-    </footer>
-  </div>
 </body>
 </html>
