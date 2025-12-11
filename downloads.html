@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Downloads - D&D 4E</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="container">
+  <h1>Downloads</h1>
+  <p>Access official and fan-created resources. Files are hosted on GitHub for easy access.</p>
+
+  <ul class="download-list">
+    <li><a href="https://github.com/username/dnd4e-files/raw/main/Player-Handbook.pdf" target="_blank">Player Handbook PDF</a></li>
+    <li><a href="https://github.com/username/dnd4e-files/raw/main/Monster-Manual.pdf" target="_blank">Monster Manual PDF</a></li>
+    <li><a href="https://github.com/username/dnd4e-files/raw/main/Character-Sheet.pdf" target="_blank">Character Sheet</a></li>
+  </ul>
+</div>
+
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar').innerHTML = data;
+    });
+</script>
+
+</body>
+</html>
