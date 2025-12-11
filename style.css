@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
+body {
+  background-color: #F5F0E1;
+  color: #2B1A0E;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-family: 'MedievalSharp', cursive;
+  color: #8B0000;
+}
+
+a {
+  color: #8B0000;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #D4AF37;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: #8B0000;
+  padding: 10px 20px;
+}
+
+.navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.navbar li {
+  margin-right: 20px;
+}
+
+.navbar a {
+  color: #F5F0E1;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  color: #D4AF37;
+}
+
+/* Page content styling */
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff8e1;
+  border: 2px solid #D4AF37;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+ul.download-list, ul.links-list {
+  padding-left: 20px;
+}
+
+ul.download-list li, ul.links-list li {
+  margin-bottom: 10px;
+}
