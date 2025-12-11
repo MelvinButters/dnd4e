@@ -32,7 +32,9 @@ a:hover {
 }
 
 .navbar-logo {
-  max-height: 80px; /* adjust image size */
+  height: auto;       /* maintain aspect ratio */
+  max-height: 200px;  /* bigger image height */
+  max-width: 100%;    /* don’t overflow navbar */
   margin-bottom: 15px;
 }
 
@@ -46,7 +48,7 @@ a:hover {
 }
 
 .navbar li {
-  margin: 0; /* gap handles spacing */
+  margin: 0; /* spacing handled by gap */
 }
 
 .navbar a {
