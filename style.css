@@ -81,3 +81,20 @@ ul.download-list, ul.links-list {
 ul.download-list li, ul.links-list li {
   margin-bottom: 10px;
 }
+
+/* ---------------------------------------------------------- */
+/* NEW — Boxes for link categories                           */
+/* ---------------------------------------------------------- */
+
+.link-box {
+  background-color: #fffaf0;              /* parchment-like */
+  border: 2px solid #D4AF37;              /* gold border */
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 6px rgba(0,0,0,0.15);
+}
+
+.link-box h2 {
+  margin-top: 0;
+}
