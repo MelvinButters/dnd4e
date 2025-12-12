@@ -22,42 +22,33 @@ a:hover {
   color: #D4AF37;
 }
 
-/* ---------------------------------------------------------- */
-/* Navbar styling                                             */
-/* ---------------------------------------------------------- */
+/* Navbar styling */
 .navbar {
   background-color: #8B0000;
+  padding: 20px;
   display: flex;
-  flex-direction: column; /* stack logo above links */
-  align-items: center;
-  width: 100%;
-  padding: 0; /* remove padding so logo spans full width */
+  flex-direction: column; /* stack image and links */
+  align-items: center; /* center image and links */
 }
 
-/* Logo stretches full width */
 .navbar-logo {
-  width: 100%;           /* full width */
-  height: auto;          /* maintain aspect ratio */
-  max-height: 250px;     /* optional limit */
-  object-fit: cover;     /* fill width without distortion */
-  display: block;
-  margin-bottom: 10px;   /* spacing below logo */
+  height: auto;       /* maintain aspect ratio */
+  max-height: 200px;  /* bigger image height */
+  max-width: 100%;    /* don’t overflow navbar */
+  margin-bottom: 15px;
 }
 
-/* Links under the logo */
 .navbar ul {
   list-style: none;
   margin: 0;
-  padding: 15px 0;        /* padding above/below links */
+  padding: 0;
   display: flex;
-  gap: 30px;              /* spacing between links */
-  justify-content: center;
-  width: 100%;            /* make the links row full width */
-  background-color: #8B0000;
+  gap: 30px; /* spacing between links */
+  justify-content: center; /* center links horizontally */
 }
 
 .navbar li {
-  margin: 0;
+  margin: 0; /* spacing handled by gap */
 }
 
 .navbar a {
@@ -71,9 +62,7 @@ a:hover {
   color: #D4AF37;
 }
 
-/* ---------------------------------------------------------- */
-/* Page content styling                                       */
-/* ---------------------------------------------------------- */
+/* Page content styling */
 .container {
   max-width: 900px;
   margin: 20px auto;
@@ -94,7 +83,7 @@ ul.download-list li, ul.links-list li {
 }
 
 /* ---------------------------------------------------------- */
-/* Boxes for link categories                                  */
+/* Boxes for link categories                                   */
 /* ---------------------------------------------------------- */
 .link-box {
   background-color: #fffaf0;              /* parchment-like */
