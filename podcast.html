@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Actual Play Podcast - D&D 4E</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="container">
+  <h1>Actual Play Podcast</h1>
+
+  <h2>About the Show</h2>
+  <p>
+    Join our table as we play through epic Dungeons & Dragons 4th Edition campaigns.
+    Expect tactical combat, strong character moments, and plenty of table banter as
+    our heroes face deadly encounters and world-shaking threats.
+  </p>
+
+  <h2>Where to Listen</h2>
+  <p>You can find the podcast on the following platforms:</p>
+  <ul>
+    <li><a href="#" target="_blank">Spotify</a></li>
+    <li><a href="#" target="_blank">Apple Podcasts</a></li>
+    <li><a href="#" target="_blank">Google Podcasts</a></li>
+    <li><a href="#" target="_blank">YouTube</a></li>
+    <li><a href="#" target="_blank">RSS Feed</a></li>
+  </ul>
+
+  <h2>Upcoming Episodes & Events</h2>
+  <p>
+    We release episodes regularly and occasionally run live or special events.
+    Check back often or follow us on social media for updates.
+  </p>
+
+  <ul>
+    <li><strong>Episode 12:</strong> Into the Shattered Halls — <em>Coming Soon</em></li>
+    <li><strong>Live One-Shot:</strong> Arena of the Fallen Gods — <em>TBA</em></li>
+    <li><strong>Campaign Arc:</strong> The Ember Crown — <em>Ongoing</em></li>
+  </ul>
+
+  <h2>Community & Updates</h2>
+  <p>
+    Join the community to discuss episodes, share character theories, and get early news
+    about upcoming arcs and special content.
+  </p>
+  <ul>
+    <li><a href="#" target="_blank">Discord</a></li>
+    <li><a href="#" target="_blank">Twitter / X</a></li>
+    <li><a href="#" target="_blank">Bluesky</a></li>
+  </ul>
+</div>
+
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar').innerHTML = data;
+    });
+</script>
+
+</body>
+</html>
