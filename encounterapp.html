@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4E Encounter Forge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0a07; --bg2: #13100c; --bg3: #1c1710; --panel: #1a1510;
+    --border: #3d2e18; --gold: #c9922a; --gold-light: #e8b64a; --gold-dim: #7a5a1a;
+    --red: #8b2020; --red-bright: #c93030; --text: #e8d8b8; --text-dim: #9a8060;
+    --text-muted: #5a4830; --white: #f5ead0;
+    --role-brute: #a03020; --role-soldier: #205080; --role-skirmisher: #306820;
+    --role-artillery: #6a3080; --role-controller: #204040; --role-lurker: #403010; --role-leader: #806020;
+    --elite: #b07820; --solo: #c04820; --minion: #404040;
+    --atwill: #4a7a30; --encounter: #8b2020; --daily: #2a3a6a; --trait: #5a4a20;
+    --glow-r: 120; --glow-g: 60; --glow-b: 10;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'EB Garamond', serif; font-size: 16px; min-height: 100vh; background-image: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(var(--glow-r),var(--glow-g),var(--glow-b),0.15) 0%, transparent 70%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M30 0v60M0 30h60' stroke='%23ffffff05' stroke-width='0.5'/%3E%3C/svg%3E"); }
+  .ember { position: fixed; pointer-events: none; z-index: 0; width: 100%; height: 100%; top: 0; left: 0; }
+  .ember span { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: var(--gold); opacity: 0; animation: float-up linear infinite; }
+  @keyframes float-up { 0% { transform: translateY(0) translateX(0); opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.2; } 100% { transform: translateY(-120vh) translateX(var(--drift)); opacity: 0; } }
+  .container { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  header { text-align: center; margin-bottom: 2rem; padding: 2.5rem 1rem 2rem; position: relative; }
+  header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 100% at 50% 50%, rgba(var(--glow-r),var(--glow-g),var(--glow-b),0.12) 0%, transparent 70%); pointer-events: none; }
+  .header-ornament { color: var(--gold-dim); font-size: 1.1rem; letter-spacing: 0.5em; text-transform: uppercase; font-family: 'Cinzel', serif; margin-bottom: 0.5rem; }
+  h1 { font-family: 'Cinzel Decorative', serif; font-size: clamp(1.8rem, 5vw, 3.2rem); color: var(--gold-light); text-shadow: 0 0 40px rgba(200,140,40,0.4), 0 2px 0 rgba(0,0,0,0.8); letter-spacing: 0.05em; line-height: 1.1; margin-bottom: 0.6rem; }
+  .subtitle { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--text-dim); letter-spacing: 0.3em; text-transform: uppercase; }
+  .divider { display: flex; align-items: center; gap: 1rem; margin: 1.2rem auto 0; max-width: 400px; color: var(--gold-dim); }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--gold-dim), transparent); }
+  .divider-gem { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+  .view-toggle { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+  .view-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.6rem 1.5rem; cursor: pointer; transition: all 0.2s; border-radius: 2px; }
+  .view-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+  .view-btn.active { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 12%, transparent); color: var(--gold-light); box-shadow: 0 0 15px color-mix(in srgb, var(--gold) 15%, transparent); }
+
+  .setup-panel, .browser-panel, .runner-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 2px; padding: 2rem; margin-bottom: 2rem; position: relative; box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(200,150,50,0.07); }
+  .setup-panel::before, .browser-panel::before, .runner-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .hidden { display: none !important; }
+
+  .section-title { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
+
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.8rem; }
+  @media (max-width: 640px) { .setup-grid { grid-template-columns: 1fr; } }
+  .field-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  label { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+  input[type="number"], input[type="text"], select { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'EB Garamond', serif; font-size: 1.1rem; padding: 0.55rem 0.8rem; width: 100%; outline: none; transition: border-color 0.2s, box-shadow 0.2s; appearance: none; -webkit-appearance: none; }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 15%, transparent); }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%237a5a1a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.8rem center; padding-right: 2rem; }
+  select option { background: #1a1510; color: var(--text); }
+
+  .upload-zone { border: 1px dashed var(--border); border-radius: 2px; padding: 1.2rem; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 1.8rem; position: relative; }
+  .upload-zone:hover { border-color: var(--gold-dim); }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  .upload-zone-label { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-dim); pointer-events: none; }
+  .upload-zone-label strong { color: var(--gold); display: block; font-size: 1rem; margin-bottom: 0.3rem; }
+  .monster-count { display: inline-block; margin-top: 0.5rem; background: color-mix(in srgb, var(--gold) 12%, transparent); border: 1px solid var(--gold-dim); border-radius: 20px; padding: 0.2rem 0.8rem; font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--gold); letter-spacing: 0.1em; }
+  .parse-error { color: #e06060; font-size: 0.85rem; margin-top: 0.4rem; }
+
+  .action-btn { background: linear-gradient(135deg, color-mix(in srgb, var(--gold-dim) 60%, var(--bg3)), color-mix(in srgb, var(--gold-dim) 35%, var(--bg3))); border: 1px solid var(--gold); border-radius: 2px; color: var(--gold-light); font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.6rem 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; white-space: nowrap; }
+  .action-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.07), transparent); opacity: 0; transition: opacity 0.2s; }
+  .action-btn:hover { background: linear-gradient(135deg, color-mix(in srgb, var(--gold-dim) 80%, var(--bg3)), color-mix(in srgb, var(--gold-dim) 55%, var(--bg3))); box-shadow: 0 0 20px color-mix(in srgb, var(--gold) 30%, transparent); }
+  .action-btn:hover::before { opacity: 1; }
+  .action-btn:active { transform: scale(0.99); }
+  .action-btn.secondary { background: var(--bg2); border-color: var(--border); color: var(--text-dim); }
+  .action-btn.secondary:hover { border-color: var(--gold-dim); color: var(--text); background: var(--bg3); box-shadow: none; }
+  .action-btn.danger-btn { background: linear-gradient(135deg, #5a1010, #3a0808); border-color: var(--red-bright); color: #e08080; }
+  .action-btn.danger-btn:hover { background: linear-gradient(135deg, #7a1818, #5a1010); }
+
+  .budget-display { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 0.8rem 1rem; margin-bottom: 1.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+  .budget-label { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; }
+  .budget-value { font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--gold-light); }
+  .budget-range { font-size: 0.85rem; color: var(--text-dim); }
+
+  /* ── MONSTER BROWSER ── */
+  .browser-controls { display: grid; grid-template-columns: 2fr auto auto auto auto; gap: 0.8rem; margin-bottom: 1rem; align-items: end; }
+  @media (max-width: 900px) { .browser-controls { grid-template-columns: 1fr 1fr; } }
+  .sort-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.55rem 0.7rem; cursor: pointer; border-radius: 2px; transition: all 0.15s; white-space: nowrap; display: flex; align-items: center; gap: 0.3rem; }
+  .sort-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+  .sort-btn.active { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); color: var(--gold-light); }
+  .sort-arrow { font-size: 0.7rem; }
+
+  .browser-layout { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; }
+  @media (max-width: 900px) { .browser-layout { grid-template-columns: 1fr; } }
+
+  .monster-list { max-height: 60vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 2px; background: var(--bg2); }
+  .monster-list-item { display: grid; grid-template-columns: 2fr 60px 90px 70px auto; gap: 0.5rem; padding: 0.7rem 1rem; border-bottom: 1px solid rgba(60,45,25,0.4); align-items: center; transition: background 0.15s; }
+  .monster-list-item:hover { background: rgba(200,140,40,0.06); }
+  .monster-list-item:last-child { border-bottom: none; }
+  .monster-list-item.dragging { opacity: 0.5; }
+  .ml-name { color: var(--white); font-weight: 500; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  .ml-name:hover { color: var(--gold-light); }
+  .ml-drag-handle { cursor: grab; color: var(--text-muted); font-size: 1rem; padding-right: 0.3rem; flex-shrink: 0; }
+  .ml-level { color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.9rem; text-align: center; }
+  .ml-role { font-size: 0.75rem; }
+  .ml-xp { color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 0.85rem; text-align: right; }
+
+  /* ── ENCOUNTER DROP ZONE ── */
+  .encounter-drop-panel { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; position: sticky; top: 1rem; }
+  .encounter-drop-header { padding: 1rem 1.2rem 0.8rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .encounter-drop-title { font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
+  .encounter-xp-badge { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--gold-light); background: rgba(150,100,30,0.15); border: 1px solid var(--gold-dim); border-radius: 20px; padding: 0.2rem 0.7rem; }
+  
+  .drop-zone { min-height: 120px; border: 2px dashed var(--border); border-radius: 2px; margin: 1rem; transition: all 0.2s; padding: 0.5rem; }
+  .drop-zone.drag-over { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 8%, transparent); }
+  .drop-zone-hint { color: var(--text-muted); font-size: 0.85rem; font-style: italic; text-align: center; padding: 1.5rem 1rem; font-family: 'Cinzel', serif; letter-spacing: 0.1em; }
+
+  .encounter-entry { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.6rem; border-bottom: 1px solid rgba(60,45,25,0.3); background: var(--bg2); border-radius: 2px; margin-bottom: 0.3rem; animation: card-in 0.2s ease; }
+  .encounter-entry:last-child { border-bottom: none; }
+  .enc-qty-controls { display: flex; align-items: center; gap: 0.2rem; }
+  .enc-qty-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.75rem; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 2px; transition: all 0.1s; padding: 0; line-height: 1; }
+  .enc-qty-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .enc-qty { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--gold); min-width: 16px; text-align: center; }
+  .enc-name { flex: 1; font-size: 0.9rem; color: var(--white); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .enc-name:hover { color: var(--gold-light); }
+  .enc-meta { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--text-dim); white-space: nowrap; }
+  .enc-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 0.1rem 0.3rem; transition: color 0.15s; line-height: 1; }
+  .enc-remove:hover { color: var(--red-bright); }
+
+  /* ── Encounter Notes ── */
+  .encounter-notes-section { padding: 0.5rem 1rem 0.6rem; border-bottom: 1px solid var(--border); }
+  .encounter-notes-label { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.35rem; display: block; }
+  .encounter-notes-textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'EB Garamond', serif; font-size: 0.9rem; line-height: 1.5; padding: 0.5rem 0.7rem; resize: vertical; min-height: 80px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  .encounter-notes-textarea:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 15%, transparent); }
+  .encounter-notes-textarea::placeholder { color: var(--text-muted); font-style: italic; }
+
+  .runner-notes-section { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; margin-bottom: 1.2rem; overflow: hidden; }
+  .runner-notes-header { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.9rem; cursor: pointer; user-select: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+  .runner-notes-header:hover { border-bottom-color: var(--border); }
+  .runner-notes-title { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-dim); display: flex; align-items: center; gap: 0.5rem; }
+  .runner-notes-toggle { font-size: 0.65rem; color: var(--text-muted); transition: transform 0.2s; }
+  .runner-notes-toggle.open { transform: rotate(180deg); }
+  .runner-notes-body { padding: 0.6rem 0.9rem 0.8rem; border-top: 1px solid var(--border); }
+  .runner-notes-textarea { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'EB Garamond', serif; font-size: 0.95rem; line-height: 1.55; padding: 0.55rem 0.75rem; resize: vertical; min-height: 100px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  .runner-notes-textarea:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 15%, transparent); }
+  .runner-notes-textarea::placeholder { color: var(--text-muted); font-style: italic; }
+
+  .encounter-footer { padding: 0.8rem 1rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.6rem; }
+  .encounter-diff-info { font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; }
+  .encounter-start-btn { width: 100%; background: linear-gradient(135deg, color-mix(in srgb, var(--gold-dim) 60%, var(--bg3)), color-mix(in srgb, var(--gold-dim) 35%, var(--bg3))); border: 1px solid var(--gold); border-radius: 2px; color: var(--gold-light); font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.8rem; cursor: pointer; transition: all 0.2s; }
+  .encounter-start-btn:hover { background: linear-gradient(135deg, color-mix(in srgb, var(--gold-dim) 80%, var(--bg3)), color-mix(in srgb, var(--gold-dim) 55%, var(--bg3))); box-shadow: 0 0 20px color-mix(in srgb, var(--gold) 30%, transparent); }
+  .encounter-start-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .encounter-clear-btn { width: 100%; background: none; border: 1px solid var(--border); border-radius: 2px; color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.4rem; cursor: pointer; transition: all 0.15s; }
+  .encounter-clear-btn:hover { border-color: var(--red); color: #e08080; }
+
+  /* ── STAT BLOCK MODAL ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal-content { background: var(--panel); border: 1px solid var(--gold-dim); border-radius: 2px; width: 100%; max-width: 680px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.8); position: relative; }
+  .modal-close { position: absolute; top: 0.8rem; right: 0.8rem; background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer; padding: 0.3rem; line-height: 1; transition: color 0.2s; z-index: 2; }
+  .modal-close:hover { color: var(--red-bright); }
+  .modal-add-btn { position: absolute; top: 0.8rem; right: 2.8rem; }
+
+  /* ── 4E STAT BLOCK LAYOUT ── */
+  .sb-outer { font-family: 'EB Garamond', serif; }
+  .sb-header { background: color-mix(in srgb, var(--gold-dim) 20%, var(--bg3)); border-bottom: 3px solid var(--gold-dim); padding: 0.8rem 1.2rem; }
+  .sb-name { font-family: 'Cinzel Decorative', serif; font-size: 1.5rem; color: var(--gold-light); line-height: 1.1; }
+  .sb-type-line { font-size: 0.92rem; color: var(--text-dim); margin-top: 0.2rem; font-style: italic; }
+  .sb-level-line { display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.3rem; }
+  .sb-level-role { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--gold); letter-spacing: 0.05em; }
+  .sb-xp { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--text-dim); }
+
+  .sb-body { padding: 0; }
+  .sb-vitals { background: color-mix(in srgb, var(--gold-dim) 8%, var(--bg3)); padding: 0.7rem 1.2rem; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 0.2rem 2rem; font-size: 0.95rem; }
+  .sb-vital-row { display: flex; gap: 0.4rem; }
+  .sb-vital-label { color: var(--text-dim); min-width: 28px; font-weight: 500; }
+  .sb-vital-val { color: var(--white); }
+  .sb-vital-val strong { color: var(--gold-light); font-weight: 600; }
+
+  .sb-defenses { background: color-mix(in srgb, var(--gold-dim) 5%, var(--bg3)); padding: 0.55rem 1.2rem; border-bottom: 1px solid var(--border); display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.92rem; }
+  .sb-defense-item { display: flex; flex-direction: column; align-items: center; }
+  .sb-defense-val { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--gold-light); font-weight: 600; line-height: 1; }
+  .sb-defense-name { font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .sb-speeds { padding: 0.4rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text); background: color-mix(in srgb, var(--gold-dim) 6%, var(--bg3)); }
+  .sb-senses { padding: 0.35rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text); background: color-mix(in srgb, var(--gold-dim) 4%, var(--bg3)); }
+  .sb-resists { padding: 0.35rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text); background: color-mix(in srgb, var(--gold-dim) 4%, var(--bg3)); }
+  .sb-skills-row { padding: 0.35rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text); background: color-mix(in srgb, var(--gold-dim) 6%, var(--bg3)); }
+  .sb-label { font-weight: 600; color: var(--text-dim); }
+
+  .sb-ability-scores { background: color-mix(in srgb, var(--gold-dim) 3%, var(--bg)); padding: 0.5rem 1.2rem; border-bottom: 2px solid var(--border); display: flex; gap: 0; }
+  .sb-ability { flex: 1; text-align: center; border-right: 1px solid var(--border); padding: 0.3rem 0; }
+  .sb-ability:last-child { border-right: none; }
+  .sb-ability-name { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+  .sb-ability-score { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--white); }
+  .sb-ability-mod { font-size: 0.8rem; color: var(--gold-dim); }
+
+  .sb-powers { padding: 0.5rem 0; }
+  .sb-power-section-header { font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); padding: 0.3rem 1.2rem 0.2rem; background: rgba(150,100,30,0.06); border-top: 1px solid rgba(150,100,30,0.15); margin-top: 0.3rem; }
+
+  .sb-power { border-top: 1px solid rgba(60,45,25,0.5); padding: 0.6rem 1.2rem; }
+  .sb-power:first-child { border-top: none; }
+  .sb-power-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.3rem; }
+  .sb-power-name { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--white); display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; }
+  .sb-power-usage { display: inline-block; font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.1rem 0.5rem; border-radius: 20px; border: 1px solid; }
+  .sb-power-atwill { border-color: var(--atwill); color: #80c060; background: rgba(60,100,30,0.15); }
+  .sb-power-encounter { border-color: var(--encounter); color: #e07070; background: rgba(120,20,20,0.15); }
+  .sb-power-daily { border-color: var(--daily); color: #7090d0; background: rgba(30,50,100,0.15); }
+  .sb-power-recharge { border-color: #604820; color: #c0a040; background: rgba(80,60,10,0.15); }
+  .sb-power-trait { border-color: var(--trait); color: #c0b060; background: rgba(70,60,15,0.15); }
+  .sb-power-type-line { font-size: 0.82rem; color: var(--gold-dim); margin-bottom: 0.25rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .sb-power-kw { font-style: italic; color: var(--text-dim); }
+  .sb-power-detail { font-size: 0.9rem; line-height: 1.55; color: var(--text); }
+  .sb-power-detail .lbl { font-weight: 600; color: var(--text-dim); }
+  .sb-power-detail p { margin-top: 0.15rem; }
+
+  .sb-footer { padding: 0.6rem 1.2rem; border-top: 2px solid var(--border); background: color-mix(in srgb, var(--gold-dim) 3%, var(--bg)); font-size: 0.85rem; color: var(--text-dim); display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .sb-footer span { color: var(--text); }
+
+  /* Tags */
+  .role-tag { display: inline-block; font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: 20px; border: 1px solid; }
+  .role-tag-Brute { border-color: var(--role-brute); color: #e08070; background: rgba(150,40,20,0.1); }
+  .role-tag-Soldier { border-color: var(--role-soldier); color: #70a0e0; background: rgba(20,60,110,0.15); }
+  .role-tag-Skirmisher { border-color: var(--role-skirmisher); color: #70c060; background: rgba(30,90,20,0.12); }
+  .role-tag-Artillery { border-color: var(--role-artillery); color: #c080e0; background: rgba(90,30,110,0.15); }
+  .role-tag-Controller { border-color: var(--role-controller); color: #60c0c0; background: rgba(20,60,60,0.15); }
+  .role-tag-Lurker { border-color: var(--role-lurker); color: #c0a040; background: rgba(60,40,10,0.15); }
+  .role-tag-Leader { border-color: var(--role-leader); color: #d0c060; background: rgba(100,80,20,0.15); }
+  .role-tag-Unknown, .role-tag-NoRole { border-color: var(--text-muted); color: var(--text-dim); background: rgba(60,60,60,0.1); }
+  .group-tag { display: inline-block; margin-left: 0.3rem; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.1rem 0.35rem; border-radius: 20px; border: 1px solid; }
+  .group-tag-Elite { border-color: var(--elite); color: var(--elite); background: rgba(150,100,20,0.1); }
+  .group-tag-Solo { border-color: var(--solo); color: var(--solo); background: rgba(180,60,20,0.1); }
+  .group-tag-Minion { border-color: var(--minion); color: #808080; background: rgba(60,60,60,0.1); }
+
+  /* ── RUNNER ── */
+  .runner-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+  .round-tracker { display: flex; align-items: center; gap: 1rem; background: var(--bg2); border: 1px solid var(--border); padding: 0.8rem 1.5rem; border-radius: 2px; }
+  .round-label { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+  .round-value { font-family: 'Cinzel Decorative', serif; font-size: 2rem; color: var(--gold-light); min-width: 3rem; text-align: center; }
+  .runner-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  /* Initiative tracker */
+  .initiative-setup { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 1.2rem; margin-bottom: 1.5rem; }
+  .initiative-setup-title { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
+  .add-pc-btn { font-size: 0.68rem; }
+  .initiative-grid { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+  .init-row { display: grid; grid-template-columns: auto auto 1fr 80px auto auto; gap: 0.4rem; align-items: center; }
+  .init-row-label { font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--text-dim); padding-right: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .init-row-label.monster-label { color: var(--gold-dim); }
+  .init-row-label.pc-label { color: #70a0e0; }
+  .init-input { background: var(--bg); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'Cinzel', serif; font-size: 1rem; padding: 0.3rem 0.5rem; text-align: center; width: 100%; outline: none; transition: border-color 0.2s; }
+  .init-input:focus { border-color: var(--gold-dim); }
+  .init-type-badge { font-family: 'Cinzel', serif; font-size: 0.6rem; padding: 0.15rem 0.4rem; border-radius: 20px; border: 1px solid; }
+  .init-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0.2rem; transition: color 0.15s; }
+  .init-remove:hover { color: var(--red-bright); }
+  .start-run-btn { width: 100%; }
+
+  /* Turn tracker - vertical initiative list */
+  .turn-order-bar { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 0.6rem 0.8rem; margin-bottom: 1.5rem; }
+  .turn-order-bar-title { font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+  .turn-order-inner { display: flex; flex-direction: column; gap: 0.3rem; }
+  .turn-token { display: flex; align-items: center; gap: 0.7rem; padding: 0.45rem 0.8rem; border-radius: 2px; border: 1px solid var(--border); font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.05em; white-space: nowrap; transition: all 0.3s; cursor: default; position: relative; }
+  .turn-token.active-turn { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold-light);
+    box-shadow: 0 0 0 2px var(--gold), 0 0 28px color-mix(in srgb, var(--gold) 55%, transparent), inset 0 0 16px color-mix(in srgb, var(--gold) 12%, transparent);
+    font-size: 0.85rem; transform: translateX(4px); }
+  .turn-token.active-turn::before { content: '▶'; position: absolute; left: -1.2rem; color: var(--gold); font-size: 0.7rem; animation: pulse-arrow 1s ease-in-out infinite; }
+  @keyframes pulse-arrow { 0%,100% { opacity: 1; transform: translateX(0); } 50% { opacity: 0.4; transform: translateX(3px); } }
+  .turn-token.monster-token { border-color: color-mix(in srgb, var(--role-brute) 60%, var(--border)); color: var(--text-dim); }
+  .turn-token.pc-token { border-color: color-mix(in srgb, var(--role-soldier) 60%, var(--border)); color: var(--text-dim); }
+  .turn-token.trap-token { border-color: color-mix(in srgb, var(--red) 60%, var(--border)); color: #e08080; }
+  .turn-token.dead-token { opacity: 0.3; text-decoration: line-through; }
+  .turn-init { font-size: 0.68rem; color: var(--text-muted); margin-left: auto; font-family: 'Cinzel', serif; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 0.05rem 0.45rem; }
+  .turn-token.active-turn .turn-init { color: var(--gold); border-color: var(--gold-dim); background: color-mix(in srgb, var(--gold) 10%, var(--bg3)); }
+  .turn-token-type { font-size: 0.58rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .runner-monsters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .runner-monster-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 1rem; transition: border-color 0.2s; }
+  .runner-monster-card:hover { border-color: var(--gold-dim); }
+  .runner-monster-card.current-turn { border-color: var(--gold); box-shadow: 0 0 16px rgba(200,140,40,0.15); }
+  .runner-monster-card.dead { opacity: 0.45; }
+  /* Trap cards in the runner */
+  .runner-trap-card { background: var(--bg2); border: 1px solid color-mix(in srgb, var(--red) 50%, var(--border)); border-radius: 2px; padding: 1rem; transition: border-color 0.2s; }
+  .runner-trap-card:hover { border-color: #c05050; }
+  .runner-trap-card.current-turn { border-color: var(--gold); box-shadow: 0 0 16px rgba(200,140,40,0.15); }
+  .trap-init-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .trap-init-label { font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+  .trap-init-input { background: var(--bg); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'Cinzel', serif; font-size: 0.95rem; padding: 0.2rem 0.5rem; width: 70px; text-align: center; outline: none; transition: border-color 0.2s; }
+  .trap-init-input:focus { border-color: var(--gold-dim); }
+  .trap-init-set-btn { font-size: 0.65rem; padding: 0.25rem 0.6rem; }
+  .rm-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; gap: 0.5rem; }
+  .rm-name-block { display: flex; flex-direction: column; gap: 0.2rem; }
+  .rm-name { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--white); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  .rm-instance { font-size: 0.75rem; color: var(--text-dim); font-family: 'EB Garamond', serif; font-style: italic; }
+  .rm-init-display { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--gold-dim); }
+  .rm-controls { display: flex; gap: 0.3rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .rm-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.68rem; padding: 0.25rem 0.5rem; cursor: pointer; border-radius: 2px; transition: all 0.15s; white-space: nowrap; }
+  .rm-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+  .rm-btn.danger:hover { border-color: var(--red-bright); color: var(--red-bright); }
+
+  .hp-section { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+  .hp-bar-container { flex: 1; height: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .hp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--red-bright)); transition: width 0.3s ease; }
+  .hp-bar-fill.high { background: linear-gradient(90deg, #206020, #40a040); }
+  .hp-bar-fill.mid { background: linear-gradient(90deg, #806020, #c0a040); }
+  .hp-bar-fill.low { background: linear-gradient(90deg, #8b1010, #c93030); }
+  .hp-inputs { display: flex; align-items: center; gap: 0.3rem; flex-shrink: 0; }
+  .hp-input { width: 55px; text-align: center; padding: 0.25rem; font-size: 0.95rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 2px; font-family: 'Cinzel', serif; }
+  .hp-sep { color: var(--text-muted); font-size: 0.85rem; }
+  .hp-bloodied { font-family: 'Cinzel', serif; font-size: 0.62rem; color: var(--red-bright); padding: 0.1rem 0.4rem; border: 1px solid var(--red); border-radius: 20px; background: rgba(120,20,20,0.15); }
+
+  .hp-adjust { display: flex; gap: 0.3rem; margin-bottom: 0.8rem; align-items: center; flex-wrap: wrap; }
+  .hp-delta-input { width: 60px; text-align: center; padding: 0.2rem 0.3rem; font-size: 0.9rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 2px; font-family: 'Cinzel', serif; }
+  .hp-delta-label { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--text-muted); }
+
+  .conditions-section { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.8rem; }
+  .condition-tag { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); background: var(--bg3); cursor: pointer; transition: all 0.15s; user-select: none; }
+  .condition-tag:hover { border-color: var(--gold-dim); }
+  .condition-tag.active { border-color: var(--red-bright); color: var(--red-bright); background: rgba(120,20,20,0.15); box-shadow: 0 0 6px rgba(120,20,20,0.2); }
+
+  .powers-section { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.35rem; }
+  .runner-power { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.5rem; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; cursor: pointer; transition: all 0.15s; }
+  .runner-power:hover { border-color: var(--gold-dim); }
+  .runner-power.used { opacity: 0.45; border-color: var(--text-muted); }
+  .runner-power input[type="checkbox"] { accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+  .runner-power-name { font-size: 0.82rem; color: var(--text); flex: 1; line-height: 1.2; }
+  .runner-power-type { font-size: 0.62rem; color: var(--gold-dim); text-transform: uppercase; flex-shrink: 0; }
+
+  /* PC Tracker cards */
+  .runner-pcs-section { margin-bottom: 1.5rem; }
+  .runner-pcs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.8rem; }
+  .pc-card { background: rgba(20,50,100,0.12); border: 1px solid rgba(40,80,160,0.3); border-radius: 2px; padding: 0.8rem 1rem; transition: border-color 0.2s; }
+  .pc-card:hover { border-color: rgba(60,120,200,0.5); }
+  .pc-card.current-turn { border-color: var(--gold); box-shadow: 0 0 16px rgba(200,140,40,0.15); }
+  .pc-name-display { font-family: 'Cinzel', serif; font-size: 0.95rem; color: #90bce0; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center; }
+  .pc-conditions { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+  /* Encounter tabs */
+  .enc-tab { background: var(--bg2); border: 1px solid var(--border); border-bottom: none; border-radius: 2px 2px 0 0; color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.08em; padding: 0.35rem 0.7rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+  .enc-tab:hover { border-color: var(--gold-dim); color: var(--text); }
+  .enc-tab.active { background: var(--bg3); border-color: var(--gold-dim); color: var(--gold-light); }
+
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.4; }
+  .no-monsters-warning { background: rgba(120,20,20,0.1); border: 1px solid var(--red); border-radius: 2px; padding: 1rem 1.2rem; font-size: 0.9rem; color: #e08070; margin-bottom: 1rem; }
+  @keyframes card-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── SETTINGS COG ── */
+  .settings-cog { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200; background: var(--bg2); border: 1px solid var(--border); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; transition: all 0.2s; box-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+  .settings-cog:hover { border-color: var(--gold-dim); transform: rotate(30deg); }
+
+  /* ── Raw JS stat block display in modal (dark theme) ── */
+  .jsb-wrap { font-family: 'EB Garamond', serif; }
+  .jsb-wrap h1.monster { font-family: 'Cinzel Decorative', serif; font-size: 1.4rem; color: var(--gold-light); background: color-mix(in srgb, var(--gold-dim) 20%, var(--bg3)); padding: 0.7rem 1.2rem 0.5rem; border-bottom: 3px solid var(--gold-dim); line-height: 1.2; }
+  .jsb-wrap h1.monster .type { display: block; font-family: 'EB Garamond', serif; font-size: 0.9rem; color: var(--text-dim); font-style: italic; font-weight: normal; margin-top: 0.15rem; }
+  .jsb-wrap h1.monster .level { display: block; font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--gold); font-weight: normal; margin-top: 0.1rem; }
+  .jsb-wrap h1.monster .xp { color: var(--text-dim); font-size: 0.82rem; }
+  .jsb-wrap p.flavor { background: color-mix(in srgb, var(--gold-dim) 8%, var(--bg3)); padding: 0.55rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.92rem; color: var(--text); line-height: 1.55; }
+  .jsb-wrap p.flavor b { color: var(--text-dim); }
+  .jsb-wrap p[class="flavor alt"] { background: color-mix(in srgb, var(--gold-dim) 5%, var(--bg3)); padding: 0.45rem 1.2rem; border-bottom: 1px solid rgba(60,45,25,0.4); font-size: 0.92rem; color: var(--white); line-height: 1.4; }
+  .jsb-wrap p[class="flavor alt"] b { color: var(--gold-light); }
+  .jsb-wrap p.flavorIndent { background: color-mix(in srgb, var(--gold-dim) 3%, var(--bg)); padding: 0.3rem 1.2rem 0.3rem 2rem; border-bottom: 1px solid rgba(60,45,25,0.3); font-size: 0.9rem; color: var(--text); line-height: 1.55; }
+  .jsb-wrap p.flavorIndent i { color: var(--text-dim); }
+  .jsb-wrap p.publishedIn { background: color-mix(in srgb, var(--gold-dim) 3%, var(--bg)); padding: 0.4rem 1.2rem; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
+  .jsb-wrap table.bodytable { width: 100%; border-collapse: collapse; background: color-mix(in srgb, var(--gold-dim) 8%, var(--bg3)); font-size: 0.9rem; }
+  .jsb-wrap table.bodytable td { padding: 0.3rem 1.2rem; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .jsb-wrap table.bodytable td.rightalign { text-align: right; }
+  .jsb-wrap table.bodytable b { color: var(--text-dim); }
+  .jsb-wrap h2 { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); padding: 0.3rem 1.2rem 0.2rem; background: color-mix(in srgb, var(--gold) 8%, transparent); border-top: 1px solid color-mix(in srgb, var(--gold) 20%, transparent); }
+
+  /* ── TRAP BROWSER ── */
+  .trap-browser-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 2px; padding: 2rem; margin-bottom: 2rem; position: relative; box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(200,150,50,0.07); }
+  .trap-browser-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #8b3a3a, transparent); }
+  .trap-count { display: inline-block; margin-top: 0.5rem; background: color-mix(in srgb, #8b3a3a 12%, transparent); border: 1px solid #7a2a2a; border-radius: 20px; padding: 0.2rem 0.8rem; font-family: 'Cinzel', serif; font-size: 0.72rem; color: #e08080; letter-spacing: 0.1em; }
+  .trap-list { max-height: 60vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 2px; background: var(--bg2); }
+  .trap-list-item { display: grid; grid-template-columns: 2fr 60px 100px 70px auto; gap: 0.5rem; padding: 0.7rem 1rem; border-bottom: 1px solid rgba(60,45,25,0.4); align-items: center; transition: background 0.15s; }
+  .trap-list-item:hover { background: rgba(180,60,60,0.06); }
+  .trap-list-item:last-child { border-bottom: none; }
+  .tl-name { color: var(--white); font-weight: 500; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  .tl-name:hover { color: #e08080; }
+  .tl-level { color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.9rem; text-align: center; }
+  .tl-role { font-size: 0.75rem; }
+  .tl-xp { color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 0.85rem; text-align: right; }
+  .trap-tag { display: inline-block; font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: 20px; border: 1px solid; }
+  .trap-tag-Trap    { border-color: #7a2a2a; color: #e08080; background: rgba(120,30,30,0.12); }
+  .trap-tag-Hazard  { border-color: #7a4a10; color: #e0a060; background: rgba(120,70,10,0.12); }
+  .trap-tag-Terrain { border-color: #1a5a3a; color: #60c090; background: rgba(20,90,50,0.12); }
+  .trap-tag-Other   { border-color: var(--text-muted); color: var(--text-dim); background: rgba(60,60,60,0.1); }
+  .trap-group-tag { display: inline-block; margin-left: 0.3rem; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.1rem 0.35rem; border-radius: 20px; border: 1px solid; }
+  .trap-group-tag-Elite { border-color: var(--elite); color: var(--elite); background: rgba(150,100,20,0.1); }
+  .trap-group-tag-Solo { border-color: var(--solo); color: var(--solo); background: rgba(180,60,20,0.1); }
+  .trap-group-tag-Minion { border-color: var(--minion); color: #808080; background: rgba(60,60,60,0.1); }
+  .enc-trap-entry { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.6rem; border-bottom: 1px solid rgba(120,40,40,0.3); background: rgba(80,20,20,0.12); border-radius: 2px; margin-bottom: 0.3rem; animation: card-in 0.2s ease; border-left: 2px solid #7a2a2a; }
+
+  /* Trap stat block modal styling */
+  .jsb-wrap h1.trap { font-family: 'Cinzel', serif; font-size: 1.4rem; color: #e08080; background: color-mix(in srgb, #7a2a2a 20%, var(--bg3)); padding: 0.7rem 1.2rem 0.5rem; border-bottom: 3px solid #7a2a2a; line-height: 1.2; }
+  .jsb-wrap h1.thHead { font-family: 'Cinzel', serif; font-size: 1.4rem; color: #e08080; background: color-mix(in srgb, #7a2a2a 20%, var(--bg3)); padding: 0.7rem 1.2rem 0.5rem; border-bottom: 3px solid #7a2a2a; line-height: 1.2; }
+  .jsb-wrap h1.dm { font-family: 'Cinzel', serif; font-size: 1.4rem; color: #c0a060; background: color-mix(in srgb, #5a4a10 20%, var(--bg3)); padding: 0.7rem 1.2rem 0.5rem; border-bottom: 3px solid #5a4a10; line-height: 1.2; }
+  .jsb-wrap span.type { display: block; font-family: 'EB Garamond', serif; font-size: 0.9rem; color: var(--text-dim); font-style: italic; font-weight: normal; margin-top: 0.15rem; }
+  .jsb-wrap span.thSubHead { display: block; font-family: 'EB Garamond', serif; font-size: 0.9rem; color: var(--text-dim); font-style: italic; font-weight: normal; margin-top: 0.15rem; }
+  .jsb-wrap span.level { display: block; font-family: 'Cinzel', serif; font-size: 0.85rem; color: #e08080; font-weight: normal; margin-top: 0.1rem; }
+  .jsb-wrap span.thLevel { display: block; font-family: 'Cinzel', serif; font-size: 0.85rem; color: #e08080; font-weight: normal; margin-top: 0.1rem; }
+  .jsb-wrap span.xp, .jsb-wrap span.thXP { color: var(--text-dim); font-size: 0.82rem; }
+  .jsb-wrap span.traplead { display: block; background: color-mix(in srgb, #7a2a2a 8%, var(--bg3)); padding: 0.45rem 1.2rem; border-bottom: 1px solid rgba(120,40,40,0.4); font-size: 0.92rem; color: var(--text); }
+  .jsb-wrap span.trapblocktitle { display: block; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: #c07060; padding: 0.3rem 1.2rem 0.1rem; background: color-mix(in srgb, #7a2a2a 10%, transparent); border-top: 1px solid rgba(120,40,40,0.2); margin-top: 0.2rem; }
+  .jsb-wrap span.trapblockbody { display: block; padding: 0.2rem 1.2rem; font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+  .jsb-wrap span.thInit { display: block; padding: 0.3rem 1.2rem; font-size: 0.9rem; color: var(--text-dim); background: color-mix(in srgb, #7a2a2a 6%, var(--bg3)); border-bottom: 1px solid rgba(120,40,40,0.3); }
+  .jsb-wrap h2.thHead { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: #c07060; padding: 0.3rem 1.2rem 0.2rem; background: color-mix(in srgb, #8b3a3a 10%, transparent); border-top: 1px solid color-mix(in srgb, #8b3a3a 25%, transparent); }
+  .jsb-wrap p.thStat { padding: 0.25rem 1.2rem; font-size: 0.9rem; color: var(--text); background: color-mix(in srgb, #7a2a2a 8%, var(--bg3)); border-bottom: 1px solid rgba(120,40,40,0.2); }
+  .jsb-wrap p.th2 { padding: 0.3rem 1.2rem 0.1rem; font-size: 0.9rem; color: #e08080; background: color-mix(in srgb, #7a2a2a 5%, var(--bg)); border-top: 1px solid rgba(120,40,40,0.2); }
+  .jsb-wrap p.tbod { padding: 0.15rem 1.2rem; font-size: 0.88rem; color: var(--text); line-height: 1.5; background: color-mix(in srgb, #7a2a2a 3%, var(--bg)); }
+  .jsb-wrap p.thBody { padding: 0.25rem 1.2rem; font-size: 0.88rem; color: var(--text); line-height: 1.5; }
+  .jsb-wrap p.powerstat { padding: 0.25rem 1.2rem; font-size: 0.9rem; color: var(--text); background: color-mix(in srgb, #7a2a2a 5%, var(--bg3)); border-bottom: 1px solid rgba(120,40,40,0.2); }
+
+  /* Print trap stat blocks */
+  /* Trap stat blocks — shared base */
+  .print-trap-page { font-family: 'EB Garamond', Georgia, serif; max-width: 680px; margin: 0 auto 2.5rem; border: 2px solid #8a3a3a; border-radius: 4px; page-break-inside: avoid; background: #fff; }
+  .print-trap-page .jsb-wrap h1.trap,
+  .print-trap-page .jsb-wrap h1.thHead,
+  .print-trap-page .jsb-wrap h1.dm { font-family: 'Cinzel', Georgia, serif; font-size: 1.2rem; color: #fff !important; background: #2a0808 !important; padding: 0.5rem 1rem 0.3rem; border-bottom: 3px solid #8a3a3a; line-height: 1.3; }
+  .print-trap-page .jsb-wrap span.type,
+  .print-trap-page .jsb-wrap span.thSubHead { display: block; font-family: 'EB Garamond', Georgia, serif; font-size: 0.85rem; color: rgba(255,255,255,0.75) !important; font-style: italic; }
+  .print-trap-page .jsb-wrap span.level,
+  .print-trap-page .jsb-wrap span.thLevel { display: block; font-family: 'Cinzel', Georgia, serif; font-size: 0.82rem; color: rgba(255,255,255,0.85) !important; }
+  .print-trap-page .jsb-wrap span.xp,
+  .print-trap-page .jsb-wrap span.thXP { color: rgba(255,255,255,0.65) !important; font-size: 0.8rem; }
+  .print-trap-page .jsb-wrap p.flavor { background: #fdf0e8; padding: 0.45rem 1rem; border-bottom: 1px solid #d8a898; font-size: 0.9rem; line-height: 1.5; }
+  .print-trap-page .jsb-wrap span.traplead { display: block; background: #faeae0; padding: 0.4rem 1rem; border-bottom: 1px solid #d8a898; font-size: 0.9rem; }
+  .print-trap-page .jsb-wrap span.trapblocktitle { display: block; font-family: 'Cinzel', Georgia, serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #8b3a3a; padding: 0.25rem 1rem 0.1rem; background: #faeae0; border-top: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap span.trapblockbody { display: block; padding: 0.2rem 1rem; font-size: 0.88rem; color: #1a0808; line-height: 1.5; }
+  .print-trap-page .jsb-wrap span.thInit { display: block; padding: 0.3rem 1rem; font-size: 0.88rem; color: #5a3020; background: #faeae0; border-bottom: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap h2.thHead { font-family: 'Cinzel', Georgia, serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: #8b3a3a; padding: 0.25rem 1rem 0.15rem; background: #faeae0; border-top: 1px solid #d8a898; border-bottom: none; margin: 0; }
+  .print-trap-page .jsb-wrap p.thStat { padding: 0.25rem 1rem; font-size: 0.88rem; color: #1a0808; background: #faeae0; border-bottom: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap p.th2 { padding: 0.25rem 1rem 0.1rem; font-size: 0.88rem; color: #8b3a3a; border-top: 1px solid #e8c8b8; }
+  .print-trap-page .jsb-wrap p.tbod { padding: 0.15rem 1rem; font-size: 0.86rem; color: #1a0808; line-height: 1.5; }
+  .print-trap-page .jsb-wrap p.thBody { padding: 0.25rem 1rem; font-size: 0.86rem; color: #1a0808; line-height: 1.5; }
+  .print-trap-page .jsb-wrap p.powerstat { padding: 0.25rem 1rem; font-size: 0.88rem; color: #1a0808; background: #faeae0; border-bottom: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap p.publishedIn { background: #f5e8e0; padding: 0.35rem 1rem; border-top: 1px solid #d8a898; font-size: 0.78rem; color: #7a5a50; font-style: italic; }
+  /* Trap — Red */
+  .print-trap-type-Trap { border-color: #8a2020 !important; }
+  .print-trap-type-Trap .jsb-wrap h1.trap,
+  .print-trap-type-Trap .jsb-wrap h1.thHead,
+  .print-trap-type-Trap .jsb-wrap h1.dm { background: #5a0808 !important; border-bottom-color: #8a2020 !important; }
+  .print-trap-type-Trap .jsb-wrap span.trapblocktitle,
+  .print-trap-type-Trap .jsb-wrap h2.thHead { color: #8a2020; }
+  .print-trap-type-Trap .jsb-wrap p.th2 { color: #8a2020; }
+  /* Hazard — Orange */
+  .print-trap-type-Hazard { border-color: #8a5010 !important; }
+  .print-trap-type-Hazard .jsb-wrap h1.trap,
+  .print-trap-type-Hazard .jsb-wrap h1.thHead,
+  .print-trap-type-Hazard .jsb-wrap h1.dm { background: #4a2a00 !important; border-bottom-color: #8a5010 !important; }
+  .print-trap-type-Hazard .jsb-wrap span.trapblocktitle,
+  .print-trap-type-Hazard .jsb-wrap h2.thHead { color: #8a5010; border-top-color: #d8b880; }
+  .print-trap-type-Hazard .jsb-wrap p.th2 { color: #8a5010; border-top-color: #e8d098; }
+  .print-trap-type-Hazard .jsb-wrap span.traplead,
+  .print-trap-type-Hazard .jsb-wrap p.flavor,
+  .print-trap-type-Hazard .jsb-wrap span.thInit,
+  .print-trap-type-Hazard .jsb-wrap p.thStat,
+  .print-trap-type-Hazard .jsb-wrap p.powerstat { background: #fdf5e8; border-color: #d8b880; }
+  /* Terrain — Green */
+  .print-trap-type-Terrain { border-color: #1a6a3a !important; }
+  .print-trap-type-Terrain .jsb-wrap h1.trap,
+  .print-trap-type-Terrain .jsb-wrap h1.thHead,
+  .print-trap-type-Terrain .jsb-wrap h1.dm { background: #082a14 !important; border-bottom-color: #1a6a3a !important; }
+  .print-trap-type-Terrain .jsb-wrap span.trapblocktitle,
+  .print-trap-type-Terrain .jsb-wrap h2.thHead { color: #1a6a3a; border-top-color: #90c8a8; }
+  .print-trap-type-Terrain .jsb-wrap p.th2 { color: #1a6a3a; border-top-color: #b0d8c0; }
+  .print-trap-type-Terrain .jsb-wrap span.traplead,
+  .print-trap-type-Terrain .jsb-wrap p.flavor,
+  .print-trap-type-Terrain .jsb-wrap span.thInit,
+  .print-trap-type-Terrain .jsb-wrap p.thStat,
+  .print-trap-type-Terrain .jsb-wrap p.powerstat { background: #edf8f1; border-color: #90c8a8; }
+  /* Other — grey */
+  .print-trap-type-Other { border-color: #6a6050 !important; }
+  .print-trap-type-Other .jsb-wrap h1.trap,
+  .print-trap-type-Other .jsb-wrap h1.thHead,
+  .print-trap-type-Other .jsb-wrap h1.dm { background: #2a2418 !important; border-bottom-color: #6a6050 !important; }
+
+  /* ── PRINT / PDF EXPORT ── */
+  @media print {
+    body { background: white !important; color: black !important; font-family: 'EB Garamond', serif; }
+  }
+
+  /* Print window stat block styles */
+  .print-sb-page { font-family: 'EB Garamond', Georgia, serif; max-width: 680px; margin: 0 auto 2.5rem; border: 2px solid #8a6a30; border-radius: 4px; page-break-inside: avoid; background: #fff; }
+  .print-sb-page .sb-header { background: #2a1a08; border-bottom: 3px solid #7a5a1a; padding: 0.8rem 1.2rem; color: #e8b64a; }
+  .print-sb-page .sb-name { font-family: 'Cinzel Decorative', 'Cinzel', Georgia, serif; font-size: 1.4rem; color: #e8b64a; }
+  .print-sb-page .sb-type-line { font-size: 0.9rem; color: #9a8060; font-style: italic; margin-top: 0.2rem; }
+  .print-sb-page .sb-level-line { display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.3rem; }
+  .print-sb-page .sb-level-role { font-family: 'Cinzel', Georgia, serif; font-size: 0.85rem; color: #c9922a; }
+  .print-sb-page .sb-xp { font-family: 'Cinzel', Georgia, serif; font-size: 0.85rem; color: #9a8060; }
+  .print-sb-page .sb-vitals { background: #f5ead0; padding: 0.6rem 1.2rem; border-bottom: 1px solid #8a6a30; display: grid; grid-template-columns: 1fr 1fr; gap: 0.2rem 2rem; font-size: 0.95rem; color: #1a1008; }
+  .print-sb-page .sb-vital-row { display: flex; gap: 0.4rem; }
+  .print-sb-page .sb-vital-label { color: #5a4020; min-width: 28px; font-weight: 600; }
+  .print-sb-page .sb-vital-val strong { color: #7a3a08; font-weight: 700; }
+  .print-sb-page .sb-defenses { background: #ede0bc; padding: 0.5rem 1.2rem; border-bottom: 1px solid #8a6a30; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .print-sb-page .sb-defense-item { display: flex; flex-direction: column; align-items: center; }
+  .print-sb-page .sb-defense-val { font-family: 'Cinzel', Georgia, serif; font-size: 1.2rem; color: #3a2008; font-weight: 700; }
+  .print-sb-page .sb-defense-name { font-size: 0.65rem; color: #7a5a30; text-transform: uppercase; letter-spacing: 0.1em; }
+  .print-sb-page .sb-speeds, .print-sb-page .sb-senses, .print-sb-page .sb-resists, .print-sb-page .sb-skills-row { padding: 0.3rem 1.2rem; border-bottom: 1px solid #c8a870; font-size: 0.88rem; color: #1a1008; background: #faf3e0; }
+  .print-sb-page .sb-label { font-weight: 700; color: #5a4020; }
+  .print-sb-page .sb-ability-scores { background: #f0e4c8; padding: 0.5rem 1.2rem; border-bottom: 2px solid #8a6a30; display: flex; gap: 0; }
+  .print-sb-page .sb-ability { flex: 1; text-align: center; border-right: 1px solid #c8a870; padding: 0.3rem 0; }
+  .print-sb-page .sb-ability:last-child { border-right: none; }
+  .print-sb-page .sb-ability-name { font-family: 'Cinzel', Georgia, serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: #8a6a30; }
+  .print-sb-page .sb-ability-score { font-family: 'Cinzel', Georgia, serif; font-size: 1rem; color: #1a1008; }
+  .print-sb-page .sb-ability-mod { font-size: 0.8rem; color: #7a5a30; }
+  .print-sb-page .sb-powers { padding: 0.3rem 0; background: #fff; }
+  .print-sb-page .sb-power-section-header { font-family: 'Cinzel', Georgia, serif; font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: #7a5a1a; padding: 0.3rem 1.2rem 0.2rem; background: #f5ead0; border-top: 1px solid #c8a870; margin-top: 0.3rem; }
+  .print-sb-page .sb-power { border-top: 1px solid #e0d0b0; padding: 0.5rem 1.2rem; color: #1a1008; }
+  .print-sb-page .sb-power-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.2rem; }
+  .print-sb-page .sb-power-name { font-family: 'Cinzel', Georgia, serif; font-size: 0.9rem; color: #1a1008; }
+  .print-sb-page .sb-power-usage { display: inline-block; font-family: 'Cinzel', Georgia, serif; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.1rem 0.5rem; border-radius: 20px; border: 1px solid; }
+  .print-sb-page .sb-power-atwill { border-color: #3a6020; color: #3a6020; }
+  .print-sb-page .sb-power-encounter { border-color: #8b1414; color: #8b1414; }
+  .print-sb-page .sb-power-daily { border-color: #1a2b5e; color: #1a2b5e; }
+  .print-sb-page .sb-power-recharge { border-color: #604820; color: #604820; }
+  .print-sb-page .sb-power-trait { border-color: #5a4a20; color: #5a4a20; }
+  .print-sb-page .sb-power-type-line { font-size: 0.82rem; color: #7a5a30; margin-bottom: 0.2rem; }
+  .print-sb-page .sb-power-kw { font-style: italic; }
+  .print-sb-page .sb-power-detail { font-size: 0.88rem; line-height: 1.5; color: #1a1008; }
+  .print-sb-page .sb-power-detail .lbl { font-weight: 700; color: #5a4020; }
+  .print-sb-page .sb-power-detail p { margin-top: 0.1rem; }
+  .print-sb-page .sb-footer { padding: 0.5rem 1.2rem; border-top: 2px solid #8a6a30; background: #f0e4c8; font-size: 0.82rem; color: #7a5a30; display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
+  .print-sb-page .sb-footer span { color: #1a1008; }
+  .print-sb-page .role-tag, .print-sb-page .group-tag { display: inline-block; font-family: 'Cinzel', Georgia, serif; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: 20px; border: 1px solid #8a6a30; color: #5a4020; }
+
+  .sp-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(4px); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .sp-overlay.active { opacity: 1; pointer-events: auto; }
+  .sp-modal { background: var(--panel); border: 1px solid var(--gold-dim); border-radius: 2px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.8); position: relative; padding: 1.8rem; }
+  .sp-modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .sp-close { position: absolute; top: 0.8rem; right: 0.8rem; background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer; padding: 0.3rem; line-height: 1; transition: color 0.2s; }
+  .sp-close:hover { color: var(--red-bright); }
+  .sp-title { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 1.4rem; display: flex; align-items: center; gap: 0.8rem; }
+  .sp-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
+
+  /* Theme swatches */
+  .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.6rem; margin-bottom: 1.6rem; }
+  .theme-swatch { border: 2px solid transparent; border-radius: 3px; padding: 0.55rem 0.5rem; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .theme-swatch:hover { border-color: var(--gold-dim); }
+  .theme-swatch.active { border-color: var(--gold); box-shadow: 0 0 12px rgba(200,140,40,0.2); }
+  .swatch-dot { width: 28px; height: 28px; border-radius: 50%; margin: 0 auto 0.35rem; border: 2px solid rgba(255,255,255,0.15); }
+  .swatch-label { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+
+  /* Party editor */
+  .party-row { display: grid; grid-template-columns: 1fr 70px 30px; gap: 0.4rem; align-items: center; margin-bottom: 0.4rem; }
+  .party-input { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'EB Garamond', serif; font-size: 1rem; padding: 0.3rem 0.6rem; width: 100%; outline: none; transition: border-color 0.2s; }
+  .party-input:focus { border-color: var(--gold-dim); }
+  .party-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0.2rem; transition: color 0.15s; text-align: center; }
+  .party-remove:hover { color: var(--red-bright); }
+  .party-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+</style>
+</head>
+<body>
+
+<div class="ember" id="embers"></div>
+
+<div class="container">
+  <header>
+    <div class="header-ornament">Dungeons &amp; Dragons 4th Edition</div>
+    <h1>Encounter Forge</h1>
+    <p class="subtitle">Builder &amp; Tactical Runner</p>
+    <div class="divider"><div class="divider-gem"></div></div>
+  </header>
+
+  <div class="view-toggle">
+    <button class="view-btn active" id="btn-view-builder" onclick="switchView('builder')">Encounter Builder</button>
+    <button class="view-btn" id="btn-view-runner" onclick="switchView('runner')">Encounter Runner</button>
+  </div>
+
+  <!-- ═══════════════ BUILDER VIEW ═══════════════ -->
+  <div id="view-builder">
+    <!-- Setup -->
+    <div class="setup-panel">
+      <div class="section-title">Load Libraries</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.8rem;">
+        <div class="upload-zone" id="uploadZone" style="margin-bottom:0;">
+          <input type="file" id="monsterFiles" accept=".js" multiple />
+          <div class="upload-zone-label">
+            <strong>⚔ Monster Files</strong>
+            Select data*.js monster files
+          </div>
+          <div id="monsterStatus"></div>
+        </div>
+        <div class="upload-zone" id="trapUploadZone" style="margin-bottom:0;">
+          <input type="file" id="trapFiles" accept=".js" multiple />
+          <div class="upload-zone-label">
+            <strong>🪤 Trap &amp; Hazard Files</strong>
+            Select data*.js trap files
+          </div>
+          <div id="trapStatus"></div>
+        </div>
+      </div>
+
+      <div class="section-title">Party Configuration</div>
+      <div class="setup-grid">
+        <div class="field-group">
+          <label for="partyLevel">Party Level</label>
+          <input type="number" id="partyLevel" min="1" max="30" value="3" />
+        </div>
+        <div class="field-group">
+          <label for="partySize">Party Size</label>
+          <input type="number" id="partySize" min="1" max="10" value="5" />
+        </div>
+        <div class="field-group">
+          <label for="levelRange">Monster Level Range (±)</label>
+          <input type="number" id="levelRange" min="0" max="8" value="4" />
+        </div>
+      </div>
+
+      <div id="budgetDisplay" class="budget-display">
+        <div><div class="budget-label">XP Budget</div><div class="budget-value" id="budgetValue">—</div></div>
+        <div class="budget-range" id="budgetRange">Adjust party settings above</div>
+      </div>
+    </div>
+
+    <!-- Browser + Drop Zone -->
+    <div class="browser-panel">
+      <div class="section-title">Monster Browser &amp; Manual Encounter</div>
+
+      <!-- Filter/Sort controls -->
+      <div class="browser-controls">
+        <div class="field-group">
+          <label for="searchMonster">Search Name</label>
+          <input type="text" id="searchMonster" placeholder="Type to filter…" oninput="filterMonsterList()" />
+        </div>
+        <div class="field-group">
+          <label for="filterRole">Role</label>
+          <select id="filterRole" onchange="filterMonsterList()">
+            <option value="All">All Roles</option>
+            <option value="Brute">Brute</option>
+            <option value="Soldier">Soldier</option>
+            <option value="Skirmisher">Skirmisher</option>
+            <option value="Artillery">Artillery</option>
+            <option value="Controller">Controller</option>
+            <option value="Lurker">Lurker</option>
+            <option value="Leader">Leader</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>&nbsp;</label>
+          <button class="sort-btn" id="sortName" onclick="setSort('name')">Name <span class="sort-arrow" id="arrow-name"></span></button>
+        </div>
+        <div class="field-group">
+          <label>&nbsp;</label>
+          <button class="sort-btn" id="sortLevel" onclick="setSort('level')">Level <span class="sort-arrow" id="arrow-level"></span></button>
+        </div>
+        <div class="field-group">
+          <label>&nbsp;</label>
+          <button class="sort-btn" id="sortRole" onclick="setSort('role')">Role <span class="sort-arrow" id="arrow-role"></span></button>
+        </div>
+      </div>
+
+      <div class="browser-layout">
+        <!-- Monster list -->
+        <div class="monster-list" id="monsterList">
+          <div class="empty-state"><div class="icon">📜</div><p>Load monster files to browse the library.</p></div>
+        </div>
+
+        <!-- Multi-Encounter panel -->
+        <div class="encounter-drop-panel">
+          <div class="encounter-drop-header">
+            <div class="encounter-drop-title">⚔ Encounters</div>
+            <button class="action-btn add-pc-btn" onclick="createNewEncounter()" style="font-size:0.68rem;padding:0.3rem 0.7rem;">+ New</button>
+          </div>
+
+          <!-- Encounter tabs -->
+          <div id="encounterTabs" style="display:flex;flex-wrap:wrap;gap:0.3rem;padding:0.6rem 0.8rem 0;border-bottom:1px solid var(--border);"></div>
+
+          <!-- Active encounter area -->
+          <div id="activeEncounterArea">
+            <div style="padding:0.6rem 1rem 0.3rem;display:flex;align-items:center;gap:0.4rem;">
+              <input type="text" id="encounterNameInput" placeholder="Encounter name…" 
+                     style="flex:1;font-size:0.85rem;padding:0.3rem 0.5rem;" 
+                     oninput="renameCurrentEncounter(this.value)" />
+              <div class="encounter-xp-badge" id="encounterXpBadge">0 XP</div>
+            </div>
+            <!-- Encounter Notes -->
+            <div class="encounter-notes-section">
+              <label class="encounter-notes-label" for="encounterNotesInput">📋 Encounter Notes</label>
+              <textarea id="encounterNotesInput" class="encounter-notes-textarea"
+                placeholder="Monster tactics, round-by-round events, environmental notes…"
+                oninput="saveCurrentEncounterNotes(this.value)"></textarea>
+            </div>
+            <!-- Random generation controls -->
+            <div id="randomGenPanel" style="padding:0.4rem 1rem;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:0.4rem;align-items:flex-end;">
+              <div class="field-group" style="flex:1;min-width:100px;">
+                <label style="font-size:0.62rem;">Theme</label>
+                <select id="randomTheme" style="font-size:0.8rem;padding:0.3rem 0.5rem;">
+                  <option value="any">Any / Mixed</option>
+                  <optgroup label="Origin">
+                    <option value="natural">Natural</option>
+                    <option value="aberrant">Aberrant</option>
+                    <option value="elemental">Elemental</option>
+                    <option value="fey">Fey</option>
+                    <option value="immortal">Immortal</option>
+                    <option value="shadow">Shadow</option>
+                  </optgroup>
+                  <optgroup label="Type / Keyword">
+                    <option value="beast">Beast</option>
+                    <option value="humanoid">Humanoid</option>
+                    <option value="undead">Undead</option>
+                    <option value="construct">Construct</option>
+                    <option value="dragon">Dragon</option>
+                    <option value="giant">Giant</option>
+                    <option value="demon">Demon</option>
+                    <option value="devil">Devil</option>
+                    <option value="angel">Angel</option>
+                    <option value="animate">Animate</option>
+                    <option value="plant">Plant</option>
+                    <option value="ooze">Ooze</option>
+                  </optgroup>
+                </select>
+              </div>
+              <button class="action-btn secondary" onclick="generateRandomEncounter()" style="font-size:0.68rem;padding:0.35rem 0.6rem;white-space:nowrap;">🎲 Random</button>
+            </div>
+            <div class="drop-zone" id="dropZone" 
+                 ondragover="event.preventDefault(); this.classList.add('drag-over')"
+                 ondragleave="this.classList.remove('drag-over')"
+                 ondrop="handleDrop(event)">
+              <div id="encounterEntries">
+                <div class="drop-zone-hint">Drag monsters here<br>or click + Add</div>
+              </div>
+            </div>
+            <div class="encounter-footer">
+              <div class="encounter-diff-info">
+                <span id="encounterDiffLabel" style="color:var(--text-muted)">—</span>
+                <span id="encounterPerPc" style="color:var(--text-muted)">—</span>
+              </div>
+              <button class="encounter-start-btn" id="startEncounterBtn" onclick="startManualEncounter()" disabled>Start Encounter →</button>
+              <button class="encounter-clear-btn" onclick="exportEncounterPdf()" id="exportPdfBtn" style="border-color:var(--gold-dim);color:var(--gold);">🖨 Export Stat Blocks (PDF)</button>
+              <button class="encounter-clear-btn" onclick="clearEncounter()">Clear Monsters</button>
+              <button class="encounter-clear-btn" onclick="deleteCurrentEncounter()" style="border-color:var(--red);color:#e08080;">Delete Encounter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TRAP BROWSER ═══ -->
+    <div class="trap-browser-panel">
+      <div class="section-title">Trap &amp; Hazard Browser</div>
+
+      <!-- Filter/Sort controls -->
+      <div class="browser-controls">
+        <div class="field-group">
+          <label for="searchTrap">Search Name</label>
+          <input type="text" id="searchTrap" placeholder="Type to filter…" oninput="filterTrapList()" />
+        </div>
+        <div class="field-group">
+          <label for="filterTrapType">Type</label>
+          <select id="filterTrapType" onchange="filterTrapList()">
+            <option value="All">All Types</option>
+            <option value="Trap">Trap</option>
+            <option value="Hazard">Hazard</option>
+            <option value="Terrain">Terrain</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>&nbsp;</label>
+          <button class="sort-btn" id="sortTrapName" onclick="setTrapSort('name')">Name <span class="sort-arrow" id="tarrow-name"></span></button>
+        </div>
+        <div class="field-group">
+          <label>&nbsp;</label>
+          <button class="sort-btn" id="sortTrapLevel" onclick="setTrapSort('level')">Level <span class="sort-arrow" id="tarrow-level"></span></button>
+        </div>
+        <div class="field-group">
+          <label>&nbsp;</label>
+          <button class="sort-btn" id="sortTrapRole" onclick="setTrapSort('role')">Role <span class="sort-arrow" id="tarrow-role"></span></button>
+        </div>
+      </div>
+
+      <div class="browser-layout">
+        <!-- Trap list -->
+        <div class="trap-list" id="trapList">
+          <div class="empty-state"><div class="icon">🪤</div><p>Load trap/hazard files to browse the library.</p></div>
+        </div>
+
+        <!-- Trap encounter panel (reuses the right-side drop zone from above) -->
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:1rem;font-family:'Cinzel',serif;font-size:0.78rem;color:var(--text-dim);letter-spacing:0.1em;line-height:1.8;">
+          <div style="color:#e08080;font-size:0.85rem;margin-bottom:0.6rem;">🪤 Adding Traps</div>
+          Click <strong style="color:var(--text);">+ Add</strong> on any trap or hazard to include it in the currently active encounter above.<br><br>
+          Traps share the XP budget with monsters and will appear in both the encounter panel and the PDF export.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="view-runner" class="hidden">
+    <div class="runner-panel">
+
+      <!-- Initiative Setup (shown before starting) -->
+      <div id="initiativeSetup">
+        <div class="runner-header" style="margin-bottom:1.5rem;">
+          <div style="font-family:'Cinzel',serif; font-size:1rem; color:var(--gold-light);">Initiative &amp; Combatant Setup</div>
+          <button class="action-btn secondary" onclick="switchView('builder')">← Back to Builder</button>
+        </div>
+        <div class="initiative-setup">
+          <div class="initiative-setup-title">
+            <span>Set Initiative — Monsters &amp; PCs</span>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+              <button class="action-btn add-pc-btn" onclick="rollAllMonsterInits()" title="Roll d20 + modifier for all monsters">🎲 Roll All Monsters</button>
+              <button class="action-btn add-pc-btn" onclick="loadPartyIntoInitiative()" title="Pre-fill PCs from your saved party">👥 Load Party</button>
+              <button class="action-btn add-pc-btn" onclick="addPcRow()">+ Add PC</button>
+            </div>
+          </div>
+          <div class="initiative-grid" id="initiativeGrid"></div>
+          <button class="action-btn start-run-btn" onclick="startRun()">⚔ Begin Encounter</button>
+        </div>
+      </div>
+
+      <!-- Active Run (shown after initiative set) -->
+      <div id="activeRun" class="hidden">
+        <div class="runner-header">
+          <div class="round-tracker">
+            <div class="round-label">Round</div>
+            <div class="round-value" id="roundValue">1</div>
+            <button class="action-btn" onclick="nextTurn()">Next Turn</button>
+          </div>
+          <div class="runner-actions">
+            <button class="action-btn" onclick="resetEncounter()">Reset</button>
+            <button class="action-btn" onclick="endEncounter()" style="border-color:var(--red);color:#e08080;">End Encounter</button>
+            <button class="action-btn secondary" onclick="switchView('builder')">Builder</button>
+          </div>
+        </div>
+
+        <!-- Encounter Notes (runner) -->
+        <div class="runner-notes-section" id="runnerNotesSection">
+          <div class="runner-notes-header" onclick="toggleRunnerNotes()">
+            <span class="runner-notes-title">📋 Encounter Notes</span>
+            <span class="runner-notes-toggle" id="runnerNotesToggle">▲</span>
+          </div>
+          <div class="runner-notes-body" id="runnerNotesBody">
+            <textarea id="runnerNotesTextarea" class="runner-notes-textarea"
+              placeholder="No notes for this encounter."
+              oninput="saveRunnerNotes(this.value)"></textarea>
+          </div>
+        </div>
+
+        <!-- Turn order bar -->
+        <div class="turn-order-bar">
+          <div class="turn-order-inner" id="turnOrderBar"></div>
+        </div>
+
+        <!-- PC cards -->
+        <div id="runnerPcsSection" class="runner-pcs-section hidden">
+          <div class="section-title">Player Characters</div>
+          <div class="runner-pcs-grid" id="runnerPcsGrid"></div>
+        </div>
+
+        <!-- Monster cards -->
+        <div class="section-title" id="monsterCardsLabel">Monsters</div>
+        <div class="runner-monsters-grid" id="runnerContent"></div>
+
+        <!-- Trap / Hazard cards -->
+        <div id="runnerTrapsSection" class="hidden">
+          <div class="section-title" id="trapCardsLabel">Traps &amp; Hazards</div>
+          <div class="runner-monsters-grid" id="runnerTrapsContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings cog -->
+<button class="settings-cog" onclick="openSettings()" title="Settings &amp; Party">⚙</button>
+
+<!-- Settings + Party modal -->
+<div class="sp-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="sp-modal">
+    <button class="sp-close" onclick="closeSettings()">✕</button>
+
+    <div class="sp-title">Colour Theme</div>
+    <div class="theme-grid" id="themeGrid"></div>
+
+    <div class="sp-title">Standing Party</div>
+    <div style="font-family:'EB Garamond',serif;font-size:0.88rem;color:var(--text-dim);margin-bottom:0.8rem;line-height:1.5;">
+      Define your regular PCs here. They'll be pre-loaded into the initiative grid every encounter — you can still add extras or remove them per-session.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 70px 30px;gap:0.4rem;margin-bottom:0.4rem;">
+      <span style="font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);">Name</span>
+      <span style="font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);text-align:center;">Init Mod</span>
+      <span></span>
+    </div>
+    <div id="partyEditorRows"></div>
+    <div class="party-actions">
+      <button class="action-btn add-pc-btn" onclick="addPartyMember()">+ Add Member</button>
+      <button class="action-btn" onclick="savePartyToFile()">💾 Save Party File</button>
+      <button class="action-btn secondary" onclick="document.getElementById('partyFileInput').click()">📂 Load Party File</button>
+      <input type="file" id="partyFileInput" accept=".json" style="display:none" onchange="loadPartyFromFile(event)">
+    </div>
+    <div style="margin-top:0.6rem;font-family:'EB Garamond',serif;font-size:0.82rem;color:var(--text-muted);font-style:italic;">
+      Party data is also saved automatically in your browser — no need to load a file each visit unless switching computers.
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="monsterModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="sb-outer" id="statBlockContent"></div>
+  </div>
+</div>
+
+<script>
+// ─── Themes ───
+const THEMES = [
+  { id: 'obsidian-gold', label: 'Obsidian & Gold', dot: '#c9922a',
+    vars: { '--bg':'#0d0a07','--bg2':'#13100c','--bg3':'#1c1710','--panel':'#1a1510',
+            '--border':'#3d2e18','--gold':'#c9922a','--gold-light':'#e8b64a','--gold-dim':'#7a5a1a',
+            '--text':'#e8d8b8','--text-dim':'#9a8060','--text-muted':'#5a4830','--white':'#f5ead0',
+            '--glow-r':'120','--glow-g':'60','--glow-b':'10' } },
+  { id: 'void-amethyst', label: 'Void & Amethyst', dot: '#9b5de5',
+    vars: { '--bg':'#080710','--bg2':'#0e0c18','--bg3':'#16132a','--panel':'#120f20',
+            '--border':'#3a2460','--gold':'#9b5de5','--gold-light':'#c084fc','--gold-dim':'#5b2d9a',
+            '--text':'#ddd8f0','--text-dim':'#8870b0','--text-muted':'#4a3870','--white':'#f0eaff',
+            '--glow-r':'120','--glow-g':'40','--glow-b':'200' } },
+  { id: 'deep-sapphire', label: 'Deep Sapphire', dot: '#3b82f6',
+    vars: { '--bg':'#060a10','--bg2':'#0a1018','--bg3':'#0f1825','--panel':'#0d1520',
+            '--border':'#1e3a5f','--gold':'#3b82f6','--gold-light':'#60a5fa','--gold-dim':'#1d4e8f',
+            '--text':'#d0dff0','--text-dim':'#6a90b8','--text-muted':'#304860','--white':'#e8f0ff',
+            '--glow-r':'20','--glow-g':'80','--glow-b':'180' } },
+  { id: 'forest-emerald', label: 'Forest & Emerald', dot: '#10b981',
+    vars: { '--bg':'#050f09','--bg2':'#091510','--bg3':'#0d1f17','--panel':'#0b1a13',
+            '--border':'#1a4030','--gold':'#10b981','--gold-light':'#34d399','--gold-dim':'#0a6648',
+            '--text':'#c8e8d8','--text-dim':'#5a9070','--text-muted':'#2a5040','--white':'#e0f5ec',
+            '--glow-r':'10','--glow-g':'140','--glow-b':'80' } },
+  { id: 'crimson-iron', label: 'Crimson & Iron', dot: '#e53e3e',
+    vars: { '--bg':'#0f0606','--bg2':'#160b0b','--bg3':'#200e0e','--panel':'#1a0c0c',
+            '--border':'#4a1818','--gold':'#e53e3e','--gold-light':'#fc6d6d','--gold-dim':'#8b1a1a',
+            '--text':'#f0d8d8','--text-dim':'#a06060','--text-muted':'#603030','--white':'#fff0f0',
+            '--glow-r':'200','--glow-g':'20','--glow-b':'20' } },
+  { id: 'copper-slate', label: 'Copper & Slate', dot: '#d97706',
+    vars: { '--bg':'#080809','--bg2':'#0f1012','--bg3':'#171a1e','--panel':'#141618',
+            '--border':'#3a3020','--gold':'#d97706','--gold-light':'#f59e0b','--gold-dim':'#7c4a10',
+            '--text':'#e0d8c8','--text-dim':'#8a7858','--text-muted':'#4a4030','--white':'#f5efe0',
+            '--glow-r':'160','--glow-g':'100','--glow-b':'10' } },
+];
+
+let activeThemeId = localStorage.getItem('ef-theme') || 'obsidian-gold';
+
+function applyTheme(id) {
+  const theme = THEMES.find(t => t.id === id) || THEMES[0];
+  activeThemeId = theme.id;
+  const root = document.documentElement;
+  Object.entries(theme.vars).forEach(([k, v]) => root.style.setProperty(k, v));
+  // Update ember colour to match accent
+  document.querySelectorAll('.ember span').forEach(s => s.style.background = theme.vars['--gold']);
+  localStorage.setItem('ef-theme', id);
+  renderThemeGrid();
+}
+
+function renderThemeGrid() {
+  const grid = document.getElementById('themeGrid');
+  if (!grid) return;
+  grid.innerHTML = THEMES.map(t => `
+    <div class="theme-swatch ${t.id === activeThemeId ? 'active' : ''}" onclick="applyTheme('${t.id}')">
+      <div class="swatch-dot" style="background:${t.dot};box-shadow:0 0 8px ${t.dot}55;"></div>
+      <div class="swatch-label">${t.label}</div>
+    </div>`).join('');
+}
+
+// ─── Party management ───
+let standingParty = []; // [{uid, name, initMod}]
+
+function loadPartyFromStorage() {
+  try {
+    const raw = localStorage.getItem('ef-party');
+    if (raw) standingParty = JSON.parse(raw);
+  } catch(e) { standingParty = []; }
+}
+
+function savePartyToStorage() {
+  localStorage.setItem('ef-party', JSON.stringify(standingParty));
+}
+
+function renderPartyEditor() {
+  const el = document.getElementById('partyEditorRows');
+  if (!el) return;
+  if (standingParty.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-style:italic;font-size:0.88rem;padding:0.4rem 0 0.8rem;">No party members yet. Click + Add Member.</div>';
+    return;
+  }
+  el.innerHTML = standingParty.map(pc => `
+    <div class="party-row">
+      <input class="party-input" type="text" placeholder="PC Name" value="${pc.name}"
+             oninput="updatePartyMember('${pc.uid}','name',this.value)">
+      <input class="party-input" type="number" placeholder="±0" value="${pc.initMod}"
+             style="text-align:center;"
+             oninput="updatePartyMember('${pc.uid}','initMod',this.value)">
+      <button class="party-remove" onclick="removePartyMember('${pc.uid}')">✕</button>
+    </div>`).join('');
+}
+
+function addPartyMember() {
+  standingParty.push({ uid: crypto.randomUUID(), name: '', initMod: 0 });
+  renderPartyEditor();
+  savePartyToStorage();
+}
+
+function updatePartyMember(uid, field, val) {
+  const pc = standingParty.find(p => p.uid === uid);
+  if (!pc) return;
+  pc[field] = field === 'initMod' ? (parseInt(val) || 0) : val;
+  savePartyToStorage();
+}
+
+function removePartyMember(uid) {
+  standingParty = standingParty.filter(p => p.uid !== uid);
+  renderPartyEditor();
+  savePartyToStorage();
+}
+
+function savePartyToFile() {
+  const data = JSON.stringify({ party: standingParty }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'party.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function loadPartyFromFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.party && Array.isArray(data.party)) {
+        standingParty = data.party.map(p => ({
+          uid: p.uid || crypto.randomUUID(),
+          name: p.name || '',
+          initMod: parseInt(p.initMod) || 0
+        }));
+        renderPartyEditor();
+        savePartyToStorage();
+      }
+    } catch(err) { alert('Could not read party file. Make sure it\'s a valid party.json.'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function loadPartyIntoInitiative() {
+  saveInitiativeValues();
+  if (standingParty.length === 0) {
+    alert('No standing party defined. Open Settings (⚙) to set up your party first.');
+    return;
+  }
+  // Only add members not already in pcRows (match by name)
+  const existingNames = pcRows.map(p => p.name.trim().toLowerCase());
+  let added = 0;
+  standingParty.forEach(pc => {
+    if (!existingNames.includes(pc.name.trim().toLowerCase())) {
+      pcRows.push({ uid: crypto.randomUUID(), name: pc.name, initiative: '', initMod: pc.initMod });
+      added++;
+    }
+  });
+  renderInitiativeGrid();
+  if (added === 0) alert('All party members are already in the initiative list.');
+}
+
+function openSettings() {
+  renderThemeGrid();
+  renderPartyEditor();
+  document.getElementById('settingsOverlay').classList.add('active');
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+// ─── Ember particles ───
+(function() {
+  const el = document.getElementById('embers');
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.bottom = Math.random() * 20 + '%';
+    s.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+    s.style.animationDuration = (8 + Math.random() * 12) + 's';
+    s.style.animationDelay = (Math.random() * 12) + 's';
+    s.style.width = s.style.height = (1 + Math.random() * 2) + 'px';
+    s.style.opacity = '0';
+    el.appendChild(s);
+  }
+})();
+
+// ─── State ───
+let monsters = [];
+// Multi-encounter state
+let encounters = []; // [{id, name, monsters:[{monster,qty}]}]
+let activeEncounterId = null; // id of currently selected encounter in builder
+
+let activeEncounter = []; // [{uid, monster, instanceId, totalInGroup, currentHp, maxHp, conditions, powersUsed, initiative}]
+let activePcs = [];       // [{uid, name, initiative, conditions}]
+let activeTraps = [];     // [{uid, trap, instanceId, totalInGroup, initiative}] — traps in the running encounter
+let turnOrder = [];       // sorted by initiative, each {uid, name, type:'monster'|'pc', initiative}
+let currentTurnIdx = 0;
+let currentRound = 1;
+let currentModalMonster = null;
+let sortField = 'name';
+let sortDir = 1;
+
+// Helper: get the current encounter's monster list
+function currentEncounterMonsters() {
+  const enc = encounters.find(e => e.id === activeEncounterId);
+  return enc ? enc.monsters : [];
+}
+// Helper: set the current encounter's monster list
+function setCurrentEncounterMonsters(list) {
+  const enc = encounters.find(e => e.id === activeEncounterId);
+  if (enc) enc.monsters = list;
+}
+
+// ─── Multi-encounter management ───
+function createNewEncounter(name) {
+  const id = crypto.randomUUID();
+  const n = name || `Encounter ${encounters.length + 1}`;
+  encounters.push({ id, name: n, monsters: [], notes: '' });
+  activeEncounterId = id;
+  renderEncounterTabs();
+  renderEncounterZone();
+}
+
+function selectEncounter(id) {
+  activeEncounterId = id;
+  renderEncounterTabs();
+  renderEncounterZone();
+}
+
+function renameCurrentEncounter(name) {
+  const enc = encounters.find(e => e.id === activeEncounterId);
+  if (enc) { enc.name = name; renderEncounterTabs(); }
+}
+
+function saveCurrentEncounterNotes(notes) {
+  const enc = encounters.find(e => e.id === activeEncounterId);
+  if (enc) enc.notes = notes;
+}
+
+function deleteCurrentEncounter() {
+  if (encounters.length === 0) return;
+  if (!confirm('Delete this encounter?')) return;
+  encounters = encounters.filter(e => e.id !== activeEncounterId);
+  activeEncounterId = encounters.length > 0 ? encounters[encounters.length - 1].id : null;
+  if (encounters.length === 0) createNewEncounter();
+  else { renderEncounterTabs(); renderEncounterZone(); }
+}
+
+function renderEncounterTabs() {
+  const tabs = document.getElementById('encounterTabs');
+  tabs.innerHTML = encounters.map(enc => {
+    const isActive = enc.id === activeEncounterId;
+    return `<button class="enc-tab ${isActive ? 'active' : ''}" onclick="selectEncounter('${enc.id}')" title="${enc.name}">${enc.name}</button>`;
+  }).join('');
+  // Sync name input and notes textarea
+  const enc = encounters.find(e => e.id === activeEncounterId);
+  const nameInput = document.getElementById('encounterNameInput');
+  if (nameInput && enc) nameInput.value = enc.name;
+  const notesInput = document.getElementById('encounterNotesInput');
+  if (notesInput && enc) notesInput.value = enc.notes || '';
+}
+
+// ─── View switching ───
+function switchView(view) {
+  document.getElementById('view-builder').classList.toggle('hidden', view !== 'builder');
+  document.getElementById('view-runner').classList.toggle('hidden', view !== 'runner');
+  document.getElementById('btn-view-builder').classList.toggle('active', view === 'builder');
+  document.getElementById('btn-view-runner').classList.toggle('active', view === 'runner');
+  if (view === 'runner') {
+    // If an encounter is already running, jump straight back to it — don't reset
+    const isRunning = !document.getElementById('activeRun').classList.contains('hidden');
+    if (!isRunning) buildInitiativeSetup();
+  }
+}
+
+// ─── XP Budget ───
+function getBaseXPPerPC(level) {
+  if (level <= 10) return level * 100;
+  if (level <= 20) return level * 125 + 250;
+  return level * 200 + 1000;
+}
+function getEncounterBudget(partyLevel, partySize) {
+  return getBaseXPPerPC(partyLevel) * partySize;
+}
+function updateBudgetDisplay() {
+  const lvl = parseInt(document.getElementById('partyLevel').value) || 1;
+  const sz = parseInt(document.getElementById('partySize').value) || 5;
+  const budget = getEncounterBudget(lvl, sz);
+  const lo = Math.round(budget * 0.85), hi = Math.round(budget * 1.15);
+  document.getElementById('budgetValue').textContent = budget.toLocaleString() + ' XP';
+  document.getElementById('budgetRange').textContent = `Acceptable range: ${lo.toLocaleString()} – ${hi.toLocaleString()} XP`;
+  updateEncounterXpDisplay();
+}
+['partyLevel','partySize'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateBudgetDisplay);
+});
+updateBudgetDisplay();
+
+// ─── File loading (data*.js format) ───
+// rawStatBlocks maps "monsterN" id -> raw HTML string
+let rawStatBlocks = {};
+
+document.getElementById('monsterFiles').addEventListener('change', function(e) {
+  const files = Array.from(e.target.files).filter(f => f.name.toLowerCase().endsWith('.js'));
+  if (!files.length) {
+    document.getElementById('monsterStatus').innerHTML = '<div class="parse-error">No .js files found. Select your data*.js files.</div>';
+    return;
+  }
+  monsters = [];
+  rawStatBlocks = {};
+  let loaded = 0;
+  const statusEl = document.getElementById('monsterStatus');
+  statusEl.innerHTML = `<div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.5rem">Parsing ${files.length} file(s)\u2026</div>`;
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        // Intercept od.reader.jsonp_batch_data callback
+        const od = {
+          reader: {
+            jsonp_batch_data(_ts, _type, dataMap) {
+              Object.entries(dataMap).forEach(([rawId, html]) => {
+                rawStatBlocks[rawId] = html;
+                try {
+                  const m = parseMonsterFromHtml(rawId, html);
+                  if (m) monsters.push(m);
+                } catch(err) { /* skip malformed */ }
+              });
+            }
+          }
+        };
+        const fn = new Function('od', ev.target.result);
+        fn(od);
+      } catch(err) { console.warn('Error loading', file.name, err); }
+
+      loaded++;
+      if (loaded === files.length) {
+        showMonsterStatus(monsters.length);
+        filterMonsterList();
+      }
+    };
+    reader.readAsText(file);
+  });
+});
+
+// ─── Parse monster metadata from embedded HTML string ───
+function parseMonsterFromHtml(rawId, html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+
+  // Name from h1 (strip child spans)
+  const h1 = div.querySelector('h1');
+  if (!h1) return null;
+  const h1c = h1.cloneNode(true);
+  h1c.querySelectorAll('span').forEach(s => s.remove());
+  const name = h1c.textContent.replace(/\n/g,'').trim().replace(/\s+/g,' ') || rawId;
+
+  // Type line
+  const typeEl = div.querySelector('span.type');
+  const typeStr = typeEl ? typeEl.textContent.trim() : '';
+
+  // Level / role / groupRole / xp
+  const levelEl = div.querySelector('span.level');
+  let level = 0, role = 'Unknown', groupRole = 'Standard', xp = 0;
+  if (levelEl) {
+    const xpEl = levelEl.querySelector('span.xp');
+    const xpText = xpEl ? xpEl.textContent : '';
+    const xpMatch = xpText.match(/XP\s*([\d,]+)/i);
+    if (xpMatch) xp = parseInt(xpMatch[1].replace(/,/g,'')) || 0;
+
+    const levelClone = levelEl.cloneNode(true);
+    levelClone.querySelectorAll('span').forEach(s => s.remove());
+    const lrm = levelClone.textContent.trim().match(/Level\s+(\d+)\s+(.*)/i);
+    if (lrm) {
+      level = parseInt(lrm[1]) || 0;
+      let roleStr = lrm[2].trim();
+      for (const gr of ['Elite','Solo','Minion']) {
+        if (roleStr.includes(gr)) { groupRole = gr; roleStr = roleStr.replace(gr,'').trim(); break; }
+      }
+      role = roleStr || 'Unknown';
+    }
+  }
+
+  // HP (first numeric value after <b>HP</b>)
+  const hpMatch = html.match(/<b>HP<\/b>\s*(\d+)/i);
+  const hp = hpMatch ? parseInt(hpMatch[1]) : (groupRole === 'Minion' ? 1 : 0);
+
+  // Initiative
+  const initMatch = html.match(/<b>Initiative<\/b>\s*([+-]?\d+)/i);
+  const initiative = initMatch ? parseInt(initMatch[1]) : 0;
+
+  // Source
+  const pubEl = div.querySelector('p.publishedIn');
+  const source = pubEl ? pubEl.textContent.replace(/^Published in\s*/i,'').replace(/\.$/, '').trim() : '';
+
+  // Keywords / origin from type string
+  const keywords = [];
+  const typeLower = typeStr.toLowerCase();
+  for (const kw of ['undead','dragon','demon','devil','angel','construct','plant','beast','ooze','humanoid','animate','giant']) {
+    if (typeLower.includes(kw)) keywords.push(kw);
+  }
+  let origin = '';
+  for (const o of ['natural','aberrant','elemental','fey','immortal','shadow']) {
+    if (typeLower.includes(o)) { origin = o; break; }
+  }
+
+  return { id: rawId, name, level, xp, role, groupRole, hp, initiative,
+           type: typeStr, origin, keywords, source, folder: '', file: rawId, rawHtml: html };
+}
+
+function showMonsterStatus(count) {
+  document.getElementById('monsterStatus').innerHTML = count > 0
+    ? `<div class="monster-count">✦ ${count.toLocaleString()} monsters loaded</div>`
+    : '';
+}
+
+// ─── Sort ───
+function setSort(field) {
+  if (sortField === field) sortDir = -sortDir;
+  else { sortField = field; sortDir = 1; }
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sort' + field.charAt(0).toUpperCase() + field.slice(1))?.classList.add('active');
+  ['name','level','role'].forEach(f => {
+    const arrow = document.getElementById('arrow-' + f);
+    if (arrow) arrow.textContent = f === sortField ? (sortDir === 1 ? '▲' : '▼') : '';
+  });
+  filterMonsterList();
+}
+setSort('name');
+
+// ─── Filter + Render list ───
+function filterMonsterList() {
+  const search = document.getElementById('searchMonster').value.toLowerCase();
+  const role = document.getElementById('filterRole').value;
+
+  let filtered = monsters.filter(m => {
+    const matchName = m.name.toLowerCase().includes(search);
+    const matchRole = role === 'All' || m.role === role;
+    return matchName && matchRole;
+  });
+
+  filtered.sort((a, b) => {
+    let va, vb;
+    if (sortField === 'name')  { va = a.name.toLowerCase(); vb = b.name.toLowerCase(); }
+    else if (sortField === 'level') { va = a.level; vb = b.level; }
+    else if (sortField === 'role')  { va = a.role; vb = b.role; }
+    return va < vb ? -sortDir : va > vb ? sortDir : 0;
+  });
+
+  filtered = filtered.slice(0, 6000);
+  const listEl = document.getElementById('monsterList');
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><p>No monsters match your filters.</p></div>';
+    return;
+  }
+  listEl.innerHTML = filtered.map(m => `
+    <div class="monster-list-item" draggable="true"
+         ondragstart="handleDragStart(event, '${m.id}')"
+         ondragend="this.classList.remove('dragging')">
+      <div class="ml-name">
+        <span class="ml-drag-handle" title="Drag to encounter">⠿</span>
+        <span onclick="openStatBlock('${m.id}')">${m.name}${m.groupRole !== 'Standard' ? `<span class="group-tag group-tag-${m.groupRole}">${m.groupRole}</span>` : ''}</span>
+      </div>
+      <div class="ml-level" style="text-align:center">Lvl ${m.level}</div>
+      <div class="ml-role"><span class="role-tag role-tag-${m.role.replace(/\s+/g,'')}">${m.role}</span></div>
+      <div class="ml-xp">${m.xp} XP</div>
+      <button class="rm-btn" onclick="addToEncounter('${m.id}')">+ Add</button>
+    </div>
+  `).join('');
+}
+
+// ─── Drag & Drop ───
+let dragMonsterId = null;
+function handleDragStart(event, id) {
+  dragMonsterId = id;
+  event.dataTransfer.effectAllowed = 'copy';
+  event.currentTarget.classList.add('dragging');
+}
+function handleDrop(event) {
+  event.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  if (dragMonsterId) { addToEncounter(dragMonsterId); dragMonsterId = null; }
+}
+
+// ─── Encounter management ───
+function addToEncounter(id) {
+  if (!activeEncounterId) createNewEncounter();
+  const m = monsters.find(x => x.id === id);
+  if (!m) return;
+  const list = currentEncounterMonsters();
+  const existing = list.find(x => !x._isTrap && x.monster.id === id);
+  if (existing) existing.qty++;
+  else list.push({ monster: m, qty: 1 });
+  renderEncounterZone();
+}
+function removeFromEncounter(id) {
+  setCurrentEncounterMonsters(currentEncounterMonsters().filter(x => x._isTrap || x.monster.id !== id));
+  renderEncounterZone();
+}
+function adjustEncounterQty(id, delta) {
+  const item = currentEncounterMonsters().find(x => !x._isTrap && x.monster.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  renderEncounterZone();
+}
+function clearEncounter() {
+  setCurrentEncounterMonsters([]);
+  renderEncounterZone();
+}
+function addModalMonsterToEncounter() {
+  if (currentModalMonster) { addToEncounter(currentModalMonster.id); }
+}
+
+function renderEncounterZone() {
+  const manualEncounter = currentEncounterMonsters();
+  const el = document.getElementById('encounterEntries');
+  if (manualEncounter.length === 0) {
+    el.innerHTML = '<div class="drop-zone-hint">Drag monsters here<br>or click + Add</div>';
+    document.getElementById('startEncounterBtn').disabled = true;
+    document.getElementById('encounterXpBadge').textContent = '0 XP';
+    document.getElementById('encounterDiffLabel').textContent = '—';
+    document.getElementById('encounterDiffLabel').style.color = 'var(--text-muted)';
+    document.getElementById('encounterPerPc').textContent = '—';
+    return;
+  }
+  const totalXp = manualEncounter.reduce((sum, it) => {
+    const xp = it._isTrap ? (it.trap.xp * it.qty) : (it.monster.xp * it.qty);
+    return sum + xp;
+  }, 0);
+  el.innerHTML = manualEncounter.map(item => {
+    if (item._isTrap) {
+      const t = item.trap;
+      return `
+      <div class="enc-trap-entry">
+        <div class="enc-qty-controls">
+          <button class="enc-qty-btn" onclick="adjustTrapEncounterQty('${t.id}', -1)">−</button>
+          <span class="enc-qty">×${item.qty}</span>
+          <button class="enc-qty-btn" onclick="adjustTrapEncounterQty('${t.id}', 1)">+</button>
+        </div>
+        <span class="enc-name" onclick="openTrapStatBlock('${t.id}')" style="color:#e08080;">🪤 ${t.name}</span>
+        <span class="enc-meta">${t.xp > 0 ? (t.xp * item.qty) + ' XP' : '—'}</span>
+        <button class="enc-remove" onclick="removeTrapFromEncounter('${t.id}')">✕</button>
+      </div>`;
+    }
+    const m = item.monster;
+    return `
+    <div class="encounter-entry">
+      <div class="enc-qty-controls">
+        <button class="enc-qty-btn" onclick="adjustEncounterQty('${m.id}', -1)">−</button>
+        <span class="enc-qty">×${item.qty}</span>
+        <button class="enc-qty-btn" onclick="adjustEncounterQty('${m.id}', 1)">+</button>
+      </div>
+      <span class="enc-name" onclick="openStatBlock('${m.id}')">${m.name}</span>
+      <span class="enc-meta">${m.xp * item.qty} XP</span>
+      <button class="enc-remove" onclick="removeFromEncounter('${m.id}')">✕</button>
+    </div>`;
+  }).join('');
+
+  document.getElementById('encounterXpBadge').textContent = totalXp.toLocaleString() + ' XP';
+  document.getElementById('startEncounterBtn').disabled = false;
+
+  const lvl = parseInt(document.getElementById('partyLevel').value) || 1;
+  const sz  = parseInt(document.getElementById('partySize').value) || 5;
+  const budget = getEncounterBudget(lvl, sz);
+  const ratio = totalXp / budget;
+  const perPc = Math.round(totalXp / sz);
+
+  let diffLabel = 'Standard', diffColor = 'var(--gold)';
+  if (ratio < 0.75) { diffLabel = 'Easy'; diffColor = '#80c080'; }
+  else if (ratio < 1.1) { diffLabel = 'Standard'; diffColor = 'var(--gold)'; }
+  else if (ratio < 1.3) { diffLabel = 'Hard'; diffColor = '#e07040'; }
+  else { diffLabel = 'Deadly'; diffColor = '#e06060'; }
+
+  document.getElementById('encounterDiffLabel').textContent = diffLabel;
+  document.getElementById('encounterDiffLabel').style.color = diffColor;
+  document.getElementById('encounterPerPc').textContent = perPc.toLocaleString() + ' XP/PC';
+}
+function updateEncounterXpDisplay() { renderEncounterZone(); }
+
+// ─── Random Encounter Generator ───
+function generateRandomEncounter() {
+  if (monsters.length === 0) {
+    alert('Load monster files first before generating a random encounter.');
+    return;
+  }
+  if (!activeEncounterId) createNewEncounter();
+
+  const lvl = parseInt(document.getElementById('partyLevel').value) || 1;
+  const sz  = parseInt(document.getElementById('partySize').value) || 5;
+  const _rangeRaw = document.getElementById('levelRange').value;
+  const range = _rangeRaw !== '' ? parseInt(_rangeRaw) : 4;
+  const theme = document.getElementById('randomTheme').value.toLowerCase();
+  const budget = getEncounterBudget(lvl, sz);
+  const loXp = Math.round(budget * 0.85);
+  const hiXp = Math.round(budget * 1.15);
+
+  // Filter monsters by level range and theme
+  const minLvl = lvl - range, maxLvl = lvl + range;
+  let pool = monsters.filter(m => m.level >= minLvl && m.level <= maxLvl);
+
+  if (theme !== 'any') {
+    const themed = pool.filter(m => {
+      const searchStr = [m.origin, m.type, ...(m.keywords||[]), m.name].join(' ').toLowerCase();
+      return searchStr.includes(theme);
+    });
+    if (themed.length >= 2) pool = themed;
+    // else fall back to full level-filtered pool
+  }
+
+  if (pool.length === 0) {
+    alert('No monsters match that level range and theme. Try a wider range or different theme.');
+    return;
+  }
+
+  // Build the encounter greedily
+  let attempts = 0, best = null, bestXp = 0;
+  for (let attempt = 0; attempt < 200; attempt++) {
+    const enc = {};
+    let totalXp = 0;
+    // Shuffle pool for variety
+    const shuffled = pool.slice().sort(() => Math.random() - 0.5);
+    for (const m of shuffled) {
+      // How many can we fit?
+      const spaceXp = hiXp - totalXp;
+      if (spaceXp <= 0) break;
+      const maxQty = Math.min(8, Math.floor(spaceXp / m.xp));
+      if (maxQty < 1) continue;
+      const qty = Math.max(1, Math.floor(Math.random() * maxQty) + 1);
+      enc[m.id] = { monster: m, qty };
+      totalXp += m.xp * qty;
+      if (totalXp >= loXp) break;
+    }
+    if (totalXp >= loXp && totalXp <= hiXp) {
+      if (totalXp > bestXp) { best = enc; bestXp = totalXp; }
+    } else if (!best && totalXp > bestXp) {
+      best = enc; bestXp = totalXp;
+    }
+    if (best && bestXp >= loXp && bestXp <= hiXp) break;
+  }
+
+  if (!best) {
+    alert('Could not build a balanced encounter with these settings. Try adjusting party level, level range, or theme.');
+    return;
+  }
+
+  setCurrentEncounterMonsters(Object.values(best));
+  renderEncounterZone();
+}
+
+// ─── Initialize first encounter on load ───
+loadPartyFromStorage();
+applyTheme(activeThemeId);
+createNewEncounter('Encounter 1');
+
+// ─── Stat Block Modal ───
+function openStatBlock(id) {
+  const m = monsters.find(x => x.id === id);
+  if (!m) return;
+  currentModalMonster = m;
+  document.getElementById('statBlockContent').innerHTML = buildStatBlock(m);
+  document.getElementById('monsterModal').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('monsterModal').classList.remove('active');
+  currentModalMonster = null;
+}
+
+// Render stat block: use raw HTML from the JS data file, styled for the dark UI
+function buildStatBlock(m) {
+  const html = m.rawHtml || '';
+  return `<div class="sb-outer js-statblock">${styledStatBlockHtml(html)}</div>`;
+}
+
+// Reorder raw 4e stat block HTML so Skills + Ability Scores appear
+// immediately after the vitals section, before any traits/powers.
+function reorderStatBlockHtml(html) {
+  // Use a temporary DOM container to manipulate elements
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+
+  // Find the stats paragraph — the <p class="flavor alt"> that contains <b>Str</b>
+  const allFlavAlt = Array.from(tmp.querySelectorAll('p'));
+  const statsPara = allFlavAlt.find(p =>
+    (p.className === 'flavor alt' || p.className === 'flavor') &&
+    /\bStr\b/.test(p.textContent)
+  );
+  if (!statsPara) return html; // nothing to move
+
+  // Also grab the Skills-only paragraph immediately before statsPara if it
+  // is a flavor-alt that contains only Skills (some formats split them)
+  const prev = statsPara.previousElementSibling;
+  const skillsOnlyPara =
+    prev &&
+    (prev.className === 'flavor alt' || prev.className === 'flavor') &&
+    /\bSkills\b/.test(prev.textContent) &&
+    !/\bStr\b/.test(prev.textContent)
+      ? prev
+      : null;
+
+  // Determine the insertion point: right after the bodytable (newer format)
+  // or after the first <p class="flavor"> block (older format), whichever exists.
+  const bodyTable = tmp.querySelector('table.bodytable');
+  const firstFlavorP = tmp.querySelector('p.flavor');
+  let insertAfter = bodyTable || firstFlavorP;
+  if (!insertAfter) return html; // can't determine position
+
+  // Remove the paragraphs from their current location, then re-insert them
+  // right after the vitals anchor, in order: Skills (if separate) then Stats.
+  const fragments = [];
+  if (skillsOnlyPara) { skillsOnlyPara.remove(); fragments.push(skillsOnlyPara); }
+  statsPara.remove();
+  fragments.push(statsPara);
+
+  // Insert in reverse order using insertAdjacentElement so they appear
+  // in the original relative order after the insertion point.
+  let anchor = insertAfter;
+  for (const frag of fragments) {
+    anchor.insertAdjacentElement('afterend', frag);
+    anchor = frag;
+  }
+
+  return tmp.innerHTML;
+}
+
+// Apply dark-theme styling to the raw 4e HTML stat block
+function styledStatBlockHtml(html) {
+  if (!html) return '<div style="padding:2rem;color:var(--text-muted);font-style:italic;">No stat block data available.</div>';
+  return `<div class="jsb-wrap">${reorderStatBlockHtml(html)}</div>`;
+}
+
+
+// ─── Export Encounter to PDF ───
+function exportEncounterPdf() {
+  const encList = currentEncounterMonsters();
+  if (encList.length === 0) {
+    alert('Add monsters to the encounter first.');
+    return;
+  }
+
+  // Strip inline styles from trap h1 headings so our CSS type colours win
+  function cleanTrapHtml(rawHtml) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = rawHtml;
+    const h1 = tmp.querySelector('h1.trap, h1.thHead, h1.dm');
+    if (h1) h1.removeAttribute('style');
+    // Also strip inline bg/color from any table cells that form the header row
+    tmp.querySelectorAll('tr:first-child td, tr:first-child th').forEach(cell => {
+      cell.style.removeProperty('background');
+      cell.style.removeProperty('background-color');
+      cell.style.removeProperty('color');
+    });
+    return tmp.innerHTML;
+  }
+
+  // Build one stat block per unique monster or trap (raw HTML, wrapped for print)
+  const statBlocksHtml = encList.map(item => {
+    if (item._isTrap) {
+      const t = item.trap;
+      const typeClass = `print-trap-type-${['Trap','Hazard','Terrain'].includes(t.trapType) ? t.trapType : 'Other'}`;
+      const rawHtml = cleanTrapHtml(t.rawHtml || `<h1 class=trap>${t.name}</h1><p style="padding:1rem;color:#666">No stat block data available.</p>`);
+      return `<div class="print-trap-page ${typeClass}"><div class="jsb-wrap">${rawHtml}</div></div>`;
+    }
+    const m = item.monster;
+    const rawHtml = m.rawHtml || `<h1 class=monster>${m.name}</h1><p style="padding:1rem;color:#666">No stat block data available.</p>`;
+    return `<div class="print-sb-page jsb-wrap">${reorderStatBlockHtml(rawHtml)}</div>`;
+  }).join('');
+
+  const encName = encounters.find(e => e.id === activeEncounterId)?.name || 'Encounter';
+
+  const printHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${encName} — Stat Blocks</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: white; font-family: 'EB Garamond', Georgia, serif; padding: 1.5cm; font-size: 14px; color: #1a1008; }
+  h2 { font-family: 'Cinzel', Georgia, serif; font-size: 1rem; letter-spacing: 0.3em; text-transform: uppercase; color: #7a5a1a; margin-bottom: 1.5rem; text-align: center; border-bottom: 1px solid #c8a870; padding-bottom: 0.5rem; }
+  .print-sb-page { max-width: 100%; margin: 0 auto 2rem; border: 2px solid #8a6a30; border-radius: 3px; page-break-inside: avoid; background: #fff; overflow: hidden; }
+
+  /* ── Raw 4e HTML stat block styles ── */
+  .jsb-wrap h1.monster { font-family: 'Cinzel Decorative', 'Cinzel', Georgia, serif; font-size: 1.2rem; color: #e8b64a; background: #2a1a08; padding: 0.5rem 1rem 0.3rem; border-bottom: 3px solid #7a5a1a; line-height: 1.3; }
+  .jsb-wrap h1.monster .type { display: block; font-family: 'EB Garamond', Georgia, serif; font-size: 0.85rem; color: #9a8060; font-style: italic; font-weight: normal; margin-top: 0.1rem; }
+  .jsb-wrap h1.monster .level { display: block; font-family: 'Cinzel', Georgia, serif; font-size: 0.82rem; color: #c9922a; font-weight: normal; margin-top: 0.1rem; }
+  .jsb-wrap h1.monster .xp { color: #9a8060; font-size: 0.8rem; }
+  .jsb-wrap p.flavor, .jsb-wrap p.flavor.alt { background: #f5ead0; padding: 0.45rem 1rem; border-bottom: 1px solid #c8a870; font-size: 0.9rem; line-height: 1.5; }
+  .jsb-wrap p.flavor b, .jsb-wrap p.flavor.alt b { color: #5a3a10; }
+  .jsb-wrap p.flavorIndent { background: #faf3e0; padding: 0.3rem 1rem 0.3rem 1.8rem; border-bottom: 1px solid #e8d8b0; font-size: 0.88rem; line-height: 1.5; }
+  .jsb-wrap p.flavorIndent i { color: #5a4020; }
+  .jsb-wrap p.publishedIn { background: #f0e4c8; padding: 0.35rem 1rem; border-top: 1px solid #c8a870; font-size: 0.78rem; color: #7a5a30; font-style: italic; }
+  .jsb-wrap table.bodytable { width: 100%; border-collapse: collapse; background: #f5ead0; font-size: 0.9rem; }
+  .jsb-wrap table.bodytable td { padding: 0.3rem 1rem; border-bottom: 1px solid #d8c890; vertical-align: top; }
+  .jsb-wrap table.bodytable td.rightalign { text-align: right; }
+  .jsb-wrap table.bodytable b { color: #5a3a10; }
+  .jsb-wrap h2 { font-family: 'Cinzel', Georgia, serif; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: #7a5a1a; padding: 0.3rem 1rem 0.2rem; background: #f5ead0; border-top: 1px solid #c8a870; border-bottom: none; margin: 0; }
+  .jsb-wrap p.flavor.alt { font-style: normal; }
+
+  /* Trap stat blocks in print — shared base */
+  .print-trap-page { max-width: 100%; margin: 0 auto 2rem; border: 2px solid #8a3a3a; border-radius: 3px; page-break-inside: avoid; background: #fff; overflow: hidden; }
+  .print-trap-page .jsb-wrap h1.trap,
+  .print-trap-page .jsb-wrap h1.thHead,
+  .print-trap-page .jsb-wrap h1.dm { font-family: 'Cinzel', Georgia, serif; font-size: 1.2rem; color: #fff !important; background: #2a0808 !important; padding: 0.5rem 1rem 0.3rem; border-bottom: 3px solid #8a3a3a; line-height: 1.3; }
+  .print-trap-page .jsb-wrap span.type,
+  .print-trap-page .jsb-wrap span.thSubHead { display: block; font-family: 'EB Garamond', Georgia, serif; font-size: 0.85rem; color: rgba(255,255,255,0.75) !important; font-style: italic; }
+  .print-trap-page .jsb-wrap span.level,
+  .print-trap-page .jsb-wrap span.thLevel { display: block; font-family: 'Cinzel', Georgia, serif; font-size: 0.82rem; color: rgba(255,255,255,0.85) !important; }
+  .print-trap-page .jsb-wrap span.xp,
+  .print-trap-page .jsb-wrap span.thXP { color: rgba(255,255,255,0.65) !important; font-size: 0.8rem; }
+  .print-trap-page .jsb-wrap p.flavor { background: #fdf0e8; padding: 0.45rem 1rem; border-bottom: 1px solid #d8a898; font-size: 0.9rem; line-height: 1.5; }
+  .print-trap-page .jsb-wrap span.traplead { display: block; background: #faeae0; padding: 0.4rem 1rem; border-bottom: 1px solid #d8a898; font-size: 0.9rem; }
+  .print-trap-page .jsb-wrap span.trapblocktitle { display: block; font-family: 'Cinzel', Georgia, serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #8b3a3a; padding: 0.25rem 1rem 0.1rem; background: #faeae0; border-top: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap span.trapblockbody { display: block; padding: 0.2rem 1rem; font-size: 0.88rem; color: #1a0808; line-height: 1.5; }
+  .print-trap-page .jsb-wrap span.thInit { display: block; padding: 0.3rem 1rem; font-size: 0.88rem; color: #5a3020; background: #faeae0; border-bottom: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap h2.thHead { font-family: 'Cinzel', Georgia, serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: #8b3a3a; padding: 0.25rem 1rem 0.15rem; background: #faeae0; border-top: 1px solid #d8a898; border-bottom: none; margin: 0; }
+  .print-trap-page .jsb-wrap p.thStat { padding: 0.25rem 1rem; font-size: 0.88rem; color: #1a0808; background: #faeae0; border-bottom: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap p.th2 { padding: 0.25rem 1rem 0.1rem; font-size: 0.88rem; color: #8b3a3a; border-top: 1px solid #e8c8b8; }
+  .print-trap-page .jsb-wrap p.tbod { padding: 0.15rem 1rem; font-size: 0.86rem; color: #1a0808; line-height: 1.5; }
+  .print-trap-page .jsb-wrap p.thBody { padding: 0.25rem 1rem; font-size: 0.86rem; color: #1a0808; line-height: 1.5; }
+  .print-trap-page .jsb-wrap p.powerstat { padding: 0.25rem 1rem; font-size: 0.88rem; color: #1a0808; background: #faeae0; border-bottom: 1px solid #d8a898; }
+  .print-trap-page .jsb-wrap p.publishedIn { background: #f5e8e0; padding: 0.35rem 1rem; border-top: 1px solid #d8a898; font-size: 0.78rem; color: #7a5a50; font-style: italic; }
+
+  /* Trap — Red */
+  .print-trap-type-Trap { border-color: #8a2020 !important; }
+  .print-trap-type-Trap .jsb-wrap h1.trap,
+  .print-trap-type-Trap .jsb-wrap h1.thHead,
+  .print-trap-type-Trap .jsb-wrap h1.dm { background: #5a0808 !important; border-bottom-color: #8a2020 !important; }
+  .print-trap-type-Trap .jsb-wrap span.trapblocktitle,
+  .print-trap-type-Trap .jsb-wrap h2.thHead { color: #8a2020; }
+  .print-trap-type-Trap .jsb-wrap p.th2 { color: #8a2020; }
+
+  /* Hazard — Orange */
+  .print-trap-type-Hazard { border-color: #8a5010 !important; }
+  .print-trap-type-Hazard .jsb-wrap h1.trap,
+  .print-trap-type-Hazard .jsb-wrap h1.thHead,
+  .print-trap-type-Hazard .jsb-wrap h1.dm { background: #4a2a00 !important; border-bottom-color: #8a5010 !important; }
+  .print-trap-type-Hazard .jsb-wrap span.trapblocktitle,
+  .print-trap-type-Hazard .jsb-wrap h2.thHead { color: #8a5010; border-top-color: #d8b880; }
+  .print-trap-type-Hazard .jsb-wrap p.th2 { color: #8a5010; border-top-color: #e8d098; }
+  .print-trap-type-Hazard .jsb-wrap span.traplead,
+  .print-trap-type-Hazard .jsb-wrap p.flavor,
+  .print-trap-type-Hazard .jsb-wrap span.thInit,
+  .print-trap-type-Hazard .jsb-wrap p.thStat,
+  .print-trap-type-Hazard .jsb-wrap p.powerstat { background: #fdf5e8; border-color: #d8b880; }
+
+  /* Terrain — Green */
+  .print-trap-type-Terrain { border-color: #1a6a3a !important; }
+  .print-trap-type-Terrain .jsb-wrap h1.trap,
+  .print-trap-type-Terrain .jsb-wrap h1.thHead,
+  .print-trap-type-Terrain .jsb-wrap h1.dm { background: #082a14 !important; border-bottom-color: #1a6a3a !important; }
+  .print-trap-type-Terrain .jsb-wrap span.trapblocktitle,
+  .print-trap-type-Terrain .jsb-wrap h2.thHead { color: #1a6a3a; border-top-color: #90c8a8; }
+  .print-trap-type-Terrain .jsb-wrap p.th2 { color: #1a6a3a; border-top-color: #b0d8c0; }
+  .print-trap-type-Terrain .jsb-wrap span.traplead,
+  .print-trap-type-Terrain .jsb-wrap p.flavor,
+  .print-trap-type-Terrain .jsb-wrap span.thInit,
+  .print-trap-type-Terrain .jsb-wrap p.thStat,
+  .print-trap-type-Terrain .jsb-wrap p.powerstat { background: #edf8f1; border-color: #90c8a8; }
+
+  /* Other — grey */
+  .print-trap-type-Other { border-color: #6a6050 !important; }
+  .print-trap-type-Other .jsb-wrap h1.trap,
+  .print-trap-type-Other .jsb-wrap h1.thHead,
+  .print-trap-type-Other .jsb-wrap h1.dm { background: #2a2418 !important; border-bottom-color: #6a6050 !important; }
+
+  @media print {
+    body { padding: 0.5cm; }
+    .no-print { display: none !important; }
+    @page { margin: 1cm; size: A4; }
+  }
+</style>
+</head>
+<body>
+<div class="no-print" style="text-align:center;margin-bottom:1.5rem;display:flex;gap:0.7rem;justify-content:center;align-items:center;">
+  <button onclick="window.print()" style="font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:0.15em;text-transform:uppercase;background:#5a2a08;border:1px solid #c9922a;border-radius:2px;color:#e8b64a;padding:0.6rem 1.5rem;cursor:pointer;">🖨 Print / Save PDF</button>
+  <button onclick="window.close()" style="font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;background:none;border:1px solid #3d2e18;border-radius:2px;color:#9a8060;padding:0.6rem 1rem;cursor:pointer;">✕ Close</button>
+</div>
+<h2>⚔ ${encName} — Stat Blocks</h2>
+${statBlocksHtml}
+</body>
+</html>`;
+
+  const win = window.open('', '_blank', 'width=800,height=900,scrollbars=yes');
+  if (!win) {
+    alert('Pop-up blocked. Please allow pop-ups for this page and try again.');
+    return;
+  }
+  win.document.write(printHtml);
+  win.document.close();
+  // Focus the new window
+  win.focus();
+}
+
+
+function startManualEncounter() {
+  const manualEncounter = currentEncounterMonsters();
+  if (manualEncounter.length === 0) return;
+  // Warn if no monsters (only traps) since initiative won't have combatants
+  const monsterCount = manualEncounter.filter(it => !it._isTrap).length;
+  if (monsterCount === 0) {
+    if (!confirm('This encounter has no monsters — only traps/hazards. Start anyway? (You can still add PCs in the initiative screen.)')) return;
+  }
+  switchView('runner');
+}
+
+// ─── TRAPS ───
+let traps = [];
+let rawTrapStatBlocks = {};
+let trapSortField = 'name';
+let trapSortDir = 1;
+
+document.getElementById('trapFiles').addEventListener('change', function(e) {
+  const files = Array.from(e.target.files).filter(f => f.name.toLowerCase().endsWith('.js'));
+  if (!files.length) {
+    document.getElementById('trapStatus').innerHTML = '<div class="parse-error">No .js files found.</div>';
+    return;
+  }
+  // Append to existing traps (don't clear monsters)
+  let loaded = 0;
+  const statusEl = document.getElementById('trapStatus');
+  statusEl.innerHTML = `<div style="color:var(--text-dim);font-size:0.85rem;margin-top:0.5rem">Parsing ${files.length} file(s)\u2026</div>`;
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const od = {
+          reader: {
+            jsonp_batch_data(_ts, _type, dataMap) {
+              if (_type !== 'trap') return; // skip monster entries
+              Object.entries(dataMap).forEach(([rawId, html]) => {
+                rawTrapStatBlocks[rawId] = html;
+                try {
+                  const t = parseTrapFromHtml(rawId, html);
+                  if (t && !traps.find(x => x.id === rawId)) traps.push(t);
+                } catch(err) { /* skip */ }
+              });
+            }
+          }
+        };
+        const fn = new Function('od', ev.target.result);
+        fn(od);
+      } catch(err) { console.warn('Error loading trap file', file.name, err); }
+
+      loaded++;
+      if (loaded === files.length) {
+        statusEl.innerHTML = traps.length > 0
+          ? `<div class="trap-count">🪤 ${traps.length.toLocaleString()} traps/hazards loaded</div>` : '';
+        filterTrapList();
+      }
+    };
+    reader.readAsText(file);
+  });
+});
+
+function normaliseTrapType(raw) {
+  const r = (raw || '').toLowerCase();
+  if (r === 'hazard' || r === 'area')    return 'Hazard';
+  if (r === 'terrain')                   return 'Terrain';
+  // 'trap', 'object', 'warder', 'blaster', etc. → Trap
+  return 'Trap';
+}
+
+function parseTrapFromHtml(rawId, html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+
+  // ── New format: h1.thHead ──
+  const thHead = div.querySelector('h1.thHead');
+  if (thHead) {
+    const nameNode = thHead.cloneNode(true);
+    nameNode.querySelectorAll('span').forEach(s => s.remove());
+    const name = nameNode.textContent.replace(/\n/g,'').trim().replace(/\s+/g,' ') || rawId;
+    const subHead = div.querySelector('span.thSubHead');
+    const rawSubHead = subHead ? subHead.textContent.trim() : 'Trap';
+    const trapType = normaliseTrapType(rawSubHead);
+    const thLevelEl = div.querySelector('span.thLevel');
+    let level = 0, role = 'Trap', groupRole = 'Standard', xp = 0;
+    if (thLevelEl) {
+      const xpEl = thLevelEl.querySelector('span.thXP');
+      const xpText = xpEl ? xpEl.textContent : '';
+      const xpMatch = xpText.match(/XP\s*([\d,]+)/i);
+      if (xpMatch) xp = parseInt(xpMatch[1].replace(/,/g,'')) || 0;
+      const lvClone = thLevelEl.cloneNode(true);
+      lvClone.querySelectorAll('span').forEach(s => s.remove());
+      const lrm = lvClone.textContent.trim().match(/Level\s+(\d+)\s+(.*)/i);
+      if (lrm) {
+        level = parseInt(lrm[1]) || 0;
+        let roleStr = lrm[2].trim();
+        for (const gr of ['Elite','Solo','Minion']) {
+          if (roleStr.includes(gr)) { groupRole = gr; roleStr = roleStr.replace(gr,'').trim(); break; }
+        }
+        role = roleStr || 'Trap';
+      }
+    }
+    return { id: rawId, name, level, xp, role, groupRole, trapType, rawHtml: html };
+  }
+
+  // ── Old format: h1.trap ──
+  const h1 = div.querySelector('h1.trap, h1.dm');
+  if (!h1) return null;
+  const h1c = h1.cloneNode(true);
+  h1c.querySelectorAll('span').forEach(s => s.remove());
+  const name = h1c.textContent.replace(/\n/g,'').trim().replace(/\s+/g,' ') || rawId;
+
+  const typeEl = div.querySelector('span.type');
+  const rawType = typeEl ? typeEl.textContent.trim() : (h1.className === 'dm' ? 'Terrain' : 'Trap');
+  const trapType = normaliseTrapType(rawType);
+
+  const levelEl = div.querySelector('span.level');
+  let level = 0, role = 'Trap', groupRole = 'Standard', xp = 0;
+  if (levelEl) {
+    const xpEl = levelEl.querySelector('span.xp');
+    const xpText = xpEl ? xpEl.textContent : '';
+    const xpMatch = xpText.match(/XP\s*([\d,]+)/i);
+    if (xpMatch) xp = parseInt(xpMatch[1].replace(/,/g,'')) || 0;
+    const lvClone = levelEl.cloneNode(true);
+    lvClone.querySelectorAll('span').forEach(s => s.remove());
+    const lrm = lvClone.textContent.trim().match(/Level\s+(\d+)\s+(.*)/i);
+    if (lrm) {
+      level = parseInt(lrm[1]) || 0;
+      let roleStr = lrm[2].trim();
+      for (const gr of ['Elite','Solo','Minion']) {
+        if (roleStr.includes(gr)) { groupRole = gr; roleStr = roleStr.replace(gr,'').trim(); break; }
+      }
+      role = roleStr || 'Trap';
+    }
+  }
+  return { id: rawId, name, level, xp, role, groupRole, trapType, rawHtml: html };
+}
+
+function setTrapSort(field) {
+  if (trapSortField === field) trapSortDir = -trapSortDir;
+  else { trapSortField = field; trapSortDir = 1; }
+  document.querySelectorAll('#sortTrapName,#sortTrapLevel,#sortTrapRole').forEach(b => b.classList.remove('active'));
+  document.getElementById('sortTrap' + field.charAt(0).toUpperCase() + field.slice(1))?.classList.add('active');
+  ['name','level','role'].forEach(f => {
+    const arrow = document.getElementById('tarrow-' + f);
+    if (arrow) arrow.textContent = f === trapSortField ? (trapSortDir === 1 ? '▲' : '▼') : '';
+  });
+  filterTrapList();
+}
+setTrapSort('name');
+
+function filterTrapList() {
+  const search = document.getElementById('searchTrap').value.toLowerCase();
+  const type = document.getElementById('filterTrapType').value;
+
+  let filtered = traps.filter(t => {
+    const matchName = t.name.toLowerCase().includes(search);
+    const matchType = type === 'All' || t.trapType === type;
+    return matchName && matchType;
+  });
+
+  filtered.sort((a, b) => {
+    let va, vb;
+    if (trapSortField === 'name') { va = a.name.toLowerCase(); vb = b.name.toLowerCase(); }
+    else if (trapSortField === 'level') { va = a.level; vb = b.level; }
+    else if (trapSortField === 'role') { va = a.role; vb = b.role; }
+    return va < vb ? -trapSortDir : va > vb ? trapSortDir : 0;
+  });
+
+  filtered = filtered.slice(0, 6000);
+  const listEl = document.getElementById('trapList');
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><p>No traps match your filters.</p></div>';
+    return;
+  }
+  listEl.innerHTML = filtered.map(t => `
+    <div class="trap-list-item">
+      <div class="tl-name">
+        <span onclick="openTrapStatBlock('${t.id}')">${t.name}${t.groupRole !== 'Standard' ? `<span class="trap-group-tag trap-group-tag-${t.groupRole}">${t.groupRole}</span>` : ''}</span>
+      </div>
+      <div class="tl-level" style="text-align:center">${t.level > 0 ? 'Lvl ' + t.level : '—'}</div>
+      <div class="tl-role"><span class="trap-tag trap-tag-${t.trapType in {'Trap':1,'Hazard':1,'Terrain':1} ? t.trapType : 'Other'}">${t.trapType || 'Trap'}</span></div>
+      <div class="tl-xp">${t.xp > 0 ? t.xp + ' XP' : '—'}</div>
+      <button class="rm-btn" onclick="addTrapToEncounter('${t.id}')">+ Add</button>
+    </div>
+  `).join('');
+}
+
+// ─── Trap modal ───
+let currentModalTrap = null;
+function openTrapStatBlock(id) {
+  const t = traps.find(x => x.id === id);
+  if (!t) return;
+  currentModalTrap = t;
+  document.getElementById('statBlockContent').innerHTML = `<div class="sb-outer js-statblock"><div class="jsb-wrap">${t.rawHtml}</div></div>`;
+  document.getElementById('monsterModal').classList.add('active');
+}
+
+// ─── Trap encounter management ───
+// Traps share the encounter's monster list but are stored with a _isTrap flag
+function addTrapToEncounter(id) {
+  if (!activeEncounterId) createNewEncounter();
+  const t = traps.find(x => x.id === id);
+  if (!t) return;
+  const list = currentEncounterMonsters();
+  const existing = list.find(x => x.trap && x.trap.id === id);
+  if (existing) existing.qty++;
+  else list.push({ trap: t, qty: 1, _isTrap: true });
+  renderEncounterZone();
+}
+function removeTrapFromEncounter(id) {
+  setCurrentEncounterMonsters(currentEncounterMonsters().filter(x => !(x._isTrap && x.trap.id === id)));
+  renderEncounterZone();
+}
+function adjustTrapEncounterQty(id, delta) {
+  const item = currentEncounterMonsters().find(x => x._isTrap && x.trap.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  renderEncounterZone();
+}
+
+let pcRows = []; // [{uid, name}]
+
+function buildInitiativeSetup() {
+  savedMonsterInits = {};
+  document.getElementById('initiativeSetup').classList.remove('hidden');
+  document.getElementById('activeRun').classList.add('hidden');
+  renderInitiativeGrid();
+}
+
+// Store initiative values keyed by uid so re-renders don't wipe them
+let savedMonsterInits = {}; // { uid: value }
+
+function saveInitiativeValues() {
+  const manualEncounter = currentEncounterMonsters().filter(it => !it._isTrap);
+  manualEncounter.forEach(item => {
+    for (let i = 0; i < item.qty; i++) {
+      const uid = `m_${item.monster.id}_${i}`;
+      const el = document.getElementById(`init_${uid}`);
+      if (el && el.value !== '') savedMonsterInits[uid] = el.value;
+    }
+  });
+  pcRows.forEach(pc => {
+    const nameEl = document.getElementById(`pcname_${pc.uid}`);
+    const initEl = document.getElementById(`pcinit_${pc.uid}`);
+    if (nameEl) pc.name = nameEl.value;
+    if (initEl && initEl.value !== '') pc.initiative = initEl.value;
+  });
+}
+
+function renderInitiativeGrid() {
+  saveInitiativeValues();
+  const grid = document.getElementById('initiativeGrid');
+  const manualEncounter = currentEncounterMonsters().filter(it => !it._isTrap);
+  let html = '';
+  const groups = {};
+  manualEncounter.forEach(item => {
+    const m = item.monster;
+    for (let i = 0; i < item.qty; i++) {
+      const label = item.qty > 1 ? `${m.name} #${i+1}` : m.name;
+      const uid = `m_${m.id}_${i}`;
+      if (!groups[uid]) groups[uid] = { label, uid, type: 'monster', monster: m, suggestInit: m.initiative };
+    }
+  });
+
+  Object.values(groups).forEach(g => {
+    const savedVal = savedMonsterInits[g.uid] !== undefined ? savedMonsterInits[g.uid] : '';
+    html += `
+    <div class="init-row">
+      <span class="init-row-label monster-label" title="${g.label}">${g.label}</span>
+      <button class="init-statblock-btn rm-btn" onclick="openStatBlock('${g.monster.id}')" title="View Stat Block">📋</button>
+      <input class="init-input" type="number" id="init_${g.uid}" placeholder="Roll…" value="${savedVal}">
+      <span class="init-type-badge role-tag role-tag-${(manualEncounter.find(it=>it.monster.id===g.monster.id)?.monster.role||'').replace(/\s+/g,'')}">Monster</span>
+      <span class="init-modifier" style="color:var(--text-muted);font-size:0.75rem;">+${g.suggestInit}</span>
+      <button class="init-roll-btn rm-btn" onclick="rollMonsterInit('${g.uid}', ${g.suggestInit})" title="Roll d20 + ${g.suggestInit}">🎲</button>
+    </div>`;
+  });
+
+  // PC rows
+  pcRows.forEach(pc => {
+    html += `
+    <div class="init-row">
+      <input class="init-input" type="text" id="pcname_${pc.uid}" placeholder="PC Name" value="${pc.name}" style="font-size:0.9rem;" oninput="pc_updateName('${pc.uid}', this.value)">
+      <input class="init-input" type="number" id="pcinit_${pc.uid}" placeholder="Init…" value="${pc.initiative||''}">
+      <span class="init-type-badge" style="border-color:var(--role-soldier);color:#70a0e0;background:rgba(20,60,110,0.15);">PC</span>
+      <button class="init-remove" onclick="removePcRow('${pc.uid}')">✕</button>
+    </div>`;
+  });
+
+  grid.innerHTML = html || '<div style="color:var(--text-muted);font-style:italic;font-size:0.9rem;padding:0.5rem;">No monsters in encounter. Go back to Builder.</div>';
+}
+
+function addPcRow() {
+  saveInitiativeValues();
+  pcRows.push({ uid: crypto.randomUUID(), name: '', initiative: '' });
+  renderInitiativeGrid();
+  // Focus the new PC name input
+  const lastPc = pcRows[pcRows.length - 1];
+  setTimeout(() => document.getElementById(`pcname_${lastPc.uid}`)?.focus(), 50);
+}
+
+function removePcRow(uid) {
+  saveInitiativeValues();
+  pcRows = pcRows.filter(p => p.uid !== uid);
+  renderInitiativeGrid();
+}
+
+function pc_updateName(uid, val) {
+  const pc = pcRows.find(p => p.uid === uid);
+  if (pc) pc.name = val;
+}
+
+function rollMonsterInit(uid, modifier) {
+  saveInitiativeValues();
+  const roll = Math.floor(Math.random() * 20) + 1;
+  const total = roll + modifier;
+  savedMonsterInits[uid] = total;
+  const el = document.getElementById(`init_${uid}`);
+  if (el) {
+    el.value = total;
+    el.style.color = 'var(--gold-light)';
+    el.title = `d20 rolled ${roll} + ${modifier} modifier = ${total}`;
+    setTimeout(() => { el.style.color = ''; }, 800);
+  }
+}
+
+function rollAllMonsterInits() {
+  saveInitiativeValues();
+  const manualEncounter = currentEncounterMonsters().filter(it => !it._isTrap);
+  manualEncounter.forEach(item => {
+    const m = item.monster;
+    for (let i = 0; i < item.qty; i++) {
+      const uid = `m_${m.id}_${i}`;
+      const roll = Math.floor(Math.random() * 20) + 1;
+      const total = roll + m.initiative;
+      savedMonsterInits[uid] = total;
+      const el = document.getElementById(`init_${uid}`);
+      if (el) {
+        el.value = total;
+        el.style.color = 'var(--gold-light)';
+        el.title = `d20 rolled ${roll} + ${m.initiative} modifier = ${total}`;
+        setTimeout(() => { el.style.color = ''; }, 800);
+      }
+    }
+  });
+}
+
+// ─── Runner Notes ───
+let runnerNotesOpen = true;
+
+function toggleRunnerNotes() {
+  runnerNotesOpen = !runnerNotesOpen;
+  const body = document.getElementById('runnerNotesBody');
+  const toggle = document.getElementById('runnerNotesToggle');
+  if (body) body.style.display = runnerNotesOpen ? '' : 'none';
+  if (toggle) { toggle.textContent = runnerNotesOpen ? '▲' : '▼'; toggle.classList.toggle('open', runnerNotesOpen); }
+}
+
+function saveRunnerNotes(val) {
+  // Keep builder and runner in sync
+  const enc = encounters.find(e => e.id === activeEncounterId);
+  if (enc) enc.notes = val;
+  const builderNotes = document.getElementById('encounterNotesInput');
+  if (builderNotes) builderNotes.value = val;
+}
+
+function populateRunnerNotes() {
+  const enc = encounters.find(e => e.id === activeEncounterId);
+  const ta = document.getElementById('runnerNotesTextarea');
+  if (ta && enc) ta.value = enc.notes || '';
+  // Ensure panel starts open
+  runnerNotesOpen = true;
+  const body = document.getElementById('runnerNotesBody');
+  const toggle = document.getElementById('runnerNotesToggle');
+  if (body) body.style.display = '';
+  if (toggle) { toggle.textContent = '▲'; toggle.classList.add('open'); }
+  // Hide notes section if no notes and user hasn't interacted (still show it, just collapsed-friendly)
+  const section = document.getElementById('runnerNotesSection');
+  if (section) section.style.display = '';
+}
+
+function startRun() {
+  const manualEncounter = currentEncounterMonsters().filter(it => !it._isTrap);
+  const trapEncounter = currentEncounterMonsters().filter(it => it._isTrap);
+  // Collect monster initiatives
+  const groups = {};
+  manualEncounter.forEach(item => {
+    const m = item.monster;
+    for (let i = 0; i < item.qty; i++) {
+      const uid = `m_${m.id}_${i}`;
+      groups[uid] = { monster: m, instanceId: i+1, totalInGroup: item.qty };
+    }
+  });
+
+  activeEncounter = [];
+  Object.entries(groups).forEach(([uid, g]) => {
+    const initEl = document.getElementById(`init_${uid}`);
+    const initVal = parseInt(initEl?.value) || 0;
+    activeEncounter.push({
+      uid: crypto.randomUUID(),
+      monster: g.monster,
+      instanceId: g.instanceId,
+      totalInGroup: g.totalInGroup,
+      currentHp: g.monster.hp,
+      maxHp: g.monster.hp,
+      conditions: [],
+      powersUsed: [],
+      initiative: initVal
+    });
+  });
+
+  // Populate traps — always appear as reference cards at the bottom, initiative optional
+  activeTraps = [];
+  trapEncounter.forEach(item => {
+    const t = item.trap;
+    for (let i = 0; i < item.qty; i++) {
+      activeTraps.push({
+        uid: crypto.randomUUID(),
+        trap: t,
+        instanceId: i + 1,
+        totalInGroup: item.qty,
+        initiative: null // null = not yet placed in turn order
+      });
+    }
+  });
+
+  // Collect PC initiatives
+  activePcs = pcRows.map(pc => {
+    const initEl = document.getElementById(`pcinit_${pc.uid}`);
+    const nameEl = document.getElementById(`pcname_${pc.uid}`);
+    return {
+      uid: pc.uid,
+      name: nameEl?.value || 'PC',
+      initiative: parseInt(initEl?.value) || 0,
+      conditions: []
+    };
+  }).filter(pc => pc.name.trim());
+
+  // Build turn order
+  buildTurnOrder();
+  currentRound = 1;
+  currentTurnIdx = 0;
+
+  document.getElementById('initiativeSetup').classList.add('hidden');
+  document.getElementById('activeRun').classList.remove('hidden');
+  populateRunnerNotes();
+  renderRunner();
+}
+
+function buildTurnOrder() {
+  const trapTurns = activeTraps
+    .filter(e => e.initiative !== null)
+    .map(e => ({ uid: e.uid, name: e.totalInGroup > 1 ? `${e.trap.name} #${e.instanceId}` : e.trap.name, type: 'trap', initiative: e.initiative }));
+  turnOrder = [
+    ...activeEncounter.map(e => ({ uid: e.uid, name: e.totalInGroup > 1 ? `${e.monster.name} #${e.instanceId}` : e.monster.name, type: 'monster', initiative: e.initiative })),
+    ...activePcs.map(p => ({ uid: p.uid, name: p.name, type: 'pc', initiative: p.initiative })),
+    ...trapTurns
+  ].sort((a, b) => b.initiative - a.initiative || a.name.localeCompare(b.name));
+}
+
+function nextTurn() {
+  currentTurnIdx++;
+  if (currentTurnIdx >= turnOrder.length) {
+    currentTurnIdx = 0;
+    currentRound++;
+    // Reset encounter powers for new round
+    activeEncounter.forEach(e => {
+      e.powersUsed = e.powersUsed.filter(pName => {
+        const pw = e.monster.powers.find(p => p.name === pName);
+        return pw && (pw.recharge === 'daily' || (pw.usage||'').toLowerCase() === 'daily');
+      });
+    });
+  }
+  renderRunner();
+}
+
+// ─── Render Runner ───
+const CONDITIONS_4E = ['Blinded','Dazed','Deafened','Dominated','Dying','Helpless','Immobilized','Marked','Petrified','Prone','Restrained','Stunned','Unconscious','Weakened'];
+
+function renderRunner() {
+  document.getElementById('roundValue').textContent = currentRound;
+  const currentUid = turnOrder[currentTurnIdx]?.uid;
+
+  // Turn order bar
+  const bar = document.getElementById('turnOrderBar');
+  bar.innerHTML = turnOrder.map((t, i) => {
+    const isDead = t.type === 'monster' && activeEncounter.find(e => e.uid === t.uid)?.currentHp === 0;
+    const cls = [
+      'turn-token',
+      t.type === 'monster' ? 'monster-token' : t.type === 'trap' ? 'trap-token' : 'pc-token',
+      i === currentTurnIdx ? 'active-turn' : '',
+      isDead ? 'dead-token' : ''
+    ].filter(Boolean).join(' ');
+    return `<div class="${cls}">${t.name} <span class="turn-init">(${t.initiative})</span></div>`;
+  }).join('');
+
+  // PC section
+  const pcSection = document.getElementById('runnerPcsSection');
+  if (activePcs.length > 0) {
+    pcSection.classList.remove('hidden');
+    document.getElementById('runnerPcsGrid').innerHTML = activePcs.map(pc => {
+      const isCurrent = pc.uid === currentUid;
+      const condHtml = CONDITIONS_4E.map(c => {
+        const isActive = pc.conditions.includes(c);
+        return `<span class="condition-tag ${isActive ? 'active' : ''}" onclick="togglePcCondition('${pc.uid}','${c}')">${c}</span>`;
+      }).join('');
+      return `
+      <div class="pc-card ${isCurrent ? 'current-turn' : ''}">
+        <div class="pc-name-display">
+          <span>${pc.name}</span>
+          <span style="font-family:'Cinzel',serif;font-size:0.68rem;color:var(--text-muted)">Init ${pc.initiative}</span>
+        </div>
+        <div class="pc-conditions">${condHtml}</div>
+      </div>`;
+    }).join('');
+  } else {
+    pcSection.classList.add('hidden');
+  }
+
+  // Monster cards
+  document.getElementById('runnerContent').innerHTML = activeEncounter.map(entry => {
+    const m = entry.monster;
+    const isCurrent = entry.uid === currentUid;
+    const hpPct = Math.max(0, Math.min(100, (entry.currentHp / entry.maxHp) * 100));
+    const hpClass = hpPct > 50 ? 'high' : hpPct > 25 ? 'mid' : 'low';
+    const isDead = entry.currentHp === 0;
+    const bloodied = Math.floor(entry.maxHp / 2);
+    const isBloodied = entry.currentHp > 0 && entry.currentHp <= bloodied;
+
+    const condHtml = CONDITIONS_4E.map(c => {
+      const isActive = entry.conditions.includes(c);
+      return `<span class="condition-tag ${isActive ? 'active' : ''}" onclick="toggleCondition('${entry.uid}','${c}')">${c}</span>`;
+    }).join('');
+
+    const powersHtml = (m.powers && m.powers.length > 0) ? m.powers.map(p => {
+      const isUsed = entry.powersUsed.includes(p.name);
+      return `
+      <label class="runner-power ${isUsed ? 'used' : ''}">
+        <input type="checkbox" ${isUsed ? 'checked' : ''} onchange="togglePower('${entry.uid}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
+        <span class="runner-power-name">${p.name}</span>
+        <span class="runner-power-type">${p.ptype||p.action||''}</span>
+      </label>`;
+    }).join('') : '<div style="color:var(--text-muted);font-size:0.8rem;font-style:italic;padding:0.3rem;">No powers parsed.</div>';
+
+    const instanceLabel = entry.totalInGroup > 1 ? `<span class="rm-instance">(#${entry.instanceId} of ${entry.totalInGroup})</span>` : '';
+
+    return `
+    <div class="runner-monster-card ${isCurrent ? 'current-turn' : ''} ${isDead ? 'dead' : ''}">
+      <div class="rm-header">
+        <div class="rm-name-block">
+          <div class="rm-name">
+            ${m.name} ${instanceLabel}
+            ${m.groupRole !== 'Standard' ? `<span class="group-tag group-tag-${m.groupRole}">${m.groupRole}</span>` : ''}
+            <span class="role-tag role-tag-${m.role.replace(/\s+/g,'')}" style="font-size:0.58rem;">${m.role}</span>
+          </div>
+          <div class="rm-init-display">Initiative ${entry.initiative}</div>
+        </div>
+        <div class="rm-controls">
+          <button class="rm-btn" onclick="openStatBlock('${m.id}')">Stat Block</button>
+          <button class="rm-btn danger" onclick="removeMonster('${entry.uid}')">Remove</button>
+        </div>
+      </div>
+
+      <div class="hp-section">
+        <div class="hp-bar-container"><div class="hp-bar-fill ${hpClass}" style="width:${hpPct}%"></div></div>
+        <div class="hp-inputs">
+          <input type="number" class="hp-input" value="${entry.currentHp}" onchange="setHp('${entry.uid}',this.value)">
+          <span class="hp-sep">/</span>
+          <span style="color:var(--text-dim);font-family:'Cinzel',serif;font-size:0.9rem;">${entry.maxHp}</span>
+        </div>
+        ${isBloodied ? '<span class="hp-bloodied">Bloodied</span>' : ''}
+        ${isDead ? '<span class="hp-bloodied" style="border-color:#444;color:var(--text-muted);">Dead</span>' : ''}
+      </div>
+
+      <div class="hp-adjust">
+        <span class="hp-delta-label">Damage/Heal:</span>
+        <input type="number" class="hp-delta-input" id="delta_${entry.uid}" placeholder="Δ HP" min="0">
+        <button class="rm-btn" onclick="applyDelta('${entry.uid}', -1)">Damage</button>
+        <button class="rm-btn" onclick="applyDelta('${entry.uid}', 1)">Heal</button>
+      </div>
+
+      <div class="conditions-section">${condHtml}</div>
+      <div class="powers-section">${powersHtml}</div>
+    </div>`;
+  }).join('');
+
+  // Trap / Hazard cards
+  const trapsSection = document.getElementById('runnerTrapsSection');
+  if (activeTraps.length > 0) {
+    trapsSection.classList.remove('hidden');
+    document.getElementById('runnerTrapsContent').innerHTML = activeTraps.map(entry => {
+      const t = entry.trap;
+      const isCurrent = entry.uid === currentUid;
+      const instanceLabel = entry.totalInGroup > 1 ? `<span class="rm-instance">(#${entry.instanceId} of ${entry.totalInGroup})</span>` : '';
+      const typeClass = `print-trap-type-${['Trap','Hazard','Terrain'].includes(t.trapType) ? t.trapType : 'Other'}`;
+      const hasInit = entry.initiative !== null;
+      return `
+      <div class="runner-trap-card ${isCurrent ? 'current-turn' : ''}">
+        <div class="rm-header">
+          <div class="rm-name-block">
+            <div class="rm-name" style="color:#e08080;">
+              🪤 ${t.name} ${instanceLabel}
+              <span class="role-tag" style="font-size:0.58rem;border-color:#8b3030;color:#e08080;background:rgba(120,20,20,0.12);">${t.trapType || 'Trap'}</span>
+            </div>
+            <div class="rm-init-display" style="color:var(--text-muted);">
+              ${hasInit ? `Initiative ${entry.initiative}` : 'No initiative set'}
+            </div>
+          </div>
+          <div class="rm-controls">
+            <button class="rm-btn" onclick="openTrapStatBlock('${t.id}')">Stat Block</button>
+          </div>
+        </div>
+        <div class="trap-init-row">
+          <span class="trap-init-label">Initiative:</span>
+          <input type="number" class="trap-init-input" id="trapinit_${entry.uid}" placeholder="—" value="${hasInit ? entry.initiative : ''}">
+          <button class="action-btn trap-init-set-btn" onclick="setTrapInitiative('${entry.uid}')">Set Init</button>
+          ${hasInit ? `<button class="action-btn secondary trap-init-set-btn" onclick="clearTrapInitiative('${entry.uid}')">Clear</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    trapsSection.classList.add('hidden');
+  }
+}
+
+function setTrapInitiative(uid) {
+  const entry = activeTraps.find(e => e.uid === uid);
+  if (!entry) return;
+  const inp = document.getElementById(`trapinit_${uid}`);
+  const val = parseInt(inp?.value);
+  if (isNaN(val)) return;
+  entry.initiative = val;
+  buildTurnOrder();
+  // Keep current turn index pointed at the same combatant if possible
+  renderRunner();
+}
+function clearTrapInitiative(uid) {
+  const entry = activeTraps.find(e => e.uid === uid);
+  if (!entry) return;
+  entry.initiative = null;
+  // Remove from turn order
+  turnOrder = turnOrder.filter(t => t.uid !== uid);
+  if (currentTurnIdx >= turnOrder.length) currentTurnIdx = 0;
+  renderRunner();
+}
+
+function applyDelta(uid, sign) {
+  const entry = activeEncounter.find(e => e.uid === uid);
+  if (!entry) return;
+  const inp = document.getElementById(`delta_${uid}`);
+  const val = Math.abs(parseInt(inp?.value) || 0);
+  if (val === 0) return;
+  entry.currentHp = Math.max(0, Math.min(entry.maxHp, entry.currentHp + sign * val));
+  if (inp) inp.value = '';
+  renderRunner();
+}
+function setHp(uid, val) {
+  const entry = activeEncounter.find(e => e.uid === uid);
+  if (entry) { entry.currentHp = Math.max(0, Math.min(entry.maxHp, parseInt(val)||0)); renderRunner(); }
+}
+function adjustHp(uid, delta) {
+  const entry = activeEncounter.find(e => e.uid === uid);
+  if (entry) { entry.currentHp = Math.max(0, Math.min(entry.maxHp, entry.currentHp + delta)); renderRunner(); }
+}
+function toggleCondition(uid, cond) {
+  const entry = activeEncounter.find(e => e.uid === uid);
+  if (!entry) return;
+  const idx = entry.conditions.indexOf(cond);
+  if (idx > -1) entry.conditions.splice(idx,1); else entry.conditions.push(cond);
+  renderRunner();
+}
+function togglePcCondition(uid, cond) {
+  const pc = activePcs.find(p => p.uid === uid);
+  if (!pc) return;
+  const idx = pc.conditions.indexOf(cond);
+  if (idx > -1) pc.conditions.splice(idx,1); else pc.conditions.push(cond);
+  renderRunner();
+}
+function togglePower(uid, pName) {
+  const entry = activeEncounter.find(e => e.uid === uid);
+  if (!entry) return;
+  const idx = entry.powersUsed.indexOf(pName);
+  if (idx > -1) entry.powersUsed.splice(idx,1); else entry.powersUsed.push(pName);
+  renderRunner();
+}
+function removeMonster(uid) {
+  activeEncounter = activeEncounter.filter(e => e.uid !== uid);
+  turnOrder = turnOrder.filter(t => t.uid !== uid);
+  if (currentTurnIdx >= turnOrder.length) currentTurnIdx = 0;
+  renderRunner();
+}
+function resetEncounter() {
+  if (confirm("Reset this encounter? All HP, conditions and power usage will be restored.")) {
+    activeEncounter.forEach(e => { e.currentHp = e.maxHp; e.conditions = []; e.powersUsed = []; });
+    activePcs.forEach(p => { p.conditions = []; });
+    activeTraps.forEach(e => { e.initiative = null; });
+    currentRound = 1; currentTurnIdx = 0;
+    buildTurnOrder();
+    renderRunner();
+  }
+}
+
+function endEncounter() {
+  if (confirm("End this encounter? You'll return to the initiative screen. Monster and PC HP won't be saved.")) {
+    activeEncounter = []; activePcs = []; activeTraps = []; turnOrder = [];
+    currentRound = 1; currentTurnIdx = 0;
+    savedMonsterInits = {};
+    buildInitiativeSetup();
+  }
+}
+</script>
+</body>
+</html>
