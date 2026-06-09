@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4E Power Card Printer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #0d0a07;
+  --bg2:      #171210;
+  --bg3:      #211a12;
+  --panel:    #1a1510;
+  --border:   #3d2e18;
+  --gold:     #c9922a;
+  --gold-lt:  #e8b64a;
+  --gold-dim: #7a5a1a;
+  --red:      #8b2020;
+  --red-lt:   #c93030;
+  --green:    #2a6a2a;
+  --green-lt: #4a9a4a;
+  --blue:     #1a3a6a;
+  --blue-lt:  #4a7aba;
+  --text:     #e8d8b8;
+  --text-dim: #9a8060;
+  --muted:    #5a4830;
+  /* card type colours */
+  --atwill:   #236e30;
+  --encounter:#8b2020;
+  --daily:    #4a4a4a;
+  --utility:  #3a2a6a;
+  --feature:  #4a3a10;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* Sidebar */
+.sidebar {
+  width: 340px; min-width: 340px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 1.2rem 1.2rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  flex-shrink: 0;
+}
+.sidebar-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--gold-lt);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.2rem;
+}
+.sidebar-header p {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* File loader */
+.file-loader {
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  flex-shrink: 0;
+}
+.file-loader-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 0.5rem;
+}
+.file-drop-area {
+  border: 1px dashed var(--border);
+  border-radius: 3px;
+  padding: 0.7rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+.file-drop-area:hover, .file-drop-area.drag { border-color: var(--gold-dim); color: var(--text); background: rgba(120,80,20,0.1); }
+.file-drop-area input { display: none; }
+.file-status { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.4rem; }
+.file-status span { color: var(--green-lt); }
+
+/* Filters */
+.filters {
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.filter-row { display: flex; gap: 0.4rem; align-items: center; }
+.filter-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  width: 52px;
+  flex-shrink: 0;
+}
+.filter-input, .filter-select {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  font-size: 0.88rem;
+  padding: 0.28rem 0.5rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.filter-input:focus, .filter-select:focus { border-color: var(--gold-dim); }
+.filter-select option { background: var(--bg2); }
+.filter-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.chip {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--text-dim);
+  background: var(--bg);
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--gold-dim); color: var(--text); }
+.chip.active { background: var(--gold-dim); border-color: var(--gold); color: var(--text); }
+.chip.at-will.active   { background: var(--atwill); border-color: #4a9a4a; }
+.chip.encounter.active { background: var(--encounter); border-color: #c04040; }
+.chip.daily.active     { background: var(--daily); border-color: #888888; }
+.chip.utility.active   { background: var(--utility); border-color: #7a6aaa; }
+
+/* Power list */
+.power-list-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.4rem 0;
+}
+.power-list-wrap::-webkit-scrollbar { width: 5px; }
+.power-list-wrap::-webkit-scrollbar-track { background: var(--bg); }
+.power-list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.list-count {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  padding: 0.3rem 1.2rem;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.1em;
+}
+.power-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 1.2rem;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(61,46,24,0.4);
+  transition: background 0.1s;
+  user-select: none;
+}
+.power-item:hover { background: rgba(120,80,20,0.08); }
+.power-item.selected { background: rgba(120,80,20,0.18); }
+.power-item-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.power-item-name {
+  flex: 1;
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.3;
+}
+.power-item-meta {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-align: right;
+  flex-shrink: 0;
+}
+.power-item-class {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+.check-icon {
+  width: 14px; height: 14px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+  transition: all 0.15s;
+}
+.power-item.selected .check-icon {
+  background: var(--gold);
+  border-color: var(--gold-lt);
+  color: #000;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  padding: 0.7rem 1.2rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg3);
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg);
+  color: var(--text-dim);
+}
+.btn:hover { border-color: var(--gold-dim); color: var(--text); }
+.btn.primary { background: rgba(120,80,20,0.2); border-color: var(--gold); color: var(--gold-lt); }
+.btn.primary:hover { background: rgba(180,120,30,0.3); }
+.btn.danger { border-color: var(--red); color: #e08080; }
+.btn.danger:hover { background: rgba(139,32,32,0.2); }
+.selected-count {
+  font-size: 0.75rem;
+  color: var(--gold-lt);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.1em;
+  flex: 1;
+  text-align: right;
+}
+
+/* ── Main preview area ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.preview-header {
+  padding: 0.7rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.preview-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  flex: 1;
+}
+.page-size-btns { display: flex; gap: 0.3rem; }
+.page-size-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--text-dim);
+  background: var(--bg);
+  transition: all 0.15s;
+}
+.page-size-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+.page-size-btn.active { border-color: var(--gold); background: rgba(120,80,20,0.2); color: var(--gold-lt); }
+
+.preview-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: #1a1a1a;
+}
+.preview-scroll::-webkit-scrollbar { width: 6px; }
+.preview-scroll::-webkit-scrollbar-track { background: #111; }
+.preview-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--muted);
+  font-style: italic;
+  gap: 0.5rem;
+  text-align: center;
+}
+.empty-state .icon { font-size: 3rem; opacity: 0.3; }
+.empty-state p { font-size: 0.9rem; }
+
+/* ── Print page layout ── */
+.print-page {
+  width: 210mm; /* A4 */
+  min-height: 297mm;
+  background: white;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+  padding: 10mm;
+  display: grid;
+  gap: 3mm;
+}
+.print-page.a4-portrait  { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, auto); }
+.print-page.letter-portrait { width: 215.9mm; min-height: 279.4mm; grid-template-columns: repeat(3, 1fr); }
+
+/* ── Power Card ── */
+.power-card {
+  width: 100%;
+  aspect-ratio: 63 / 88;
+  border: 1px solid #8a6a30;
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: 'EB Garamond', serif;
+  display: flex;
+  flex-direction: column;
+  background: #f5ead0;
+  page-break-inside: avoid;
+  position: relative;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Card header — colour by type */
+.card-header {
+  padding: 4px 6px 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.card-header.type-atwill    { background: #236e30; color: white; }
+.card-header.type-encounter { background: #8b1414; color: white; }
+.card-header.type-daily     { background: #4a4a4a; color: white; }
+.card-header.type-utility   { background: #2a2240; color: white; }
+.card-header.type-feature   { background: #3a2a08; color: white; }
+.card-header.type-unknown   { background: #333;    color: white; }
+
+.card-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 7.5pt;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+.card-class-level {
+  font-size: 5.5pt;
+  opacity: 0.85;
+  letter-spacing: 0.05em;
+}
+.card-type-badge {
+  font-size: 5pt;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+/* Card body — parchment 4e style */
+.card-body {
+  flex: 1;
+  overflow: hidden;
+  padding: 3px 5px 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+  font-size: 6pt;
+  line-height: 1.35;
+  color: #1a1008;
+  position: relative;
+  background: #f5ead0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.card-type-rule {
+  height: 2px;
+  margin: 2px -5px 2px;
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.power-card.type-atwill    .card-type-rule { background: #236e30; }
+.power-card.type-encounter .card-type-rule { background: #8b1414; }
+.power-card.type-daily     .card-type-rule { background: #4a4a4a; }
+.power-card.type-utility   .card-type-rule { background: #2a2240; }
+.power-card.type-feature   .card-type-rule { background: #3a2a08; }
+.power-card.type-unknown   .card-type-rule { background: #444; }
+.card-flavor {
+  font-style: italic;
+  color: #2a1a08;
+  padding-bottom: 2px;
+  margin-bottom: 1px;
+  border-bottom: 0.75px solid #b89a60;
+  font-size: 8pt;
+}
+.card-stat-line {
+  color: #1a1008;
+}
+.card-stat-line b {
+  font-weight: 700;
+}
+.card-stat-divider {
+  height: 0.75px;
+  background: #b89a60;
+  margin: 2px 0;
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.card-footer {
+  font-size: 4.5pt;
+  color: #6b5030;
+  text-align: right;
+  padding: 2px 5px;
+  border-top: 0.75px solid #b89a60;
+  flex-shrink: 0;
+  font-style: italic;
+  background: #ede0bc;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.card-divider {
+  height: 0.5px;
+  background: #b89a60;
+  margin: 1px 0;
+}
+
+/* loading */
+.loading {
+  text-align: center;
+  color: var(--text-dim);
+  font-style: italic;
+  padding: 2rem;
+  font-size: 0.85rem;
+}
+
+/* ── Print styles ── */
+@media print {
+  body { background: white !important; margin: 0; }
+  .sidebar, .preview-header { display: none !important; }
+  .main { overflow: visible !important; }
+  .preview-scroll { overflow: visible !important; padding: 0; background: white; }
+  .print-page {
+    margin: 0;
+    box-shadow: none;
+    page-break-after: always;
+    width: 100%;
+    padding: 8mm;
+  }
+  .print-page:last-child { page-break-after: avoid; }
+  /* Force background colours to print */
+  .card-header,
+  .power-card {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  @page { size: A4 portrait; margin: 0; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1>⚔ 4E Power Card Printer</h1>
+      <p>Select powers → preview → print to PDF &nbsp;·&nbsp; <span style="color:var(--gold-dim);font-size:0.72rem;">9,416 powers in full dataset</span></p>
+    </div>
+
+    <!-- File loader -->
+    <div class="file-loader">
+      <div class="file-loader-title">Load Data Files</div>
+      <div class="file-drop-area" id="dropArea"
+           ondragover="event.preventDefault();this.classList.add('drag')"
+           ondragleave="this.classList.remove('drag')"
+           ondrop="handleFileDrop(event)">
+        <input type="file" id="folderInput" webkitdirectory mozdirectory onchange="handleFileSelect(event)" style="display:none">
+        <div style="display:flex;gap:0.4rem;justify-content:center;flex-wrap:wrap;">
+          <span onclick="document.getElementById('folderInput').click()" style="cursor:pointer;padding:2px 10px;border:1px solid var(--border);border-radius:2px;">📂 Load Data Folder</span>
+        </div>
+        <small style="font-size:0.7rem;opacity:0.7;margin-top:4px;display:block;">or drop files here · _listing.js + data*.js</small>
+      </div>
+      <div class="file-status" id="fileStatus">No files loaded</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-row">
+        <span class="filter-label">Search</span>
+        <input type="text" class="filter-input" id="searchInput" placeholder="Name, class, keyword…" oninput="applyFilters()">
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Class</span>
+        <select class="filter-select" id="classFilter" onchange="applyFilters()">
+          <option value="">All Classes</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Level</span>
+        <select class="filter-select" id="levelFilter" onchange="applyFilters()">
+          <option value="">Any Level</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Source</span>
+        <select class="filter-select" id="sourceFilter" onchange="applyFilters()">
+          <option value="">Any Source</option>
+        </select>
+      </div>
+      <!-- Type chips -->
+      <div class="filter-chips">
+        <span class="chip at-will active"  data-type="at-will"   onclick="toggleTypeChip(this)">At-Will</span>
+        <span class="chip encounter active" data-type="encounter" onclick="toggleTypeChip(this)">Encounter</span>
+        <span class="chip daily active"     data-type="daily"     onclick="toggleTypeChip(this)">Daily</span>
+        <span class="chip utility active"   data-type="utility"   onclick="toggleTypeChip(this)">Utility</span>
+        <span class="chip active"           data-type="feature"   onclick="toggleTypeChip(this)">Feature</span>
+        <span class="chip active"           data-type="other"     onclick="toggleTypeChip(this)">Other</span>
+      </div>
+    </div>
+
+    <!-- Power list -->
+    <div class="power-list-wrap">
+      <div class="list-count" id="listCount">—</div>
+      <div id="powerList"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <button class="btn" onclick="selectAll()">Select All</button>
+      <button class="btn" onclick="clearSelection()">Clear</button>
+      <button class="btn danger" onclick="clearAll()">Reset</button>
+      <span class="selected-count" id="selectedCount">0 selected</span>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN PREVIEW ══ -->
+  <main class="main">
+    <div class="preview-header">
+      <span class="preview-title">Card Preview</span>
+      <div style="font-size:0.75rem;color:var(--text-dim);">Page size:</div>
+      <div class="page-size-btns">
+        <button class="page-size-btn active" onclick="setPageSize('a4')"   id="btn-a4">A4</button>
+        <button class="page-size-btn"        onclick="setPageSize('letter')" id="btn-letter">Letter</button>
+      </div>
+      <button class="btn primary" onclick="window.print()" id="printBtn" disabled>🖨 Print / Save PDF</button>
+    </div>
+    <div class="preview-scroll" id="previewScroll">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">🃏</div>
+        <p>Load your data files, then select powers from the list.</p>
+        <p style="font-size:0.78rem;color:var(--muted);">Cards preview here — 9 per A4/Letter page, 3×3 grid.</p>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script>
+'use strict';
+
+// ── State ──────────────────────────────────────────────────────────────────
+let allPowers    = [];      // from _listing.js
+let powerDetail  = {};      // {id: htmlString} from data*.js
+let filteredPowers = [];
+let selectedIds  = new Set();
+let activeTypes  = new Set(['at-will','encounter','daily','utility','feature','other']);
+let pageSize     = 'a4';
+
+// ── JSONP shim ─────────────────────────────────────────────────────────────
+// The data files call od.reader.jsonp_* — we intercept those.
+const od = {
+  reader: {
+    jsonp_data_listing(ts, type, fields, rows) {
+      // fields: ["ID","Name","ClassName","Level","Type","Action","Keywords","SourceBook"]
+      allPowers = rows.map(r => ({
+        id:       r[0],
+        name:     r[1],
+        className:r[2],
+        level:    r[3],
+        type:     r[4],   // e.g. "At-Will Attack", "Enc. Attack", "Daily Attack", "Enc. Utility"
+        action:   r[5],
+        keywords: r[6],
+        source:   r[7],
+      }));
+      afterListingLoaded();
+    },
+    jsonp_batch_data(ts, type, dataMap) {
+      Object.assign(powerDetail, dataMap);
+      updateDetailStatus();
+    }
+  }
+};
+
+// ── File loading ───────────────────────────────────────────────────────────
+let filesLoaded = { listing: false, dataCount: 0 };
+
+
+function handleFileSelect(e) {
+  processFiles(Array.from(e.target.files));
+  e.target.value = '';
+}
+function handleFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropArea').classList.remove('drag');
+  processFiles(Array.from(e.dataTransfer.files));
+}
+
+async function processFiles(files) {
+  // Filter to .js files only (folder upload may include other file types)
+  const jsFiles = files.filter(f => f.name.endsWith('.js'));
+  for (const file of jsFiles) {
+    const text = await file.text();
+    try {
+      // eval inside od context — safe since user chose their own files
+      const fn = new Function('od', text);
+      fn(od);
+    } catch(err) {
+      console.warn('Error loading', file.name, err);
+    }
+    if (file.name.includes('listing')) filesLoaded.listing = true;
+    else if (file.name.startsWith('data')) filesLoaded.dataCount++;
+  }
+  updateFileStatus();
+}
+
+function updateFileStatus() {
+  const el = document.getElementById('fileStatus');
+  const parts = [];
+  if (filesLoaded.listing) parts.push(`<span>✔ listing (${allPowers.length.toLocaleString()} powers)</span>`);
+  else parts.push('⚠ No listing file');
+  if (filesLoaded.dataCount > 0) parts.push(`<span>✔ ${filesLoaded.dataCount} data file(s) (${Object.keys(powerDetail).length.toLocaleString()} cards)</span>`);
+  else parts.push('⚠ No data files (cards will show summary only)');
+  el.innerHTML = parts.join(' · ');
+}
+
+function updateDetailStatus() {
+  updateFileStatus();
+  renderPreview(); // re-render if selection exists
+}
+
+// ── After listing loaded ───────────────────────────────────────────────────
+function afterListingLoaded() {
+  populateFilters();
+  applyFilters();
+  updateFileStatus();
+}
+
+function populateFilters() {
+  const classes  = [...new Set(allPowers.map(p => p.className))].sort();
+  const levels   = [...new Set(allPowers.map(p => p.level))].filter(Boolean)
+                    .sort((a,b) => parseInt(a)-parseInt(b));
+  const sources  = [...new Set(allPowers.flatMap(p => p.source.split(',').map(s=>s.trim())))].sort();
+
+  fillSelect('classFilter',  classes,  'All Classes');
+  fillSelect('levelFilter',  levels,   'Any Level');
+  fillSelect('sourceFilter', sources.filter(Boolean), 'Any Source');
+}
+
+function fillSelect(id, values, placeholder) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = `<option value="">${placeholder}</option>` +
+    values.map(v => `<option value="${v}">${v}</option>`).join('');
+}
+
+// ── Filters ────────────────────────────────────────────────────────────────
+function toggleTypeChip(chip) {
+  const t = chip.dataset.type;
+  if (activeTypes.has(t)) activeTypes.delete(t); else activeTypes.add(t);
+  chip.classList.toggle('active', activeTypes.has(t));
+  applyFilters();
+}
+
+function typeCategory(typeStr) {
+  const t = (typeStr || '').toLowerCase();
+  if (t.includes('at-will') || t.includes('at will') || t.includes('atwill')) return 'at-will';
+  if (t.includes('enc.') || t.includes('encounter')) {
+    if (t.includes('utility')) return 'utility';
+    return 'encounter';
+  }
+  if (t.includes('daily')) {
+    if (t.includes('utility')) return 'utility';
+    return 'daily';
+  }
+  if (t.includes('utility')) return 'utility';
+  if (t.includes('feature')) return 'feature';
+  return 'other';
+}
+
+function applyFilters() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const cls    = document.getElementById('classFilter').value;
+  const lvl    = document.getElementById('levelFilter').value;
+  const src    = document.getElementById('sourceFilter').value;
+
+  filteredPowers = allPowers.filter(p => {
+    if (!activeTypes.has(typeCategory(p.type))) return false;
+    if (cls && p.className !== cls) return false;
+    if (lvl && p.level !== lvl) return false;
+    if (src && !p.source.includes(src)) return false;
+    if (search) {
+      const hay = `${p.name} ${p.className} ${p.keywords} ${p.type}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  renderList();
+}
+
+// ── Power list rendering ───────────────────────────────────────────────────
+const TYPE_COLOURS = {
+  'at-will':   '#236e30',
+  'encounter': '#8b1414',
+  'daily':     '#4a4a4a',
+  'utility':   '#4a3a7a',
+  'feature':   '#5a4a10',
+  'other':     '#444',
+};
+
+function renderList() {
+  const list = document.getElementById('powerList');
+  const count = document.getElementById('listCount');
+
+  count.textContent = `${filteredPowers.length.toLocaleString()} powers`;
+
+  if (filteredPowers.length === 0) {
+    list.innerHTML = '<div class="loading">No powers match filters.</div>';
+    return;
+  }
+
+  // Virtual render: only show first 500 in list for performance
+  const show = filteredPowers.slice(0, 500);
+  const overflow = filteredPowers.length - show.length;
+
+  list.innerHTML = show.map(p => {
+    const cat  = typeCategory(p.type);
+    const dot  = TYPE_COLOURS[cat] || '#444';
+    const sel  = selectedIds.has(p.id);
+    const lvl  = p.level ? `Lvl ${p.level}` : '';
+    return `<div class="power-item${sel ? ' selected' : ''}" onclick="toggleSelect('${p.id}')" data-id="${p.id}">
+      <div class="check-icon">${sel ? '✔' : ''}</div>
+      <div class="power-item-dot" style="background:${dot};box-shadow:0 0 4px ${dot}88;"></div>
+      <div>
+        <div class="power-item-name">${p.name}</div>
+        <div class="power-item-class">${p.className}</div>
+      </div>
+      <div class="power-item-meta">${lvl}<br><span style="font-size:0.62rem;">${p.type}</span></div>
+    </div>`;
+  }).join('');
+
+  if (overflow > 0) {
+    list.innerHTML += `<div class="loading">… and ${overflow.toLocaleString()} more. Refine filters to narrow results.</div>`;
+  }
+}
+
+function toggleSelect(id) {
+  if (selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+
+  // Update just the clicked item in the DOM
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) {
+    el.classList.toggle('selected', selectedIds.has(id));
+    const check = el.querySelector('.check-icon');
+    if (check) check.textContent = selectedIds.has(id) ? '✔' : '';
+  }
+
+  updateSelectedCount();
+  renderPreview();
+}
+
+function selectAll() {
+  filteredPowers.slice(0, 500).forEach(p => selectedIds.add(p.id));
+  renderList();
+  updateSelectedCount();
+  renderPreview();
+}
+
+function clearSelection() {
+  selectedIds.clear();
+  renderList();
+  updateSelectedCount();
+  renderPreview();
+}
+
+function clearAll() {
+  selectedIds.clear();
+  allPowers = []; filteredPowers = []; powerDetail = {};
+  filesLoaded = { listing: false, dataCount: 0 };
+  document.getElementById('powerList').innerHTML = '';
+  document.getElementById('listCount').textContent = '—';
+  document.getElementById('fileStatus').textContent = 'No files loaded';
+  document.getElementById('classFilter').innerHTML = '<option value="">All Classes</option>';
+  document.getElementById('levelFilter').innerHTML = '<option value="">Any Level</option>';
+  document.getElementById('sourceFilter').innerHTML = '<option value="">Any Source</option>';
+  updateSelectedCount();
+  renderPreview();
+}
+
+function updateSelectedCount() {
+  document.getElementById('selectedCount').textContent = `${selectedIds.size} selected`;
+  document.getElementById('printBtn').disabled = selectedIds.size === 0;
+}
+
+function setPageSize(size) {
+  pageSize = size;
+  document.getElementById('btn-a4').classList.toggle('active', size === 'a4');
+  document.getElementById('btn-letter').classList.toggle('active', size === 'letter');
+  renderPreview();
+}
+
+// ── Card rendering ─────────────────────────────────────────────────────────
+function headerClass(typeStr) {
+  const cat = typeCategory(typeStr);
+  const map = { 'at-will':'atwill','encounter':'encounter','daily':'daily','utility':'utility','feature':'feature' };
+  return `type-${map[cat] || 'unknown'}`;
+}
+
+function typeLabel(typeStr) {
+  const t = (typeStr || '').toLowerCase();
+  if (t.includes('at-will') || t.includes('atwill')) return 'At-Will';
+  if (t.includes('enc.') && t.includes('utility')) return 'Encounter Utility';
+  if (t.includes('enc.') || t.includes('encounter')) return 'Encounter';
+  if (t.includes('daily') && t.includes('utility')) return 'Daily Utility';
+  if (t.includes('daily')) return 'Daily';
+  if (t.includes('utility')) return 'Utility';
+  if (t.includes('feature')) return 'Feature';
+  return typeStr || '—';
+}
+
+// Parse HTML stat block into structured text for the card
+function parseStatBlock(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+
+  const flavors  = [];
+  const stats    = [];
+  let source = '';
+
+  div.querySelectorAll('p').forEach(p => {
+    const cls = p.className;
+    if (!cls) return;
+
+    // Replace <br> with a sentinel before reading text
+    p.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+    const text = p.innerText.trim();
+    if (!text) return;
+
+    if (cls === 'flavor')          flavors.push(text);
+    else if (cls === 'powerstat')  stats.push(text);
+    else if (cls === 'publishedIn') source = text;
+  });
+
+  return { flavors, stats, source };
+}
+
+function buildCardHtml(power) {
+  const hdr = headerClass(power.type);
+  const lbl = typeLabel(power.type);
+  const lvl = power.level ? ` ${power.level}` : '';
+  // CSS class on the card root so colour-rule targets work
+  const typeClass = hdr.replace('type-', '');
+
+  // Check if we have detail HTML
+  const detailHtml = powerDetail[power.id];
+
+  let bodyHtml = '';
+  let footerHtml = `<div class="card-footer">${power.source || ''}</div>`;
+
+  if (detailHtml) {
+    const { flavors, stats, source } = parseStatBlock(detailHtml);
+
+    // Split flavors: italic description vs. Effect/Hit/Miss etc.
+    const effectLabelRe = /^(Effect|Hit|Miss|Trigger|Special|Sustain|Aftereffect|Secondary Attack|Primary Attack|Tertiary Attack|Requirement|Target)[:\s]/i;
+    const classFlavors  = flavors.filter(f => !effectLabelRe.test(f));
+    const effectFlavors = flavors.filter(f =>  effectLabelRe.test(f));
+
+    // Class flavour at the TOP
+    classFlavors.forEach(f => {
+      bodyHtml += `<div class="card-flavor">${f}</div>`;
+    });
+
+    // Thin coloured rule after flavour, before stats
+    bodyHtml += `<div class="card-type-rule"></div>`;
+
+    // Stat lines — skip the first line if it just repeats type + keywords
+    // (the "At-Will ✦ Arcane, Evocation, Force, Implement" line)
+    let firstStat = true;
+    stats.forEach(s => {
+      s.split('\n').forEach(line => {
+        line = line.trim();
+        if (!line) return;
+        if (firstStat) {
+          firstStat = false;
+          // Drop the line if it looks like a keyword/type echo:
+          // contains ✦ or is mostly commas+words with no sentence structure
+          if (/✦|◆/.test(line) || /^[\w\s\-,]+$/.test(line)) return;
+        }
+        bodyHtml += `<div class="card-stat-line">${formatStatLine(line)}</div>`;
+      });
+    });
+
+    // Thin rule before effect lines if we have both stats and effects
+    if (effectFlavors.length > 0) {
+      bodyHtml += `<div class="card-stat-divider"></div>`;
+    }
+
+    // Effect/Hit/Miss etc. flavors
+    effectFlavors.forEach(f => {
+      bodyHtml += `<div class="card-stat-line">${formatStatLine(f)}</div>`;
+    });
+
+    if (source) footerHtml = `<div class="card-footer">${source.replace('Published in ','').replace(/\.$/, '')}</div>`;
+
+  } else {
+    // Fallback: show summary from listing data
+    bodyHtml = `
+      <div class="card-type-rule"></div>
+      <div class="card-stat-line"><b>Action:</b> ${power.action || '—'}</div>
+      ${power.keywords ? `<div class="card-stat-line"><b>Keywords:</b> ${power.keywords}</div>` : ''}
+      <div class="card-stat-line" style="color:#6b5030;font-style:italic;margin-top:3px;font-size:5pt;">Load data files for full card text</div>
+    `;
+  }
+
+  return `
+  <div class="power-card ${typeClass}">
+    <div class="card-header ${hdr}">
+      <div class="card-name">${power.name}</div>
+      <div class="card-class-level">${power.className}${lvl !== '' ? ' · Level' + lvl : ''}</div>
+      <div class="card-type-badge">${lbl}${power.keywords ? ' · ' + power.keywords : ''}</div>
+    </div>
+    <div class="card-body">${bodyHtml}</div>
+    ${footerHtml}
+  </div>`;
+}
+
+function formatStatLine(text) {
+  // Bold the label at the start (e.g. "Hit:", "Effect:", "Attack:")
+  return text.replace(/^([A-Z][^:]{1,30}:)/, '<b>$1</b>');
+}
+
+function renderPreview() {
+  const scroll  = document.getElementById('previewScroll');
+  const empty   = document.getElementById('emptyState');
+
+  const ordered = allPowers.filter(p => selectedIds.has(p.id));
+
+  if (ordered.length === 0) {
+    if (empty) empty.style.display = 'flex';
+    // Remove pages
+    scroll.querySelectorAll('.print-page').forEach(p => p.remove());
+    return;
+  }
+
+  if (empty) empty.style.display = 'none';
+  scroll.querySelectorAll('.print-page').forEach(p => p.remove());
+
+  const perPage = 9;
+  const pageClass = pageSize === 'letter' ? 'letter-portrait' : 'a4-portrait';
+
+  for (let i = 0; i < ordered.length; i += perPage) {
+    const chunk = ordered.slice(i, i + perPage);
+    const page = document.createElement('div');
+    page.className = `print-page ${pageClass}`;
+    page.innerHTML = chunk.map(p => buildCardHtml(p)).join('');
+    scroll.appendChild(page);
+  }
+
+  // After the browser has painted and card heights are known, fit each body
+  requestAnimationFrame(() => fitAllCardText());
+}
+
+// Step down from MAX until content fits, then nudge up to fill space
+function fitCardBody(body) {
+  const MIN_PT = 4.5;
+  const MAX_PT = 11;
+  const STEP   = 0.25;
+
+  // Start at max and shrink until it fits
+  let size = MAX_PT;
+  body.style.fontSize = size + 'pt';
+  while (size > MIN_PT && body.scrollHeight > body.clientHeight) {
+    size -= STEP;
+    body.style.fontSize = size + 'pt';
+  }
+}
+
+function fitAllCardText() {
+  document.querySelectorAll('.card-body').forEach(body => fitCardBody(body));
+}
+
+// Init
+document.getElementById('listCount').textContent = 'Load files to begin';
+</script>
+</body>
+</html>
