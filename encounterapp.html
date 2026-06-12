@@ -545,6 +545,59 @@
   .party-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0.2rem; transition: color 0.15s; text-align: center; }
   .party-remove:hover { color: var(--red-bright); }
   .party-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+
+  /* ── MONSTER FORGE ── */
+  .forge-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 2px; padding: 2rem; margin-bottom: 2rem; position: relative; box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(200,150,50,0.07); }
+  .forge-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+  .forge-layout { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start; }
+  @media (max-width: 900px) { .forge-layout { grid-template-columns: 1fr; } }
+
+  .forge-form { display: flex; flex-direction: column; gap: 1.2rem; }
+  .forge-row { display: grid; gap: 1rem; }
+  .forge-row-2 { grid-template-columns: 1fr 1fr; }
+  .forge-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .forge-row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  @media (max-width: 640px) { .forge-row-2, .forge-row-3, .forge-row-4 { grid-template-columns: 1fr 1fr; } }
+
+  .forge-stat-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .forge-stat-label { font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; }
+  .forge-auto-badge { font-size: 0.6rem; color: var(--gold-dim); background: rgba(120,90,20,0.15); border: 1px solid var(--gold-dim); border-radius: 10px; padding: 0.05rem 0.4rem; letter-spacing: 0.05em; }
+  .forge-auto-badge.overridden { color: var(--red-bright); border-color: var(--red); background: rgba(120,20,20,0.1); }
+  .forge-input { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'EB Garamond', serif; font-size: 1.05rem; padding: 0.5rem 0.7rem; width: 100%; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  .forge-input:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 15%, transparent); }
+  .forge-input.auto-val { border-color: color-mix(in srgb, var(--gold-dim) 50%, transparent); color: var(--gold-light); }
+  .forge-input.overridden { border-color: color-mix(in srgb, var(--red) 50%, transparent); }
+  .forge-input-hint { font-size: 0.72rem; color: var(--text-muted); font-style: italic; margin-top: 0.15rem; }
+
+  .forge-powers-section { margin-top: 0.5rem; }
+  .forge-powers-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+  .forge-power-row { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 0.6rem 0.8rem; position: relative; }
+  .forge-power-header { display: grid; grid-template-columns: 1fr auto auto; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem; }
+  .forge-power-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .forge-power-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 0.2rem; transition: color 0.15s; }
+  .forge-power-remove:hover { color: var(--red-bright); }
+
+  .forge-add-power-btn { background: none; border: 1px dashed var(--border); color: var(--text-muted); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.5rem; width: 100%; cursor: pointer; border-radius: 2px; transition: all 0.15s; margin-top: 0.4rem; }
+  .forge-add-power-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+
+  .forge-preview { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; position: sticky; top: 1rem; overflow: hidden; }
+  .forge-preview-title { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-dim); padding: 0.8rem 1rem 0.6rem; border-bottom: 1px solid var(--border); }
+  .forge-preview-sb { font-size: 0.88rem; }
+
+  .forge-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.5rem; align-items: center; }
+  .forge-saved-list { margin-top: 1.5rem; }
+  .forge-saved-item { display: grid; grid-template-columns: 2fr 60px 90px 70px auto auto auto; gap: 0.5rem; padding: 0.7rem 1rem; border-bottom: 1px solid rgba(60,45,25,0.4); align-items: center; background: var(--bg2); transition: background 0.15s; }
+  .forge-saved-item:hover { background: rgba(200,140,40,0.06); }
+  .forge-saved-item:last-child { border-bottom: none; }
+
+  .forge-rules-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 1rem 1.2rem; margin-bottom: 1.2rem; font-size: 0.85rem; line-height: 1.7; color: var(--text-dim); }
+  .forge-rules-card b { color: var(--gold); }
+  .forge-rules-card table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.8rem; }
+  .forge-rules-card th { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--border); text-align: left; }
+  .forge-rules-card td { padding: 0.2rem 0.5rem; border-bottom: 1px solid rgba(60,45,25,0.3); color: var(--text); }
+
+  textarea.forge-input { resize: vertical; min-height: 60px; font-size: 0.95rem; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -561,6 +614,7 @@
 
   <div class="view-toggle">
     <button class="view-btn active" id="btn-view-builder" onclick="switchView('builder')">Encounter Builder</button>
+    <button class="view-btn" id="btn-view-forge" onclick="switchView('forge')">⚒ Monster Forge</button>
     <button class="view-btn" id="btn-view-runner" onclick="switchView('runner')">Encounter Runner</button>
   </div>
 
@@ -781,6 +835,198 @@
       </div>
     </div>
   </div>
+  <!-- ═══════════════ MONSTER FORGE VIEW ═══════════════ -->
+  <div id="view-forge" class="hidden">
+
+    <!-- Quick reference card -->
+    <div class="forge-panel">
+      <div class="section-title">MM3 on a Business Card — Reference</div>
+      <div class="forge-rules-card">
+        <b>Base stats at Level 0:</b> AC 14, Defenses 12, Attack +5, Avg Damage 8 &nbsp;·&nbsp; each level adds +1 to all.<br>
+        <b>AC modifier by role:</b> Soldier +2 · Brute/Artillery/Lurker −2 · Skirmisher/Controller/Leader ±0<br>
+        <b>Damage modifiers:</b> Brute +25% · Encounter/Daily power +25–50% · Multi-target −25% · Minion = ½ avg<br>
+        <b>HP multipliers:</b> Elite ×2 · Solo ×4 · Minion = 1 HP<br>
+        <table>
+          <tr><th>Role</th><th>HP (Lvl 0)</th><th>HP / Lvl</th><th>Role</th><th>HP (Lvl 0)</th><th>HP / Lvl</th></tr>
+          <tr><td>Brute</td><td>26</td><td>10</td><td>Artillery</td><td>21</td><td>6</td></tr>
+          <tr><td>Soldier</td><td>24</td><td>8</td><td>Controller</td><td>24</td><td>8</td></tr>
+          <tr><td>Skirmisher</td><td>24</td><td>8</td><td>Lurker</td><td>21</td><td>6</td></tr>
+          <tr><td>Leader</td><td>24</td><td>8</td><td>Minion</td><td>1</td><td>0</td></tr>
+        </table>
+      </div>
+
+      <div class="forge-layout">
+        <!-- Left: form -->
+        <div class="forge-form">
+          <div class="section-title">Identity</div>
+          <div class="forge-row forge-row-2">
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Monster Name</label>
+              <input class="forge-input" type="text" id="fg-name" placeholder="e.g. Gravestone Ogre" oninput="forgeUpdatePreview()" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Type / Keywords</label>
+              <input class="forge-input" type="text" id="fg-type" placeholder="e.g. Natural Humanoid (Giant)" oninput="forgeUpdatePreview()" />
+            </div>
+          </div>
+          <div class="forge-row forge-row-4">
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Level</label>
+              <input class="forge-input" type="number" id="fg-level" min="0" max="40" value="5" oninput="forgeAutoCalc()" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Role</label>
+              <select class="forge-input" id="fg-role" onchange="forgeAutoCalc()">
+                <option value="Brute">Brute</option>
+                <option value="Soldier">Soldier</option>
+                <option value="Skirmisher" selected>Skirmisher</option>
+                <option value="Artillery">Artillery</option>
+                <option value="Controller">Controller</option>
+                <option value="Lurker">Lurker</option>
+                <option value="Leader">Leader</option>
+              </select>
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Group</label>
+              <select class="forge-input" id="fg-group" onchange="forgeAutoCalc()">
+                <option value="Standard">Standard</option>
+                <option value="Elite">Elite</option>
+                <option value="Solo">Solo</option>
+                <option value="Minion">Minion</option>
+              </select>
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">XP <span class="forge-auto-badge" id="fg-xp-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-xp" min="0" value="200" oninput="forgeMarkOverride('xp')" />
+            </div>
+          </div>
+
+          <div class="section-title">Combat Stats</div>
+          <div class="forge-row forge-row-4">
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">HP <span class="forge-auto-badge" id="fg-hp-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-hp" min="1" value="88" oninput="forgeMarkOverride('hp')" />
+              <div class="forge-input-hint" id="fg-hp-hint"></div>
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">AC <span class="forge-auto-badge" id="fg-ac-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-ac" min="1" max="50" value="19" oninput="forgeMarkOverride('ac')" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Initiative <span class="forge-auto-badge" id="fg-init-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-init" min="-10" max="40" value="+7" oninput="forgeMarkOverride('init')" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Speed</label>
+              <input class="forge-input" type="number" id="fg-speed" min="0" max="20" value="6" oninput="forgeUpdatePreview()" />
+            </div>
+          </div>
+          <div class="forge-row forge-row-4">
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Fortitude <span class="forge-auto-badge" id="fg-fort-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-fort" min="1" value="17" oninput="forgeMarkOverride('fort')" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Reflex <span class="forge-auto-badge" id="fg-ref-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-ref" min="1" value="17" oninput="forgeMarkOverride('ref')" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Will <span class="forge-auto-badge" id="fg-will-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-will" min="1" value="17" oninput="forgeMarkOverride('will')" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Saving Throws</label>
+              <input class="forge-input" type="text" id="fg-saves" placeholder="e.g. +2 vs Poison" oninput="forgeUpdatePreview()" />
+            </div>
+          </div>
+          <div class="forge-row forge-row-3">
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Attack Bonus <span class="forge-auto-badge" id="fg-atk-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-atk" min="-5" max="50" value="+10" oninput="forgeMarkOverride('atk')" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Avg Damage <span class="forge-auto-badge" id="fg-dmg-badge">auto</span></label>
+              <input class="forge-input auto-val" type="number" id="fg-dmg" min="1" value="13" oninput="forgeMarkOverride('dmg')" />
+              <div class="forge-input-hint" id="fg-dmg-hint"></div>
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Bloodied</label>
+              <input class="forge-input" type="number" id="fg-bloodied" readonly style="opacity:0.7;cursor:default;" />
+              <div class="forge-input-hint">Always ½ max HP</div>
+            </div>
+          </div>
+          <div class="forge-row forge-row-2">
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Encounter / Daily Power Damage <span style="font-size:0.65rem;color:var(--text-muted);font-style:italic;">(reference only)</span></label>
+              <div style="padding:0.5rem 0.8rem;background:color-mix(in srgb,var(--encounter) 10%,var(--bg2));border:1px solid color-mix(in srgb,var(--encounter) 40%,var(--border));border-radius:2px;font-size:0.88rem;color:var(--text-dim);">
+                Big once-per-encounter attack: roughly <span id="fg-enc-dmg-display" style="color:var(--gold-light);font-weight:600;">—</span> damage
+                <div style="font-size:0.75rem;margin-top:0.2rem;color:var(--text-muted);">Midpoint of +25–50% over base avg damage</div>
+              </div>
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Multi-Target Attack Damage <span style="font-size:0.65rem;color:var(--text-muted);font-style:italic;">(reference only)</span></label>
+              <div style="padding:0.5rem 0.8rem;background:color-mix(in srgb,var(--daily) 10%,var(--bg2));border:1px solid color-mix(in srgb,var(--daily) 40%,var(--border));border-radius:2px;font-size:0.88rem;color:var(--text-dim);">
+                Area / multi-target power: roughly <span id="fg-multi-dmg-display" style="color:var(--gold-light);font-weight:600;">—</span> damage
+                <div style="font-size:0.75rem;margin-top:0.2rem;color:var(--text-muted);">−25% from base avg damage</div>
+              </div>
+            </div>
+          </div>
+          <div class="forge-row forge-row-2">
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Resistances / Immunities</label>
+              <input class="forge-input" type="text" id="fg-resist" placeholder="e.g. Resist 10 fire, Immune fear" oninput="forgeUpdatePreview()" />
+            </div>
+            <div class="forge-stat-group">
+              <label class="forge-stat-label">Senses / Perception</label>
+              <input class="forge-input" type="text" id="fg-senses" placeholder="e.g. Darkvision; Perception +9" oninput="forgeUpdatePreview()" />
+            </div>
+          </div>
+
+          <!-- Powers -->
+          <div class="section-title">Powers &amp; Traits</div>
+          <div class="forge-powers-list" id="fgPowersList"></div>
+          <button class="forge-add-power-btn" onclick="forgeAddPower()">+ Add Power / Trait / Action</button>
+
+          <div class="section-title">Notes</div>
+          <div class="forge-stat-group">
+            <label class="forge-stat-label">Flavour / Lore</label>
+            <textarea class="forge-input" id="fg-lore" rows="2" placeholder="Brief flavour description…" oninput="forgeUpdatePreview()"></textarea>
+          </div>
+
+          <div class="forge-actions">
+            <button class="action-btn" onclick="forgeSave()">💾 Save to Library</button>
+            <button class="action-btn secondary" onclick="forgeReset()">Clear Form</button>
+            <button class="action-btn secondary" id="fg-reset-all-btn" onclick="forgeResetAllOverrides()" title="Reset all overridden stats back to auto">↺ Reset Auto Stats</button>
+          </div>
+        </div>
+
+        <!-- Right: live preview -->
+        <div>
+          <div class="forge-preview">
+            <div class="forge-preview-title">⚔ Live Preview</div>
+            <div class="forge-preview-sb" id="forgePreviewSb"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved custom monsters list -->
+      <div class="forge-saved-list" id="forgeSavedSection" style="display:none;">
+        <div class="section-title">Your Custom Monsters</div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.8rem;align-items:center;">
+          <button class="action-btn secondary" onclick="forgeExportAll()" title="Download all saved monsters as one .js file" style="font-size:0.72rem;padding:0.4rem 0.9rem;">⬇ Export All (.js)</button>
+          <label class="action-btn secondary" style="font-size:0.72rem;padding:0.4rem 0.9rem;cursor:pointer;" title="Import a previously exported .js file">
+            ⬆ Import .js
+            <input id="fg-import-input" type="file" accept=".js" multiple style="display:none;" onchange="forgeImportJS(this.files);this.value='';" />
+          </label>
+          <span id="fg-import-btn" style="font-size:0.78rem;color:var(--text-dim);"></span>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:2px;">
+          <div id="forgeSavedList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="view-runner" class="hidden">
     <div class="runner-panel">
 
@@ -1161,13 +1407,19 @@ function renderEncounterTabs() {
 // ─── View switching ───
 function switchView(view) {
   document.getElementById('view-builder').classList.toggle('hidden', view !== 'builder');
+  document.getElementById('view-forge').classList.toggle('hidden', view !== 'forge');
   document.getElementById('view-runner').classList.toggle('hidden', view !== 'runner');
   document.getElementById('btn-view-builder').classList.toggle('active', view === 'builder');
+  document.getElementById('btn-view-forge').classList.toggle('active', view === 'forge');
   document.getElementById('btn-view-runner').classList.toggle('active', view === 'runner');
   if (view === 'runner') {
     // If an encounter is already running, jump straight back to it — don't reset
     const isRunning = !document.getElementById('activeRun').classList.contains('hidden');
     if (!isRunning) buildInitiativeSetup();
+  }
+  if (view === 'forge') {
+    forgeAutoCalc();
+    forgeRenderSaved();
   }
 }
 
@@ -2500,6 +2752,643 @@ function endEncounter() {
     buildInitiativeSetup();
   }
 }
+
+// ═══════════════════════════════════════════════════════
+// ─── MONSTER FORGE ───
+// ═══════════════════════════════════════════════════════
+
+// ── MM3 on a Business Card tables ──
+const FORGE_HP = {
+  Brute:      { base: 26, perLvl: 10 },
+  Soldier:    { base: 24, perLvl: 8  },
+  Skirmisher: { base: 24, perLvl: 8  },
+  Artillery:  { base: 21, perLvl: 6  },
+  Controller: { base: 24, perLvl: 8  },
+  Lurker:     { base: 21, perLvl: 6  },
+  Leader:     { base: 24, perLvl: 8  },
+  Minion:     { base: 1,  perLvl: 0  },
+};
+const FORGE_AC_MOD = {
+  Brute: -2, Soldier: 2, Skirmisher: 0, Artillery: -2,
+  Controller: 0, Lurker: -2, Leader: 0,
+};
+// Standard 4e XP by level
+const FORGE_XP = [
+  0,100,125,150,175,200,250,300,350,400,500,
+  600,700,800,1000,1200,1400,1600,2000,2400,2800,
+  3400,4000,4800,5750,7000,8400,10000,12000,14000,16500,
+  19750,23750,28500,34250,41250,49500,59500,71500,86000,103500
+];
+
+// Track which fields have been manually overridden
+let forgeOverrides = {};
+// Powers list
+let forgePowers = [];
+// Saved custom monsters (persisted in localStorage)
+let forgeCustomMonsters = [];
+
+function forgeLoadSaved() {
+  try {
+    const raw = localStorage.getItem('ef-forge-monsters');
+    if (raw) forgeCustomMonsters = JSON.parse(raw);
+  } catch(e) { forgeCustomMonsters = []; }
+}
+function forgePersist() {
+  localStorage.setItem('ef-forge-monsters', JSON.stringify(forgeCustomMonsters));
+}
+
+// ── Compute auto values from level+role+group ──
+function forgeCompute() {
+  const level  = Math.max(0, parseInt(document.getElementById('fg-level').value) || 0);
+  const role   = document.getElementById('fg-role').value;
+  const group  = document.getElementById('fg-group').value;
+
+  const isMinion   = group === 'Minion';
+  const isElite    = group === 'Elite';
+  const isSolo     = group === 'Solo';
+  // enc/multi damage are reference-only display values; not applied to base dmg
+
+  // HP
+  let hp = 1;
+  if (isMinion) {
+    hp = 1;
+  } else {
+    const hpRow = FORGE_HP[role] || FORGE_HP.Soldier;
+    hp = hpRow.base + hpRow.perLvl * level;
+    if (isElite) hp *= 2;
+    if (isSolo)  hp *= 4;
+  }
+
+  // AC: base 14 + level + role mod
+  const acMod = FORGE_AC_MOD[role] ?? 0;
+  const ac = 14 + level + acMod;
+
+  // Defenses: base 12 + level
+  const def = 12 + level;
+
+  // Attack: base 5 + level
+  const atk = 5 + level;
+
+  // Damage: base 8 + level
+  // Brute +25% · Encounter power +37.5% (midpoint of 25-50%) · Multi-target -25% · Minion x0.5
+  let dmg = 8 + level;
+  if (role === 'Brute') dmg = dmg * 1.25;
+  if (isMinion)         dmg = dmg * 0.5;
+  dmg = Math.round(dmg);
+
+  // Initiative
+  const init = 3 + Math.floor(level / 2);
+
+  // XP (level 0 uses level 1 value)
+  let xp = FORGE_XP[Math.min(Math.max(level, 1), 40)] || 0;
+  if (isElite)  xp *= 2;
+  if (isSolo)   xp *= 5;
+  if (isMinion) xp = Math.round(xp * 0.25);
+
+  return { hp, ac, def, atk, dmg, init, xp, level, role, group };
+}
+
+// ── Apply auto values to fields that aren't overridden ──
+function forgeAutoCalc() {
+  const c = forgeCompute();
+
+  const fields = [
+    { key: 'hp',   id: 'fg-hp',   val: c.hp   },
+    { key: 'ac',   id: 'fg-ac',   val: c.ac   },
+    { key: 'fort', id: 'fg-fort', val: c.def  },
+    { key: 'ref',  id: 'fg-ref',  val: c.def  },
+    { key: 'will', id: 'fg-will', val: c.def  },
+    { key: 'atk',  id: 'fg-atk',  val: c.atk  },
+    { key: 'dmg',  id: 'fg-dmg',  val: c.dmg  },
+    { key: 'init', id: 'fg-init', val: c.init },
+    { key: 'xp',   id: 'fg-xp',  val: c.xp   },
+  ];
+
+  fields.forEach(({ key, id, val }) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const badgeEl = document.getElementById(id + '-badge');
+    if (!forgeOverrides[key]) {
+      el.value = val;
+      el.classList.add('auto-val');
+      el.classList.remove('overridden');
+      if (badgeEl) { badgeEl.textContent = 'auto'; badgeEl.classList.remove('overridden'); }
+    } else {
+      el.classList.remove('auto-val');
+      el.classList.add('overridden');
+      if (badgeEl) { badgeEl.textContent = 'manual'; badgeEl.classList.add('overridden'); }
+    }
+  });
+
+  // Hints
+  const hpEl = document.getElementById('fg-hp');
+  const hintHp = document.getElementById('fg-hp-hint');
+  if (hintHp) {
+    const group = document.getElementById('fg-group').value;
+    const role  = document.getElementById('fg-role').value;
+    const hpRow = FORGE_HP[role] || FORGE_HP.Soldier;
+    const lvl = parseInt(document.getElementById('fg-level').value)||0;
+    let formula = `${hpRow.base} + ${hpRow.perLvl}×${lvl}`;
+    if (group === 'Elite') formula += ' ×2';
+    if (group === 'Solo')  formula += ' ×4';
+    if (group === 'Minion') formula = '1 HP (Minion)';
+    hintHp.textContent = formula;
+  }
+  const hintDmg = document.getElementById('fg-dmg-hint');
+  if (hintDmg) {
+    const role = document.getElementById('fg-role').value;
+    const lvl  = parseInt(document.getElementById('fg-level').value)||0;
+    const grp   = document.getElementById('fg-group').value;
+    let formula = `8 + ${lvl}`;
+    if (role === 'Brute') formula += ' ×1.25 (Brute)';
+    if (grp === 'Minion') formula += ' ×0.5 (Minion)';
+    hintDmg.textContent = formula;
+  }
+
+  // Bloodied = ½ HP
+  const bloodied = document.getElementById('fg-bloodied');
+  if (bloodied) bloodied.value = Math.floor((parseInt(hpEl?.value)||2) / 2);
+
+  // Update reference damage display boxes
+  const baseDmgVal = parseInt(document.getElementById('fg-dmg')?.value) || 8;
+  const encSpan = document.getElementById('fg-enc-dmg-display');
+  const multiSpan = document.getElementById('fg-multi-dmg-display');
+  if (encSpan)   encSpan.textContent   = Math.round(baseDmgVal * 1.375);
+  if (multiSpan) multiSpan.textContent = Math.round(baseDmgVal * 0.75);
+
+  forgeUpdatePreview();
+}
+
+// ── Mark a field as manually overridden ──
+function forgeMarkOverride(key) {
+  forgeOverrides[key] = true;
+  forgeAutoCalc();
+}
+
+// ── Reset all overrides back to auto ──
+function forgeResetAllOverrides() {
+  forgeOverrides = {};
+  forgeAutoCalc();
+}
+
+// ── Powers management ──
+let forgePowerIdCounter = 0;
+function forgeAddPower(preset) {
+  const id = ++forgePowerIdCounter;
+  forgePowers.push({
+    id,
+    name: preset?.name || '',
+    usage: preset?.usage || 'at-will',
+    action: preset?.action || 'Standard',
+    keywords: preset?.keywords || '',
+    attack: preset?.attack || '',
+    hit: preset?.hit || '',
+    effect: preset?.effect || '',
+    notes: preset?.notes || '',
+  });
+  forgeRenderPowers();
+}
+
+function forgeRemovePower(id) {
+  forgePowers = forgePowers.filter(p => p.id !== id);
+  forgeRenderPowers();
+}
+
+function forgeUpdatePower(id, field, val) {
+  const p = forgePowers.find(p => p.id === id);
+  if (p) { p[field] = val; forgeUpdatePreview(); }
+}
+
+function forgeRenderPowers() {
+  const list = document.getElementById('fgPowersList');
+  if (!list) return;
+  if (forgePowers.length === 0) {
+    list.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;font-style:italic;padding:0.3rem 0;">No powers yet — click + Add below.</div>';
+    forgeUpdatePreview();
+    return;
+  }
+  list.innerHTML = forgePowers.map(p => `
+    <div class="forge-power-row" id="fpr-${p.id}">
+      <div class="forge-power-header">
+        <input class="forge-input" type="text" placeholder="Power name…" value="${escHtml(p.name)}"
+               oninput="forgeUpdatePower(${p.id},'name',this.value)" style="font-size:1rem;" />
+        <select class="forge-input" style="width:auto;" onchange="forgeUpdatePower(${p.id},'usage',this.value)">
+          ${['at-will','encounter','daily','recharge','trait'].map(u =>
+            `<option value="${u}" ${p.usage===u?'selected':''}>${u.charAt(0).toUpperCase()+u.slice(1)}</option>`
+          ).join('')}
+        </select>
+        <button class="forge-power-remove" onclick="forgeRemovePower(${p.id})" title="Remove power">✕</button>
+      </div>
+      <div class="forge-power-fields">
+        <div class="forge-stat-group">
+          <label class="forge-stat-label">Action Type</label>
+          <select class="forge-input" onchange="forgeUpdatePower(${p.id},'action',this.value)">
+            ${['Standard','Minor','Move','Free','Opportunity','Immediate Interrupt','Immediate Reaction','Triggered'].map(a =>
+              `<option value="${a}" ${p.action===a?'selected':''}>${a}</option>`
+            ).join('')}
+          </select>
+        </div>
+        <div class="forge-stat-group">
+          <label class="forge-stat-label">Keywords (optional)</label>
+          <input class="forge-input" type="text" placeholder="e.g. Fire, Burst 1" value="${escHtml(p.keywords)}"
+                 oninput="forgeUpdatePower(${p.id},'keywords',this.value)" />
+        </div>
+      </div>
+      <div class="forge-power-fields" style="margin-top:0.4rem;">
+        <div class="forge-stat-group">
+          <label class="forge-stat-label">Attack (leave blank for traits)</label>
+          <input class="forge-input" type="text" placeholder="e.g. +10 vs AC" value="${escHtml(p.attack)}"
+                 oninput="forgeUpdatePower(${p.id},'attack',this.value)" />
+        </div>
+        <div class="forge-stat-group">
+          <label class="forge-stat-label">Hit / Effect</label>
+          <input class="forge-input" type="text" placeholder="e.g. 2d8+5 damage; prone" value="${escHtml(p.hit)}"
+                 oninput="forgeUpdatePower(${p.id},'hit',this.value)" />
+        </div>
+      </div>
+      <div class="forge-stat-group" style="margin-top:0.4rem;">
+        <label class="forge-stat-label">Notes / Miss / Secondary</label>
+        <input class="forge-input" type="text" placeholder="Miss: half damage. Or any extra text." value="${escHtml(p.notes)}"
+               oninput="forgeUpdatePower(${p.id},'notes',this.value)" />
+      </div>
+    </div>
+  `).join('');
+  forgeUpdatePreview();
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Build preview stat block ──
+function forgeUpdatePreview() {
+  const el = document.getElementById('forgePreviewSb');
+  if (!el) return;
+  el.innerHTML = forgeRenderStatBlock(forgeGatherData());
+  // keep bloodied in sync
+  const hp = parseInt(document.getElementById('fg-hp')?.value)||2;
+  const b = document.getElementById('fg-bloodied');
+  if (b) b.value = Math.floor(hp/2);
+}
+
+function forgeGatherData() {
+  const baseDmg = parseInt(document.getElementById('fg-dmg')?.value)||8;
+  return {
+    name:     document.getElementById('fg-name')?.value || 'Unnamed Monster',
+    type:     document.getElementById('fg-type')?.value || '',
+    level:    parseInt(document.getElementById('fg-level')?.value)||0,
+    role:     document.getElementById('fg-role')?.value || 'Skirmisher',
+    group:    document.getElementById('fg-group')?.value || 'Standard',
+    xp:       parseInt(document.getElementById('fg-xp')?.value)||0,
+    hp:       parseInt(document.getElementById('fg-hp')?.value)||1,
+    ac:       parseInt(document.getElementById('fg-ac')?.value)||14,
+    fort:     parseInt(document.getElementById('fg-fort')?.value)||12,
+    ref:      parseInt(document.getElementById('fg-ref')?.value)||12,
+    will:     parseInt(document.getElementById('fg-will')?.value)||12,
+    init:     parseInt(document.getElementById('fg-init')?.value)||3,
+    speed:    parseInt(document.getElementById('fg-speed')?.value)||6,
+    atk:      parseInt(document.getElementById('fg-atk')?.value)||5,
+    dmg:      baseDmg,
+    encDmg:   Math.round(baseDmg * 1.375),  // midpoint +25-50%
+    multiDmg: Math.round(baseDmg * 0.75),   // -25%
+    resist:   document.getElementById('fg-resist')?.value || '',
+    senses:   document.getElementById('fg-senses')?.value || '',
+    saves:    document.getElementById('fg-saves')?.value || '',
+    lore:     document.getElementById('fg-lore')?.value || '',
+    powers:   JSON.parse(JSON.stringify(forgePowers)),
+  };
+}
+
+function forgeRenderStatBlock(d) {
+  const groupLabel = d.group === 'Standard' ? '' : ` ${d.group}`;
+  const usageColors = { 'at-will':'var(--atwill)', 'encounter':'var(--encounter)', 'daily':'var(--daily)', 'recharge':'var(--trait)', 'trait':'var(--trait)' };
+
+  const powersHtml = d.powers.map(p => {
+    const col = usageColors[p.usage] || 'var(--text-dim)';
+    const usageLabel = p.usage === 'at-will' ? 'At-Will' : p.usage.charAt(0).toUpperCase()+p.usage.slice(1);
+    return `<div style="border-top:1px solid var(--border);padding:0.45rem 1rem;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;margin-bottom:0.15rem;">
+        <span style="font-family:'Cinzel',serif;font-size:0.85rem;color:var(--white);">${escHtml(p.name)||'Unnamed Power'}</span>
+        <span style="display:inline-block;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.06em;text-transform:uppercase;padding:0.1rem 0.5rem;border-radius:20px;border:1px solid ${col};color:${col};white-space:nowrap;">${usageLabel}</span>
+      </div>
+      ${p.action ? `<div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:0.1rem;">${escHtml(p.action)} Action${p.keywords ? ` · <em>${escHtml(p.keywords)}</em>` : ''}</div>` : ''}
+      ${p.attack ? `<div style="font-size:0.85rem;"><span style="font-weight:600;color:var(--text-dim);">Attack:</span> ${escHtml(p.attack)}</div>` : ''}
+      ${p.hit    ? `<div style="font-size:0.85rem;"><span style="font-weight:600;color:var(--text-dim);">Hit:</span> ${escHtml(p.hit)}</div>` : ''}
+      ${p.notes  ? `<div style="font-size:0.82rem;color:var(--text-dim);font-style:italic;">${escHtml(p.notes)}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const groupStyle = {
+    Standard: '',
+    Elite: `border-left:3px solid var(--elite);`,
+    Solo: `border-left:3px solid var(--solo);`,
+    Minion: `border-left:3px solid var(--minion);`,
+  }[d.group] || '';
+
+  return `
+  <div style="font-family:'EB Garamond',serif;${groupStyle}">
+    <div style="background:color-mix(in srgb,var(--gold-dim) 20%,var(--bg3));border-bottom:3px solid var(--gold-dim);padding:0.8rem 1rem;">
+      <div style="font-family:'Cinzel Decorative',serif;font-size:1.25rem;color:var(--gold-light);line-height:1.1;">${escHtml(d.name)}</div>
+      ${d.type ? `<div style="font-size:0.88rem;color:var(--text-dim);font-style:italic;margin-top:0.15rem;">${escHtml(d.type)}</div>` : ''}
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:0.3rem;">
+        <span style="font-family:'Cinzel',serif;font-size:0.82rem;color:var(--gold);">Level ${d.level}${groupLabel} ${d.role}</span>
+        <span style="font-family:'Cinzel',serif;font-size:0.8rem;color:var(--text-dim);">XP ${d.xp.toLocaleString()}</span>
+      </div>
+    </div>
+    <div style="background:color-mix(in srgb,var(--gold-dim) 8%,var(--bg3));padding:0.55rem 1rem;border-bottom:1px solid var(--border);font-size:0.9rem;">
+      <div style="display:flex;gap:0.4rem;margin-bottom:0.15rem;">
+        <span style="color:var(--text-dim);font-weight:600;min-width:26px;">HP</span>
+        <span style="color:var(--white);font-weight:700;">${d.hp}</span>
+        <span style="color:var(--text-dim);font-size:0.8rem;margin-left:0.3rem;">Bloodied ${Math.floor(d.hp/2)}</span>
+      </div>
+      <div style="display:flex;gap:0.4rem;">
+        <span style="color:var(--text-dim);font-weight:600;min-width:26px;">AC</span>
+        <span style="color:var(--white);">${d.ac}</span>
+        <span style="color:var(--text-dim);margin-left:0.5rem;">Fort ${d.fort}</span>
+        <span style="color:var(--text-dim);">Ref ${d.ref}</span>
+        <span style="color:var(--text-dim);">Will ${d.will}</span>
+      </div>
+      ${d.resist ? `<div style="margin-top:0.15rem;font-size:0.82rem;color:var(--text-dim);">Resist/Immune: <span style="color:var(--text);">${escHtml(d.resist)}</span></div>` : ''}
+      ${d.saves ? `<div style="font-size:0.82rem;color:var(--text-dim);">Saves: <span style="color:var(--text);">${escHtml(d.saves)}</span></div>` : ''}
+    </div>
+    <div style="background:color-mix(in srgb,var(--gold-dim) 5%,var(--bg3));padding:0.45rem 1rem;border-bottom:1px solid var(--border);font-size:0.88rem;display:flex;flex-wrap:wrap;gap:0.2rem 1.2rem;">
+      <span style="color:var(--text-dim);">Initiative <span style="color:var(--white);">+${d.init}</span></span>
+      <span style="color:var(--text-dim);">Speed <span style="color:var(--white);">${d.speed}</span></span>
+      ${d.senses ? `<span style="color:var(--text-dim);">${escHtml(d.senses)}</span>` : ''}
+    </div>
+    <div style="background:color-mix(in srgb,var(--gold-dim) 5%,var(--bg3));padding:0.45rem 1rem;border-bottom:1px solid var(--border);font-size:0.88rem;color:var(--text-dim);">
+      Standard attack: <span style="color:var(--white);">+${d.atk} vs AC</span> — <span style="color:var(--white);">${d.dmg} damage</span>
+    </div>
+    <div style="background:color-mix(in srgb,var(--gold-dim) 3%,var(--bg3));padding:0.35rem 1rem;border-bottom:1px solid var(--border);font-size:0.8rem;display:flex;flex-wrap:wrap;gap:0.2rem 1.4rem;">
+      <span style="color:var(--text-muted);">Encounter power: <span style="color:var(--text-dim);">~${d.encDmg != null ? d.encDmg : Math.round(d.dmg * 1.375)} dmg</span></span>
+      <span style="color:var(--text-muted);">Multi-target: <span style="color:var(--text-dim);">~${d.multiDmg != null ? d.multiDmg : Math.round(d.dmg * 0.75)} dmg</span></span>
+      <span style="color:var(--text-muted);font-style:italic;font-size:0.72rem;">reference only</span>
+    </div>
+    ${d.lore ? `<div style="padding:0.5rem 1rem;border-bottom:1px solid var(--border);font-size:0.85rem;color:var(--text-dim);font-style:italic;">${escHtml(d.lore)}</div>` : ''}
+    <div style="padding:0.2rem 0;">${powersHtml}</div>
+  </div>`;
+}
+
+// ── Save to library ──
+function forgeSave() {
+  const d = forgeGatherData();
+  if (!d.name || d.name === 'Unnamed Monster') {
+    alert('Give your monster a name first!');
+    document.getElementById('fg-name').focus();
+    return;
+  }
+  const uid = crypto.randomUUID();
+  // Build a compatible monster object (same shape as parsed monsters)
+  const customM = {
+    id: 'custom-' + uid,
+    name: d.name,
+    level: d.level,
+    xp: d.xp,
+    role: d.role,
+    groupRole: d.group,
+    hp: d.hp,
+    initiative: d.init,
+    type: d.type,
+    origin: '',
+    keywords: [],
+    source: 'Custom (Forge)',
+    folder: '',
+    file: '',
+    rawHtml: null,
+    _customData: d,   // store full data for re-editing
+    _isCustom: true,
+  };
+  // Generate a rich rawHtml stat block for display and runner
+  customM.rawHtml = forgeGenerateRawHtml(d);
+
+  forgeCustomMonsters.push(customM);
+  forgePersist();
+  monsters.push(customM); // add to main monster list so it shows in browser
+  filterMonsterList();
+  forgeRenderSaved();
+  document.getElementById('forgeSavedSection').style.display = '';
+  // Visual feedback
+  const btn = document.querySelector('.forge-actions .action-btn');
+  if (btn) { const orig = btn.textContent; btn.textContent = '✓ Saved!'; setTimeout(()=>btn.textContent=orig, 1500); }
+}
+
+// Generate raw HTML in the 4e/jsb-wrap style
+function forgeGenerateRawHtml(d) {
+  const groupLabel = d.group === 'Standard' ? '' : ` ${d.group}`;
+  const sign = n => n >= 0 ? `+${n}` : `${n}`;
+  const usageClassMap = { 'at-will':'at-will', 'encounter':'encounter', 'daily':'daily', 'recharge':'recharge', 'trait':'trait' };
+
+  const powersHtml = d.powers.map(p => {
+    const cls = usageClassMap[p.usage] || 'at-will';
+    const usageLabel = p.usage === 'at-will' ? 'At-Will' : p.usage.charAt(0).toUpperCase()+p.usage.slice(1);
+    return `<p class="flavor alt"><b>${p.name||'Power'}</b> <span class="sb-power-usage sb-power-${cls}">${usageLabel}</span></p>
+<p class="flavorIndent">${p.action} Action${p.keywords?' · '+p.keywords:''}${p.attack?' · Attack: '+p.attack:''}${p.hit?' · Hit: '+p.hit:''}${p.notes?' · '+p.notes:''}</p>`;
+  }).join('\n');
+
+  return `<h1 class="monster"><span class="type">${d.type||''}</span>${d.name}<span class="level">Level ${d.level}${groupLabel} ${d.role}<span class="xp">XP ${d.xp.toLocaleString()}</span></span></h1>
+<table class="bodytable"><tr><td><b>HP</b> ${d.hp}; <b>Bloodied</b> ${Math.floor(d.hp/2)}</td><td class="rightalign"><b>Initiative</b> ${sign(d.init)}</td></tr>
+<tr><td><b>AC</b> ${d.ac}, <b>Fortitude</b> ${d.fort}, <b>Reflex</b> ${d.ref}, <b>Will</b> ${d.will}</td><td class="rightalign"><b>Perception</b> ${sign(d.init)}</td></tr>
+<tr><td><b>Speed</b> ${d.speed}</td><td class="rightalign">${d.senses||''}</td></tr>${d.resist?`\n<tr><td colspan="2"><b>Resist/Immune:</b> ${d.resist}</td></tr>`:''}${d.saves?`\n<tr><td colspan="2"><b>Saving Throws:</b> ${d.saves}</td></tr>`:''}</table>
+${d.lore ? `<p class="flavorIndent"><i>${d.lore}</i></p>` : ''}
+<h2>Standard Actions</h2>
+<p class="flavor alt"><b>Basic Attack</b> (at-will) · Standard Action<br><i>Attack:</i> ${sign(d.atk)} vs AC — <i>Hit:</i> ${d.dmg} damage<br><span style="font-size:0.82em;color:#7a5a1a;">Encounter/daily power: ~${d.encDmg != null ? d.encDmg : Math.round(d.dmg*1.375)} dmg &nbsp;·&nbsp; Multi-target: ~${d.multiDmg != null ? d.multiDmg : Math.round(d.dmg*0.75)} dmg &nbsp;<em>(reference only)</em></span></p>
+${powersHtml}
+<p class="publishedIn">Custom Monster — Created with Encounter Forge Monster Forge</p>`;
+}
+
+// ── Export a single custom monster as a .js file ──
+function forgeExportMonster(id) {
+  const m = forgeCustomMonsters.find(x => x.id === id);
+  if (!m) return;
+  forgeWriteJS([m], (m.name || 'custom-monster').replace(/[^a-z0-9]+/gi, '_').toLowerCase() + '.js');
+}
+
+// ── Export ALL saved custom monsters as one .js file ──
+function forgeExportAll() {
+  if (forgeCustomMonsters.length === 0) { alert('No saved monsters to export.'); return; }
+  forgeWriteJS(forgeCustomMonsters, 'custom_monsters.js');
+}
+
+// ── Core writer: builds od.reader.jsonp_batch_data(...) JS and triggers download ──
+function forgeWriteJS(monsterList, filename) {
+  const lines = [];
+  lines.push('// Encounter Forge — Custom Monster Export');
+  lines.push('// Generated: ' + new Date().toISOString());
+  lines.push('// Contains: ' + monsterList.length + ' monster(s)');
+  lines.push('// Metadata (for re-import editing):');
+  lines.push('/*');
+  monsterList.forEach(function(m) {
+    lines.push(' * ' + m.id + ': ' + JSON.stringify(m._customData || {}));
+  });
+  lines.push('*/');
+  lines.push('od.reader.jsonp_batch_data(0, "monster", {');
+
+  var entryLines = monsterList.map(function(m) {
+    var html = m.rawHtml || (m._customData ? forgeGenerateRawHtml(m._customData) : '');
+    // Escape backslashes, backticks, and ${ so the HTML is safe inside a JS template literal
+    var safe = html
+      .split('\\').join('\\\\')
+      .split('`').join('\\`')
+      .split('${').join('\\${');
+    return '  ' + JSON.stringify(m.id) + ': `' + safe + '`';
+  });
+  lines.push(entryLines.join(',\n'));
+  lines.push('});');
+
+  var js = lines.join('\n') + '\n';
+  var blob = new Blob([js], { type: 'application/javascript' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Import a previously exported custom monster .js file ──
+function forgeImportJS(files) {
+  if (!files || !files.length) return;
+  let imported = 0;
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const src = ev.target.result;
+
+      // Try to extract _customData metadata from comment block
+      const metaMap = {};
+      const metaRe  = /\* (custom-[^:]+): (\{.*\})/g;
+      let mm;
+      while ((mm = metaRe.exec(src)) !== null) {
+        try { metaMap[mm[1]] = JSON.parse(mm[2]); } catch(e) {}
+      }
+
+      try {
+        const od = {
+          reader: {
+            jsonp_batch_data(_ts, _type, dataMap) {
+              Object.entries(dataMap).forEach(([rawId, html]) => {
+                if (forgeCustomMonsters.find(x => x.id === rawId)) return; // skip duplicates
+                try {
+                  const m = parseMonsterFromHtml(rawId, html);
+                  if (!m) return;
+                  m._customData = metaMap[rawId] || null;
+                  m._isCustom   = true;
+                  m.source      = 'Custom (Forge)';
+                  m.rawHtml     = html;
+                  forgeCustomMonsters.push(m);
+                  if (!monsters.find(x => x.id === rawId)) monsters.push(m);
+                  imported++;
+                } catch(e) { console.warn('Import error', rawId, e); }
+              });
+            }
+          }
+        };
+        const fn = new Function('od', src);
+        fn(od);
+      } catch(e) { alert('Could not parse file: ' + file.name); }
+
+      forgePersist();
+      forgeRenderSaved();
+      filterMonsterList();
+      if (imported > 0) {
+        const btn = document.getElementById('fg-import-btn');
+        if (btn) { const orig = btn.textContent; btn.textContent = `✓ ${imported} imported!`; setTimeout(()=>btn.textContent=orig, 2000); }
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+function forgeRenderSaved() {
+  const section = document.getElementById('forgeSavedSection');
+  const list = document.getElementById('forgeSavedList');
+  if (!list) return;
+  if (forgeCustomMonsters.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = '';
+  list.innerHTML = forgeCustomMonsters.map(m => `
+    <div class="forge-saved-item">
+      <div style="color:var(--white);font-size:0.95rem;">${escHtml(m.name)}${m.groupRole!=='Standard'?` <span class="group-tag group-tag-${m.groupRole}">${m.groupRole}</span>`:''}</div>
+      <div style="color:var(--text-dim);font-family:'Cinzel',serif;font-size:0.85rem;text-align:center;">Lvl ${m.level}</div>
+      <div><span class="role-tag role-tag-${m.role.replace(/\s+/g,'')}">${m.role}</span></div>
+      <div style="color:var(--gold-dim);font-family:'Cinzel',serif;font-size:0.82rem;">${m.xp} XP</div>
+      <button class="rm-btn" onclick="forgeEditMonster('${m.id}')">✏ Edit</button>
+      <button class="rm-btn" onclick="forgeExportMonster('${m.id}')" title="Download as .js file">⬇ Export</button>
+      <button class="rm-btn danger" onclick="forgeDeleteMonster('${m.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
+function forgeEditMonster(id) {
+  const m = forgeCustomMonsters.find(x => x.id === id);
+  if (!m || !m._customData) return;
+  const d = m._customData;
+  // Populate form
+  document.getElementById('fg-name').value  = d.name;
+  document.getElementById('fg-type').value  = d.type;
+  document.getElementById('fg-level').value = d.level;
+  document.getElementById('fg-role').value  = d.role;
+  document.getElementById('fg-group').value = d.group;
+  document.getElementById('fg-speed').value = d.speed;
+  document.getElementById('fg-resist').value = d.resist;
+  document.getElementById('fg-senses').value = d.senses;
+  document.getElementById('fg-saves').value  = d.saves;
+  document.getElementById('fg-lore').value   = d.lore;
+  // Set overrides for all computed fields so user can tweak them
+  forgeOverrides = { hp:true, ac:true, fort:true, ref:true, will:true, atk:true, dmg:true, init:true, xp:true };
+  document.getElementById('fg-hp').value   = d.hp;
+  document.getElementById('fg-ac').value   = d.ac;
+  document.getElementById('fg-fort').value = d.fort;
+  document.getElementById('fg-ref').value  = d.ref;
+  document.getElementById('fg-will').value = d.will;
+  document.getElementById('fg-atk').value  = d.atk;
+  document.getElementById('fg-dmg').value  = d.dmg;
+  document.getElementById('fg-init').value = d.init;
+  document.getElementById('fg-xp').value   = d.xp;
+  forgePowers = d.powers.map(p => ({...p, id: ++forgePowerIdCounter}));
+  forgeRenderPowers();
+  forgeAutoCalc();
+  // Remove old entry — re-save will create a new one
+  forgeDeleteMonster(id, true);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function forgeDeleteMonster(id, silent) {
+  if (!silent && !confirm('Remove this custom monster?')) return;
+  forgeCustomMonsters = forgeCustomMonsters.filter(x => x.id !== id);
+  monsters = monsters.filter(x => x.id !== id);
+  forgePersist();
+  forgeRenderSaved();
+  filterMonsterList();
+}
+
+function forgeReset() {
+  document.getElementById('fg-name').value  = '';
+  document.getElementById('fg-type').value  = '';
+  document.getElementById('fg-level').value = 5;
+  document.getElementById('fg-role').value  = 'Skirmisher';
+  document.getElementById('fg-group').value = 'Standard';
+  document.getElementById('fg-speed').value = 6;
+  document.getElementById('fg-resist').value = '';
+  document.getElementById('fg-senses').value = '';
+  document.getElementById('fg-saves').value  = '';
+  document.getElementById('fg-lore').value   = '';
+  forgePowers = [];
+  forgeOverrides = {};
+  forgeRenderPowers();
+  forgeAutoCalc();
+}
+
+// Init on page load
+forgeLoadSaved();
+// Inject custom monsters into main list on load
+forgeCustomMonsters.forEach(m => { if (!monsters.find(x => x.id === m.id)) monsters.push(m); });
+// Do first render of powers list placeholder
+forgeRenderPowers();
 </script>
 </body>
 </html>
