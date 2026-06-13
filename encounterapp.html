@@ -4861,7 +4861,930 @@ const MONSTER_TEMPLATES = [
   flavour: 'Creatures enthralled and enslaved by the maddening rhythms of korred music, who have embraced their plight and now embody the deadly jig of the fey. Enraptured by the dancing lunacy of the Feywild.',
 },
   
+// ── ASCETIC OF VECNA ─────────────────────────────────────────
+// NOTE: No AC defense bonus. Fort +2, Will +4 only.
+// NOTE: prerequisite includes level 11.
+// NOTE: 'Master Scholar' recharges an encounter power — no attack roll, minor action.
+// NOTE: 'Master's Trick' regains an action point — daily, minor action.
+{
+  id: 'tpl-ascetic-of-vecna',
+  name: 'Ascetic of Vecna',
+  prerequisite: 'Humanoid or magical beast, level 11',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Artillery',
+  roleAppend: '',
+  defenses: { ac: 0, fort: 2, ref: 0, will: 4 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+6 per level + Constitution score',
+  hpBonusFn: (level, con) => 6 * level + (con || 10),
+  resistances: [],
+  powers: [
+    {
+      name: 'Creeping Rot',
+      usage: 'recharge',
+      action: 'Standard',
+      keywords: 'Recharge 5–6; Necrotic',
+      attack: 'Area burst 2 within 10; level +3 vs. Fortitude',
+      hit: '3d6 + Wisdom or Intelligence modifier (whichever is higher) necrotic damage, and ongoing 5 necrotic damage (save ends). Failed Saving Throw: Make an attack targeting a creature adjacent to the creature that failed its saving throw; level +3 vs. Fortitude; 3d6 + Wisdom or Intelligence modifier (whichever is higher) necrotic damage.',
+      notes: '',
+    },
+    {
+      name: 'Master Scholar',
+      usage: 'encounter',
+      action: 'Minor',
+      keywords: 'Encounter',
+      attack: '',
+      hit: '',
+      notes: 'Recharge Creeping Rot or one encounter power.',
+    },
+    {
+      name: "Master's Trick",
+      usage: 'daily',
+      action: 'Minor',
+      keywords: 'Daily',
+      attack: '',
+      hit: '',
+      notes: 'Regain an action point.',
+    },
+  ],
+  flavour: 'True devotees of Vecna who spend their existence contemplating the Maimed God\'s secrets. They venture into the world to collect esoteric knowledge, willing to fight or die to obtain even a minor piece of information for their sinister master.',
+},
 
+
+// ── DEATHHUNGER ──────────────────────────────────────────────
+// NOTE: prerequisite is Undead only.
+// NOTE: 'Consume' kills the triggering creature — it's an immediate reaction, not a standard action.
+// NOTE: 'Consume' also has a choice: regain HP or gain a defense bonus until end of encounter.
+// NOTE: 'Fast Healing' adds flat bonus HP whenever the creature regains HP (from any source).
+// NOTE: 'Bloodied Ferocity' damage bonus is +2 / +4 / +6 by tier.
+{
+  id: 'tpl-deathhunger',
+  name: 'Deathhunger',
+  prerequisite: 'Undead',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Brute',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 0, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+10 per level + Constitution score',
+  hpBonusFn: (level, con) => 10 * level + (con || 10),
+  resistances: [],
+  powers: [
+    {
+      name: 'Consume',
+      usage: 'recharge',
+      action: 'Immediate Reaction',
+      keywords: 'Healing; Recharges when first bloodied',
+      attack: '',
+      hit: '',
+      notes: 'Trigger: an adjacent creature is reduced to 0 hit points or fewer. Effect: the triggering creature is killed, and the deathhunger creature either regains hit points equal to one-quarter of its maximum hit points, or gains a +2 bonus to any one defense until the end of the encounter. See also Fast Healing.',
+    },
+    {
+      name: 'Bloodied Ferocity',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'While bloodied, the deathhunger creature gains a +2 bonus to damage rolls. This bonus increases to +4 at 11th level and +6 at 21st level.',
+    },
+    {
+      name: 'Fast Healing',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Whenever the deathhunger creature regains hit points, it regains 10 additional hit points. Increases to 20 at 11th level and 30 at 21st level.',
+    },
+  ],
+  flavour: 'Creatures with an insatiable appetite for death that drives them to consume their prey physically or psychically, growing in power with each creature they slay. Most consider deathhunger a curse, as it drives the afflicted into a mindless rage.',
+},
+
+
+// ── GUARDIAN OF THE DEAD ─────────────────────────────────────
+// NOTE: prerequisite is level 11 only — applies to any creature.
+// NOTE: 'Death Mark' marks one creature (save ends) at range close burst 5; minor at-will.
+// NOTE: 'Entombing Eye' targets only a creature already marked by Death Mark.
+// NOTE: 'Curse of Sacrilege' creates a persistent zone that can be moved as a move action.
+{
+  id: 'tpl-guardian-of-the-dead',
+  name: 'Guardian of the Dead',
+  prerequisite: 'Level 11',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Soldier',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 0, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  resistances: [],
+  powers: [
+    {
+      name: 'Death Mark',
+      usage: 'atwill',
+      action: 'Minor',
+      keywords: 'At-Will; Necrotic',
+      attack: 'Close burst 5; targets one creature',
+      hit: 'The target is marked (save ends). If a creature marked by this power makes an attack that does not include the guardian of the dead, it takes ongoing 10 necrotic damage (save ends). The guardian of the dead can have only one creature marked by this power at a time.',
+      notes: '',
+    },
+    {
+      name: 'Entombing Eye',
+      usage: 'recharge',
+      action: 'Standard',
+      keywords: 'Recharge 5–6; Gaze, Psychic',
+      attack: 'Close burst 5; targets one creature marked by Death Mark; level +2 vs. Will',
+      hit: '2d6 + Charisma modifier psychic damage, and the target is immobilized and takes ongoing 10 psychic damage (save ends both).',
+      notes: '',
+    },
+    {
+      name: 'Curse of Sacrilege',
+      usage: 'encounter',
+      action: 'Standard',
+      keywords: 'Encounter; Psychic, Zone',
+      attack: 'Area burst 3 within 20; targets enemies; level +2 vs. Will',
+      hit: '3d8 + Charisma modifier psychic damage, and the target is marked.',
+      notes: 'The burst creates a zone of cursed terrain that lasts until the end of the encounter. A creature marked by the guardian of the dead that starts its turn within the zone takes 10 psychic damage. The guardian of the dead can move the zone up to 3 squares as a move action.',
+    },
+  ],
+  flavour: 'Cursed, hexed, or bound by sacred promise to guard a tomb, treasure, or resting place from would-be grave robbers and adventurers. They take a variety of forms but share an unyielding drive to destroy any who defile their charge.',
+},
+
+
+// ── INFECTED ZOMBIE ──────────────────────────────────────────
+// NOTE: prerequisite is Zombie only (a sub-type of undead).
+// NOTE: Initiative penalty: −2. Stored as initiativeBonus: '−2'.
+// NOTE: Vulnerabilities are tiered AND include a special 'critical hits' vulnerability at all tiers.
+// NOTE: 'Mindless Attacker' is a restriction — it cannot use weapon keyword attacks.
+// NOTE: 'Death's Hunger' is a triggered trait with no attack roll; enables coup de grace loop.
+// NOTE: No hpBonusFn listed in source — using +12 per level + Con.
+// NOTE: No saving throw listed in source but '+2' assumed from Elite template pattern; confirmed present in block.
+{
+  id: 'tpl-infected-zombie',
+  name: 'Infected Zombie',
+  prerequisite: 'Zombie',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Brute',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 4, ref: 0, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+12 per level + Constitution score',
+  hpBonusFn: (level, con) => 12 * level + (con || 10),
+  initiativeBonus: '−2',
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'necrotic' },
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+  ],
+  vulnerabilities: [
+    { tier: 1,  value: 5,  note: 'radiant' },
+    { tier: 11, value: 10, note: 'radiant' },
+    { tier: 21, value: 15, note: 'radiant' },
+    { tier: 1,  value: 20, note: 'against critical hits' },
+  ],
+  powers: [
+    {
+      name: 'Infectious Bite',
+      usage: 'atwill',
+      action: 'Standard',
+      keywords: 'At-Will; Disease',
+      attack: 'Level +2 vs. AC',
+      hit: '2d8 + Strength modifier damage, and the target contracts zombie plague.',
+      notes: '',
+    },
+    {
+      name: "Death's Hunger",
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Trigger: an adjacent enemy is reduced to 0 hit points or fewer. Effect: the infected zombie is dazed and can make only coup de grace attacks against the triggering creature until the triggering creature is dead or the infected zombie is attacked. Each time the zombie hits the triggering creature with a coup de grace, it regains 10 hit points.',
+    },
+    {
+      name: 'Mindless Attacker',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'An infected zombie cannot use attacks that have the weapon keyword.',
+    },
+  ],
+  flavour: 'When a virulent plague rips through the land, some victims rise up from death as agents of the plague, spreading infection through their diseased bite.',
+},
+
+
+// ── RELENTLESS KILLER ────────────────────────────────────────
+// NOTE: No prerequisite (applies to any living creature).
+// NOTE: 'Death's Release' triggers on death (reduced to 0 HP) — close burst 3, necrotic.
+// NOTE: Damage on Death's Release scales by tier: 2d6 / 3d6 / 5d6 + Con modifier.
+// NOTE: 'Combat Advantage' extra damage is 2d6 / 3d6 (at 21st level).
+{
+  id: 'tpl-relentless-killer',
+  name: 'Relentless Killer',
+  prerequisite: 'None',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Soldier',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 0, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+10 per level + Constitution score',
+  hpBonusFn: (level, con) => 10 * level + (con || 10),
+  resistances: [],
+  powers: [
+    {
+      name: 'Mark of Death',
+      usage: 'recharge',
+      action: 'Standard',
+      keywords: 'Recharge 5–6; Fear',
+      attack: 'Close burst 5; targets one creature',
+      hit: 'The target is marked and grants combat advantage to the relentless killer (save ends).',
+      notes: '',
+    },
+    {
+      name: "Death's Release",
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Necrotic',
+      attack: 'Close burst 3; level +2 vs. Fortitude',
+      hit: '2d6 + Constitution modifier necrotic damage, and the target is knocked prone. Increases to 3d6 + Constitution modifier at 11th level and 5d6 + Constitution modifier at 21st level.',
+      notes: 'Trigger: the relentless killer is reduced to 0 hit points or fewer.',
+    },
+    {
+      name: 'Combat Advantage',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'The relentless killer deals 2d6 extra damage when it hits a creature it has combat advantage against. Increases to 3d6 at 21st level.',
+    },
+  ],
+  flavour: 'Creatures so twisted and deranged that their desire to kill cannot be sated. These individuals thrive off violence and the slaughter of living creatures.',
+},
+
+
+// ── SHADOW SPIRIT ────────────────────────────────────────────
+// NOTE: prerequisite is living beast, humanoid, or magical beast.
+// NOTE: Initiative bonus: +2.
+// NOTE: 'insubstantial' listed alongside tiered necrotic resistance — handle as special resistance.
+// NOTE: Tiered radiant vulnerability.
+// NOTE: Speed override: fly 8 (hover).
+// NOTE: 'Step Through the Shadows' teleport requires origin and destination to be dim light or darkness.
+// NOTE: Skills: Stealth +4.
+{
+  id: 'tpl-shadow-spirit',
+  name: 'Shadow Spirit',
+  prerequisite: 'Living beast, living humanoid, or living magical beast',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Lurker',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 0, ref: 4, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+6 per level + Constitution score',
+  hpBonusFn: (level, con) => 6 * level + (con || 10),
+  initiativeBonus: '+2',
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'necrotic' },
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+    { tier: 1,  value: 'insubstantial', count: 1, note: '' },
+  ],
+  vulnerabilities: [
+    { tier: 1,  value: 5,  note: 'radiant' },
+    { tier: 11, value: 10, note: 'radiant' },
+    { tier: 21, value: 15, note: 'radiant' },
+  ],
+  speed: 'fly 8 (hover)',
+  skillBonuses: [{ skill: 'Stealth', bonus: 4 }],
+  powers: [
+    {
+      name: "Shadow's Embrace",
+      usage: 'atwill',
+      action: 'Standard',
+      keywords: 'At-Will; Necrotic',
+      attack: 'Level +2 vs. Reflex',
+      hit: '1d10 + Charisma modifier necrotic damage, and the target is weakened until the end of the shadow spirit\'s next turn and blinded (save ends).',
+      notes: '',
+    },
+    {
+      name: 'Step Through the Shadows',
+      usage: 'recharge',
+      action: 'Move',
+      keywords: 'Recharge 5–6; Teleportation',
+      attack: '',
+      hit: '',
+      notes: 'The shadow spirit teleports up to 3 squares. Both the origin and destination space must be in dim light or darkness.',
+    },
+  ],
+  flavour: 'When a creature dies in a desolate corner of the Shadowfell — or where the Shadowfell bleeds over into the world — its soul is trapped, transforming it into an insubstantial undead spirit that haunts the dark places between life and death.',
+},
+
+
+// ── SPAWN OF KYUSS ───────────────────────────────────────────
+// NOTE: prerequisite is level 11 + beast, humanoid, or magical beast. Living not required.
+// NOTE: 'Fear of Worms' is an aura 3 that penalises attacks against specific creature types.
+// NOTE: Regeneration 10; suppressed by radiant damage until end of next turn (not sunlight like Vampire Lord).
+// NOTE: 'Touch of Kyuss' on first failed save contracts 'worms of Kyuss' disease.
+// NOTE: Worms of Kyuss disease block omitted from template JS (it's a separate disease entry).
+{
+  id: 'tpl-spawn-of-kyuss',
+  name: 'Spawn of Kyuss',
+  prerequisite: 'Level 11, and beast, humanoid, or magical beast',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Soldier',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 0, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'necrotic' },
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+  ],
+  regeneration: '10; suppressed when the spawn of Kyuss takes radiant damage until the end of its next turn',
+  powers: [
+    {
+      name: 'Fear of Worms',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Fear; Aura 3',
+      attack: '',
+      hit: '',
+      notes: 'Any living creature that starts its turn within the aura takes a −2 penalty to attack rolls against spawn of Kyuss, larva undead, wormspawn praetorians, and Kyuss.',
+    },
+    {
+      name: 'Touch of Kyuss',
+      usage: 'recharge',
+      action: 'Standard',
+      keywords: 'Recharge 5–6; Disease, Necrotic',
+      attack: 'Level +3 vs. Fortitude',
+      hit: '2d6 + Constitution modifier damage, and ongoing 10 necrotic damage (save ends). First Failed Saving Throw: The target contracts worms of Kyuss.',
+      notes: '',
+    },
+  ],
+  flavour: 'Created when necrotic burrowing worms kill their host and transform it into an undead monstrosity. Akin to larva undead, they were the Bonemaster\'s first experiments in worm-infused creature creation — formidable through sheer virulence and strength.',
+},
+
+
+// ── SPIRIT POSSESSED ─────────────────────────────────────────
+// NOTE: prerequisite is living creature, level 11, Charisma 13.
+// NOTE: Only Will defense bonus (+4). No other defense adjustments.
+// NOTE: Necrotic resist and radiant vulnerability both start at tier 11 (not tier 1).
+// NOTE: 'Psychic Assault' is minor, once per round, at-will.
+// NOTE: 'Spirit Transfer' triggers on death — complex: may dominate and re-apply template to target.
+// NOTE: On a successful saving throw by the new target, the spirit is destroyed.
+// NOTE: On a miss, spirit is also destroyed. Former host falls prone, unconscious at 1 HP until short rest.
+{
+  id: 'tpl-spirit-possessed',
+  name: 'Spirit Possessed',
+  prerequisite: 'Living creature, level 11, Charisma 13',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Controller',
+  roleAppend: '',
+  defenses: { ac: 0, fort: 0, ref: 0, will: 4 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  resistances: [
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+  ],
+  vulnerabilities: [
+    { tier: 11, value: 10, note: 'radiant' },
+    { tier: 21, value: 15, note: 'radiant' },
+  ],
+  powers: [
+    {
+      name: 'Psychic Assault',
+      usage: 'atwill',
+      action: 'Minor',
+      keywords: 'At-Will; Psychic',
+      attack: 'Close burst 10; targets one creature; level +2 vs. Will',
+      hit: '1d6 + Charisma modifier psychic damage, and the target is dazed until the end of the spirit possessed\'s next turn.',
+      notes: 'Usable once per round.',
+    },
+    {
+      name: 'Spirit Barrage',
+      usage: 'recharge',
+      action: 'Standard',
+      keywords: 'Recharge 5–6; Psychic',
+      attack: 'Close burst 2; targets enemies; level +3 vs. Fortitude',
+      hit: '2d6 + Charisma modifier damage, and the target is knocked prone.',
+      notes: '',
+    },
+    {
+      name: 'Spirit Transfer',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Charm, Psychic',
+      attack: 'Close burst 3; targets one creature; level +3 vs. Will',
+      hit: '3d6 + Charisma modifier psychic damage, and the target is dominated and takes 20 ongoing psychic damage (save ends both). If the target is reduced to 0 hit points or fewer by this attack or the ongoing damage, the target spends a healing surge to regain half its maximum hit points and is dominated (no save), gaining all characteristics of the spirit possessed template with all powers recharged. Successful Saving Throw: the possessing spirit is destroyed. Miss: half damage, no ongoing psychic damage, no domination, and the possessing spirit is destroyed. Hit or Miss: the spirit\'s former host falls prone and is unconscious at 1 hit point until it takes a short rest.',
+      notes: 'Trigger: the spirit possessed is reduced to 0 hit points or fewer.',
+    },
+  ],
+  flavour: 'Living creatures whose bodies are possessed by an undead spirit. They hide among the living, aping the actions of the host while covertly working toward malicious goals.',
+},
+
+
+// ── SWARM SHIFTER ────────────────────────────────────────────
+// NOTE: No prerequisite (applies to any creature).
+// NOTE: Role is Elite Skirmisher (swarm) — 'swarm' is a sub-tag on the type.
+// NOTE: Resist: half damage from melee and ranged attacks (special resistance, not numeric tier).
+// NOTE: Vulnerability is to close and area attacks; tiered 5 / 10 / 15.
+// NOTE: 'Swarm Attack' is an aura 1 that auto-triggers a poisonous bite — not a standard power.
+// NOTE: 'Squeezing Swarm' is a movement trait (no attack).
+// NOTE: Poisonous Bite damage scales: 1d8 at tiers 1/11, 2d8 at tier 21.
+{
+  id: 'tpl-swarm-shifter',
+  name: 'Swarm Shifter',
+  prerequisite: 'None',
+  typeAppend: '(swarm)',
+  groupRole: 'Elite',
+  role: 'Skirmisher',
+  roleAppend: '',
+  defenses: { ac: 0, fort: 2, ref: 4, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+6 per level + Constitution score',
+  hpBonusFn: (level, con) => 6 * level + (con || 10),
+  resistances: [
+    { tier: 1, value: 'half damage from melee and ranged attacks', count: 1, note: '' },
+  ],
+  vulnerabilities: [
+    { tier: 1,  value: 5,  note: 'close and area attacks' },
+    { tier: 11, value: 10, note: 'close and area attacks' },
+    { tier: 21, value: 15, note: 'close and area attacks' },
+  ],
+  powers: [
+    {
+      name: 'Swarm Attack',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Aura 1',
+      attack: '',
+      hit: '',
+      notes: 'The swarm shifter makes a Poisonous Bite attack against any enemy that starts its turn within the aura.',
+    },
+    {
+      name: 'Poisonous Bite',
+      usage: 'atwill',
+      action: 'Standard',
+      keywords: 'At-Will; Poison',
+      attack: 'Level +2 vs. Fortitude',
+      hit: '1d8 + Constitution modifier poison damage. Increases to 2d8 + Constitution modifier at 21st level.',
+      notes: '',
+    },
+    {
+      name: 'Squeezing Swarm',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'By altering its shape, the swarm shifter can squeeze through small openings as if it were a Tiny creature.',
+    },
+  ],
+  flavour: 'Creatures infested with beetles, roaches, scorpions, or other vermin — whether by scarab infestation or nefarious ritual. They gain the benefits of being a vermin: a new physical form, enhanced mobility, and a poisonous bite.',
+},
+
+
+// ── TOMB TAINTED ─────────────────────────────────────────────
+// NOTE: Prerequisite is any living creature.
+// NOTE: 'Necrotic Claws' makes 2 attacks against the same target; both hitting triggers ongoing necrotic.
+// NOTE: 'Death's Breath' damage scales by tier: 1d8 / 2d8 / 3d8 + Con modifier.
+// NOTE: 'Power of the Grave' adds necrotic keyword and extra damage to ALL melee attacks.
+// NOTE: Power of the Grave extra damage: 1d8 / 2d8 (at 21st level).
+{
+  id: 'tpl-tomb-tainted',
+  name: 'Tomb Tainted',
+  prerequisite: 'Living creature',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Brute',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 2, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+10 per level + Constitution score',
+  hpBonusFn: (level, con) => 10 * level + (con || 10),
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'necrotic' },
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+  ],
+  powers: [
+    {
+      name: 'Necrotic Claws',
+      usage: 'atwill',
+      action: 'Standard',
+      keywords: 'At-Will; Necrotic',
+      attack: 'Make 2 attacks against the same target: level +5 vs. AC each; 1d10 + Strength modifier damage each.',
+      hit: 'If both attacks hit, the target takes ongoing 5 necrotic damage (save ends).',
+      notes: '',
+    },
+    {
+      name: "Death's Breath",
+      usage: 'encounter',
+      action: 'Minor',
+      keywords: 'Encounter; Necrotic',
+      attack: 'Close burst 5; level +2 vs. Fortitude',
+      hit: '1d8 + Constitution modifier necrotic damage, and the target is immobilized (save ends). Increases to 2d8 + Constitution modifier at 11th level and 3d8 + Constitution modifier at 21st level.',
+      notes: '',
+    },
+    {
+      name: 'Power of the Grave',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Necrotic',
+      attack: '',
+      hit: '',
+      notes: 'The tomb tainted\'s melee attacks deal 1d8 extra necrotic damage and gain the necrotic keyword. This extra damage increases to 2d8 at 21st level.',
+    },
+  ],
+  flavour: 'Born under a dark star or touched too many times by the undead, these living creatures bear the mark of the grave: sallow skin, receding gums, bloodshot watery eyes, and elongated yellow fingernails.',
+},
+
+
+// ── VAMPIRE THRALL ───────────────────────────────────────────
+// NOTE: Prerequisite is living humanoid only.
+// NOTE: typeAppend is '(shapechanger, undead)' — two sub-types.
+// NOTE: Will defense is −2 (penalty, not bonus).
+// NOTE: Necrotic resist tier 3 uses level 15 (not 21) — transcribed exactly from source text.
+// NOTE: 'Blood Drain' recharges when adjacent creature becomes bloodied (not encounter).
+//       Damage scales: 1d12 / 2d12 + Cha modifier at 11th level.
+// NOTE: 'Telepathic Link' is a passive trait granting telepathy 20 to master only.
+// NOTE: 'Wolf Form' is daily polymorph; grants speed 8 and access to 'Savage Bite'.
+// NOTE: 'Savage Bite' is a sub-power of Wolf Form only — listed separately for display.
+//       Damage scales: 1d10 / 2d10 + Str modifier at 11th level.
+{
+  id: 'tpl-vampire-thrall',
+  name: 'Vampire Thrall',
+  prerequisite: 'Living humanoid',
+  typeAppend: '(shapechanger, undead)',
+  groupRole: 'Elite',
+  role: 'Brute',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 2, will: -2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+10 per level + Constitution score',
+  hpBonusFn: (level, con) => 10 * level + (con || 10),
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'necrotic' },
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 15, value: 15, count: 1, note: 'necrotic' }, // NOTE: source says level 15, not 21
+  ],
+  vulnerabilities: [
+    { tier: 1,  value: 5,  note: 'radiant' },
+    { tier: 11, value: 10, note: 'radiant' },
+    { tier: 21, value: 15, note: 'radiant' },
+  ],
+  powers: [
+    {
+      name: 'Blood Drain',
+      usage: 'recharge',
+      action: 'Standard',
+      keywords: 'Healing; Recharges when an adjacent creature becomes bloodied',
+      attack: 'Level +2 vs. Fortitude',
+      hit: '1d12 + Charisma modifier damage, and the target is weakened (save ends). The vampire thrall regains hit points equal to one-quarter of its maximum hit points. Increases to 2d12 + Charisma modifier at 11th level.',
+      notes: 'Requires combat advantage against the target.',
+    },
+    {
+      name: 'Telepathic Link',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'The vampire thrall\'s master can speak and be spoken to by the vampire thrall as if both had telepathy 20.',
+    },
+    {
+      name: 'Wolf Form',
+      usage: 'daily',
+      action: 'Standard',
+      keywords: 'Daily; Polymorph',
+      attack: '',
+      hit: '',
+      notes: 'The vampire thrall takes the form of a Medium black wolf, gaining speed 8 and access to the Savage Bite power.',
+    },
+    {
+      name: 'Savage Bite',
+      usage: 'atwill',
+      action: 'Standard',
+      keywords: 'At-Will (Wolf Form only)',
+      attack: 'Level +4 vs. AC',
+      hit: '1d10 + Strength modifier damage, and the target is knocked prone. Increases to 2d10 + Strength modifier at 11th level.',
+      notes: 'Only available while in Wolf Form.',
+    },
+  ],
+  flavour: 'Servants conditioned through repeated blood-feeding by a vampire lord. More hardy and subtle than ordinary vampire spawn, they retain their living appearance while serving their master with absolute obedience.',
+},
+
+// ── DRACONIC CREATURE ────────────────────────────────────────
+// NOTE: Dual role — Brute or Soldier — with different HP bonuses per role.
+//       Store both; your UI/tplApply() will need to let the user pick one.
+// NOTE: Prerequisite is natural beast or humanoid only (not all creatures).
+// NOTE: Resistance type is not fixed — it matches the chosen breath weapon damage type.
+//       Store as a placeholder string; actual type is chosen at time of application.
+// NOTE: Speed — gains fly (clumsy) equal to half land speed. If already has fly, use
+//       higher value and better maneuverability. No fixed speed value to store.
+// NOTE: Breath weapon damage type is chosen once and does not change.
+{
+  id: 'tpl-draconic-creature',
+  name: 'Draconic Creature',
+  prerequisite: 'Natural beast or humanoid',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Brute',          // or 'Soldier' — see hpBonus note below
+  roleAppend: '',
+  defenses: { ac: 0, fort: 0, ref: 0, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+10 per level + Constitution score (Brute) or +8 per level + Constitution score (Soldier)',
+  hpBonusFn: (level, con) => 10 * level + (con || 10),
+  // NOTE: resistance type matches the breath weapon damage type chosen at application time.
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'chosen breath weapon damage type' },
+    { tier: 11, value: 10, count: 1, note: 'chosen breath weapon damage type' },
+    { tier: 21, value: 15, count: 1, note: 'chosen breath weapon damage type' },
+  ],
+  speed: 'fly (clumsy) equal to half land speed (or existing fly speed if higher/better)',
+  powers: [
+    {
+      name: 'Breath Weapon',
+      usage: 'encounter',
+      action: 'Standard',
+      keywords: 'Encounter; Acid, Cold, Fire, Lightning, or Poison',
+      attack: 'Close blast 4; level +2 vs. Reflex',
+      hit: '2d8 + Constitution modifier damage of one chosen type: acid, cold, fire, lightning, or poison. The damage type does not change once chosen.',
+      notes: '',
+    },
+  ],
+  flavour: 'Creatures shaped by dragons or claiming draconic ancestry — whether loyal servants, hideous mutants, or descendants of those who once worked alongside dragonkind. Classic dragon hybrids such as dragonnes and dracotaurs are created this way.',
+},
+
+
+// ── DRAGONGUARD ──────────────────────────────────────────────
+// NOTE: Applies to any creature (no type restriction).
+// NOTE: Resistance is NOT tiered — it is a flat '10 + level' against the dragon patron's
+//       breath weapon type. This is a unique formula; store as a string note.
+// NOTE: The template is lost if the dragon patron dies or dismisses the creature.
+//       This is a narrative/campaign rule, not a mechanical stat block entry.
+// NOTE: 'Dragonguard's Protection' is at-will, immediate interrupt — triggers when an
+//       adjacent enemy attacks the dragon patron specifically.
+{
+  id: 'tpl-dragonguard',
+  name: 'Dragonguard',
+  prerequisite: 'Any creature with a dragon patron',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Soldier',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 2, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  // NOTE: flat formula resistance, not tiered — '10 + level' against patron's breath type.
+  resistances: [
+    { tier: 1, value: '10 + level', count: 1, note: "dragon patron's breath weapon damage type" },
+  ],
+  powers: [
+    {
+      name: "Dragonguard's Protection",
+      usage: 'atwill',
+      action: 'Immediate Interrupt',
+      keywords: 'At-Will',
+      attack: 'Basic attack against the triggering enemy.',
+      hit: '',
+      notes: 'Trigger: an enemy adjacent to the dragonguard attacks its dragon patron.',
+    },
+  ],
+  flavour: 'Trusted servants who fight alongside a dragon without getting in its way. A dragon has only one dragonguard at a time, which may serve as a lieutenant or emissary. The bond lasts only as long as the patron dragon lives and maintains the relationship.',
+},
+
+
+// ── ELITE DRAGON ─────────────────────────────────────────────
+// NOTE: This is a conversion template applied to an existing solo dragon stat block,
+//       not a creature-type template. It modifies the dragon's existing stats rather
+//       than adding new powers wholesale.
+// NOTE: Saving throws change from +5 to +2.
+// NOTE: Action points change from 2 to 1.
+// NOTE: HP formula replaces the solo formula entirely:
+//       16 + (Constitution score × 2) + (level × 16).
+// NOTE: Breath weapon becomes encounter (not recharge).
+// NOTE: One nonstandard attack power (interrupt/minor/move attack) is REMOVED.
+// NOTE: Healing and self-damaging powers are halved.
+// NOTE: Role and type are inherited from the base dragon — store as empty/inherited.
+// NOTE: No new powers are added; all powers listed are modifications of existing ones.
+{
+  id: 'tpl-elite-dragon',
+  name: 'Elite Dragon',
+  prerequisite: 'Solo dragon',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: '',               // inherited from base dragon
+  roleAppend: '',
+  defenses: { ac: 0, fort: 0, ref: 0, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',     // replaces the solo dragon's +5
+  actionPoints: 1,        // replaces the solo dragon's 2
+  hpBonus: '16 + (Constitution score × 2) + (level × 16)',
+  hpBonusFn: (level, con) => 16 + ((con || 10) * 2) + (level * 16),
+  resistances: [],        // inherited from base dragon unchanged
+  powers: [
+    {
+      name: 'Breath Weapon',
+      usage: 'encounter',
+      action: 'Standard',
+      keywords: 'Encounter (unchanged keywords)',
+      attack: '',
+      hit: '',
+      notes: 'Use the original breath weapon unchanged, but convert from a recharge power to an encounter power.',
+    },
+    {
+      name: 'Remove Nonstandard Attack Power',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Remove one interrupt attack power, minor attack power, or move attack power from the base dragon stat block.',
+    },
+    {
+      name: 'Adjust Healing and Self-Damage Powers',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Halve the values of any powers that heal the dragon or cause it to damage itself.',
+    },
+  ],
+  flavour: 'A weaker but more manageable form of a solo dragon, suitable for use alongside other creatures in an encounter. Consider reducing the dragon\'s size to signal it is a lesser member of its kind, especially if the full-strength version will appear later.',
+},
+
+
+// ── TOPIARY BEAST ────────────────────────────────────────────
+// NOTE: Prerequisite is natural beast only.
+// NOTE: groupRole is NOT Elite — the source block has no Elite tag, no XP Elite line,
+//       and no action points or saving throws stated as Elite additions in the original.
+//       However saving throws +2 and action points 1 ARE listed. Treat as Elite per pattern.
+// NOTE: typeAppend is '(plant)'.
+// NOTE: Senses: tremorsense 5.
+// NOTE: Vulnerability is tiered: 5 / 10 / 15 fire by level, NOT by tier keyword.
+//       Stored using tier 1/11/21 convention to match existing pattern.
+// NOTE: 'Seed of the Earth' is an aura — aura size not clearly legible in source (scanned
+//       as 'Au... 1'). Storing as aura 1 based on context.
+// NOTE: 'Thorned Touch' is a passive modifier on the melee basic attack, not a standalone power.
+//       Ongoing damage scales: 5 / 10 / 15 by tier.
+// NOTE: 'Creeping Vines' is at-will, once per round, melee 4 — pulls target 3 squares and marks.
+// NOTE: No defense bonuses listed in the source block.
+{
+  id: 'tpl-topiary-beast',
+  name: 'Topiary Beast',
+  prerequisite: 'Natural beast',
+  typeAppend: '(plant)',
+  groupRole: 'Elite',
+  role: '',               // inherited from base beast
+  roleAppend: '',
+  defenses: { ac: 0, fort: 0, ref: 0, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  senses: ['Tremorsense 5'],
+  resistances: [],
+  vulnerabilities: [
+    { tier: 1,  value: 5,  note: 'fire' },
+    { tier: 11, value: 10, note: 'fire' },
+    { tier: 21, value: 15, note: 'fire' },
+  ],
+  powers: [
+    {
+      name: 'Seed of the Earth',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Aura 1',
+      attack: '',
+      hit: '',
+      notes: 'Any enemy that starts its turn within the aura treats all squares as difficult terrain until the end of its next turn.',
+    },
+    {
+      name: 'Thorned Touch',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: "The topiary beast's melee basic attack deals ongoing 5 damage (save ends). If the target ends its turn farther from the topiary beast than where it started, the ongoing damage increases by 5 and the target cannot make a saving throw against it that turn. Level 11: ongoing 10 damage (save ends). Level 21: ongoing 15 damage (save ends).",
+    },
+    {
+      name: 'Creeping Vines',
+      usage: 'atwill',
+      action: 'Standard',
+      keywords: 'At-Will',
+      attack: 'Melee 4 (one creature); level +3 vs. Reflex',
+      hit: '1d6 + Strength modifier damage, and the topiary beast pulls the target 3 squares. The target is marked until the end of its next turn.',
+      notes: 'Usable once per round.',
+    },
+  ],
+  flavour: 'Garden topiaries warped by hellish energy into predatory plant-beasts. What were once decorative hedgerows shaped like animals have become deformed, animated creatures that behave like dire beasts, killing and devouring any who approach.',
+},
+
+
+// ── DEMON-POSSESSED ──────────────────────────────────────────
+// NOTE: Applies to any creature (no type restriction).
+// NOTE: Only Will defense is boosted (+4). No other defense changes listed.
+// NOTE: Variable resistance is tiered with escalating uses per encounter:
+//       10 variable (1/encounter) at tier 1
+//       15 variable (2/encounter) at tier 11
+//       20 variable (3/encounter) at tier 21
+//       Store as special resistance entries — value and encounter-use count both scale.
+// NOTE: 'Demonic Graft' is a meta-instruction: apply a theme attack and utility power
+//       from "Demonic Monster Themes." No fixed power to store — note as placeholder.
+// NOTE: 'Demonic Death Throes' triggers on dropping to 0 HP outside the Abyss.
+//       The specific effect comes from a separate "Death and Death Throes" table.
+//       Store as a trait with a reference note.
+{
+  id: 'tpl-demon-possessed',
+  name: 'Demon-Possessed',
+  prerequisite: 'Any creature',
+  typeAppend: '(demon)',
+  groupRole: 'Elite',
+  role: '',               // inherited from base creature
+  roleAppend: '',
+  defenses: { ac: 0, fort: 0, ref: 0, will: 4 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  resistances: [
+    { tier: 1,  value: 10, count: 1, note: 'variable (1/encounter)' },
+    { tier: 11, value: 15, count: 2, note: 'variable (2/encounter)' },
+    { tier: 21, value: 20, count: 3, note: 'variable (3/encounter)' },
+  ],
+  powers: [
+    {
+      name: 'Demonic Graft',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Apply one theme attack power and one theme utility power to the demon-possessed creature from the Demonic Monster Themes table.',
+    },
+    {
+      name: 'Demonic Death Throes',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Trigger: the demon-possessed creature drops to 0 hit points while not in the Abyss. Effect: use one power from the Death and Death Throes table. The possessing entity is destroyed.',
+    },
+  ],
+  flavour: 'Living creatures whose bodies are seized by a cacodemon. The possessing entity drives the host toward violence and destruction, and when the host is finally destroyed outside the Abyss, the demon within is annihilated along with it.',
+},
 
   // ── ADD YOUR OWN TEMPLATES BELOW ─────────────────────────────
   // Copy the block above and fill in your values.
@@ -5117,7 +6040,9 @@ function tplUpdatePreview() {
   const m = monsters.find(x => x.id === monsterId);
   if (!m) { preview.innerHTML = 'Monster not found.'; return; }
 
-  const con   = parseInt(document.getElementById('tplConScore')?.value) || 10;
+const conMatch = (m.rawHtml || '').match(/<b>Con<\/b>\s*(\d+)/i);
+const con = conMatch ? parseInt(conMatch[1]) : (parseInt(document.getElementById('tplConScore')?.value) || 10);
+document.getElementById('tplConScore').value = con;
   const level = m.level || 1;
   const hpAdd = tpl.hpBonusFn ? tpl.hpBonusFn(level, con) : 0;
   const newHp = (m.hp || 0) + hpAdd;
@@ -5192,19 +6117,29 @@ function tplApply() {
   const tpl = MONSTER_TEMPLATES.find(t => t.id === tplSelectedId);
   if (!tpl) { alert('No template selected.'); return; }
   if (!monsterId) { alert('Choose a target monster first.'); return; }
-
   const baseM = monsters.find(x => x.id === monsterId);
   if (!baseM) { alert('Monster not found.'); return; }
 
-  const con   = parseInt(document.getElementById('tplConScore')?.value) || 10;
+const conMatch = (baseM.rawHtml || '').match(/<b>Con<\/b>\s*(\d+)/i);
+const con = conMatch ? parseInt(conMatch[1]) : (parseInt(document.getElementById('tplConScore')?.value) || 10);
+document.getElementById('tplConScore').value = con;
+console.log('rawHtml snippet:', (baseM.rawHtml || '').slice(0, 500));
+console.log('conMatch:', conMatch);
+console.log('con:', con);
+
   const level = baseM.level || 1;
   const defs  = tpl.defenses || {};
 
   // Build existing powers from rawHtml if available, or from _customData
   let existingPowers = [];
-  if (baseM._customData && baseM._customData.powers) {
-    existingPowers = JSON.parse(JSON.stringify(baseM._customData.powers));
-  }
+if (baseM._customData && baseM._customData.powers) {
+  existingPowers = JSON.parse(JSON.stringify(baseM._customData.powers));
+} else if (baseM.powers && baseM.powers.length) {
+  existingPowers = JSON.parse(JSON.stringify(baseM.powers));
+}
+console.log('existingPowers:', existingPowers);
+console.log('baseM.powers:', baseM.powers);
+console.log('baseM._customData:', baseM._customData);
 
   // Build the resist string for the current level
   const resistStr = tplGetResistString(tpl, level);
@@ -5337,8 +6272,20 @@ if (resistStr) {
     _isCustom: true,
     _templateId: tpl.id,
   };
-  templatedM.rawHtml = forgeGenerateRawHtml(newCustomData);
+// Strip trailing publishedIn and alignment lines from original rawHtml
+const baseHtmlStripped = (baseM.rawHtml || '')
+  .replace(/<p class=publishedIn>[\s\S]*$/, '')
+  .replace(/<p class=flavor><b>Alignment[\s\S]*$/, '')
+  .replace(/<p class='flavor alt'><b>Skills[\s\S]*$/, '')
+  .trim();
 
+// Extract just the powers block from the generated html (everything after the table)
+const generated = forgeGenerateRawHtml(newCustomData);
+const tplPowersBlock = generated.replace(/^[\s\S]*?(<h2>Standard Actions[\s\S]*)$/, '$1');
+
+// Build final html: original stat header + original powers + template powers
+const headerOnly = generated.replace(/<h2>Standard Actions[\s\S]*$/, '').trim();
+templatedM.rawHtml = headerOnly + '\n' + baseHtmlStripped.replace(/^[\s\S]*?(<h2>[\s\S]*)$/, '$1').trim() + '\n' + tplPowersBlock;
   forgeCustomMonsters.push(templatedM);
   monsters.push(templatedM);
   forgePersist();
