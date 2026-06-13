@@ -598,6 +598,43 @@
   .forge-rules-card td { padding: 0.2rem 0.5rem; border-bottom: 1px solid rgba(60,45,25,0.3); color: var(--text); }
 
   textarea.forge-input { resize: vertical; min-height: 60px; font-size: 0.95rem; line-height: 1.5; }
+
+  /* ── MONSTER TEMPLATES ── */
+  .template-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 2px; padding: 2rem; margin-bottom: 2rem; position: relative; box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(200,150,50,0.07); }
+  .template-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+  .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.8rem; margin-bottom: 1.2rem; }
+  .template-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 0.9rem 1rem; cursor: pointer; transition: all 0.18s; position: relative; }
+  .template-card:hover { border-color: var(--gold-dim); background: color-mix(in srgb, var(--gold) 6%, var(--bg2)); }
+  .template-card.selected { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, var(--bg2)); box-shadow: 0 0 14px color-mix(in srgb, var(--gold) 18%, transparent); }
+  .template-card-name { font-family: 'Cinzel', serif; font-size: 0.88rem; color: var(--gold-light); margin-bottom: 0.3rem; }
+  .template-card-prereq { font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-bottom: 0.5rem; }
+  .template-card-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .tpl-tag { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.1rem 0.4rem; border-radius: 20px; border: 1px solid; }
+  .tpl-tag-elite { color: var(--elite); border-color: var(--elite); }
+  .tpl-tag-solo { color: var(--solo); border-color: var(--solo); }
+  .tpl-tag-role { color: var(--gold-dim); border-color: var(--gold-dim); }
+  .tpl-tag-powers { color: var(--text-muted); border-color: var(--text-muted); }
+
+  .template-apply-bar { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; padding: 1rem 1.2rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .template-apply-bar h4 { font-family: 'Cinzel', serif; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+  .template-target-row { display: flex; gap: 0.8rem; align-items: flex-end; flex-wrap: wrap; }
+  .template-target-row .field-group { flex: 1; min-width: 180px; }
+  .template-preview-changes { font-size: 0.82rem; color: var(--text-dim); line-height: 1.7; padding: 0.6rem 0.8rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; }
+  .template-preview-changes b { color: var(--gold-light); }
+  .template-preview-changes .tpl-change-add { color: #6abf6a; }
+  .template-preview-changes .tpl-change-mod { color: var(--gold-light); }
+
+  .tpl-applied-badge { display: inline-block; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.1rem 0.45rem; border-radius: 20px; border: 1px solid var(--gold-dim); color: var(--gold-dim); margin-left: 0.4rem; vertical-align: middle; }
+
+  .template-monster-select { background: var(--bg2); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'EB Garamond', serif; font-size: 1.05rem; padding: 0.5rem 0.7rem; width: 100%; outline: none; transition: border-color 0.2s; }
+  .template-monster-select:focus { border-color: var(--gold-dim); }
+
+  .tpl-resist-editor { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.4rem; }
+  .tpl-resist-row { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem; align-items: center; font-size: 0.88rem; }
+  .tpl-resist-row label { color: var(--text-dim); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+  .tpl-resist-row input { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-family: 'EB Garamond', serif; font-size: 0.95rem; padding: 0.3rem 0.6rem; width: 100%; outline: none; }
+  .tpl-resist-row input:focus { border-color: var(--gold-dim); }
 </style>
 </head>
 <body>
@@ -1022,6 +1059,69 @@
         </div>
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:2px;">
           <div id="forgeSavedList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TEMPLATE WORKSHOP ═══ -->
+    <div class="template-panel" id="templateWorkshopPanel">
+      <div class="section-title">Template Workshop — Apply Templates to Monsters</div>
+
+      <div class="forge-rules-card" style="margin-bottom:1.2rem;">
+        <b>How templates work:</b> Select a template, then choose a monster from your loaded library or saved custom monsters. The template adjusts the monster's group role, defences, saves, HP, resistances, and adds template powers — then saves the result as a new custom monster in your library.<br>
+        <span style="font-size:0.8rem;color:var(--text-muted);">The original monster is never modified. Templates with variable resistances will prompt you to choose the damage type(s).</span>
+      </div>
+
+      <!-- Template picker grid -->
+      <div class="section-title" style="margin-bottom:0.8rem;">Choose a Template</div>
+      <div class="template-grid" id="templateGrid">
+        <div style="color:var(--text-muted);font-style:italic;font-size:0.88rem;padding:0.4rem;">No templates loaded yet.</div>
+      </div>
+
+      <!-- Apply bar (hidden until template selected) -->
+      <div class="template-apply-bar" id="templateApplyBar" style="display:none;">
+        <h4 id="tplApplyTitle">Apply Template</h4>
+
+        <div class="template-target-row">
+          <div class="field-group" style="position:relative;">
+            <label>Target Monster</label>
+            <input type="text" id="tplMonsterSearch" class="template-monster-select"
+                   placeholder="Type to search monsters…"
+                   autocomplete="off"
+                   oninput="tplFilterMonsterSearch()"
+                   onfocus="tplOpenDropdown()"
+                   onblur="setTimeout(tplCloseDropdown, 180)"
+                   onkeydown="tplSearchKeydown(event)" />
+            <input type="hidden" id="tplMonsterSelect" value="" />
+            <div id="tplMonsterDropdown" style="
+              display:none; position:absolute; top:100%; left:0; right:0; z-index:200;
+              background:var(--bg2); border:1px solid var(--gold-dim); border-top:none;
+              border-radius:0 0 2px 2px; max-height:240px; overflow-y:auto;
+              box-shadow:0 8px 24px rgba(0,0,0,0.6);
+            "></div>
+          </div>
+          <div class="field-group" style="max-width:120px;">
+            <label>Constitution Score</label>
+            <input type="number" id="tplConScore" min="1" max="40" value="10"
+                   style="background:var(--bg2);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:'EB Garamond',serif;font-size:1.05rem;padding:0.5rem 0.7rem;width:100%;outline:none;"
+                   oninput="tplUpdatePreview()" />
+          </div>
+        </div>
+
+        <!-- Variable resistance chooser (shown if template has resistances) -->
+        <div id="tplResistSection" style="display:none;">
+          <div style="font-family:'Cinzel',serif;font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem;">Choose Resistance Type(s)</div>
+          <div class="tpl-resist-editor" id="tplResistEditor"></div>
+        </div>
+
+        <!-- Preview of changes -->
+        <div class="template-preview-changes" id="tplPreviewChanges">
+          Select a monster above to preview changes.
+        </div>
+
+        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;">
+          <button class="action-btn" onclick="tplApply()">⚗ Apply Template &amp; Save to Library</button>
+          <button class="action-btn secondary" onclick="tplClearSelection()">✕ Deselect Template</button>
         </div>
       </div>
     </div>
@@ -3188,7 +3288,8 @@ function forgeGenerateRawHtml(d) {
   return `<h1 class="monster"><span class="type">${d.type||''}</span>${d.name}<span class="level">Level ${d.level}${groupLabel} ${d.role}<span class="xp">XP ${d.xp.toLocaleString()}</span></span></h1>
 <table class="bodytable"><tr><td><b>HP</b> ${d.hp}; <b>Bloodied</b> ${Math.floor(d.hp/2)}</td><td class="rightalign"><b>Initiative</b> ${sign(d.init)}</td></tr>
 <tr><td><b>AC</b> ${d.ac}, <b>Fortitude</b> ${d.fort}, <b>Reflex</b> ${d.ref}, <b>Will</b> ${d.will}</td><td class="rightalign"><b>Perception</b> ${sign(d.init)}</td></tr>
-<tr><td><b>Speed</b> ${d.speed}</td><td class="rightalign">${d.senses||''}</td></tr>${d.resist?`\n<tr><td colspan="2"><b>Resist/Immune:</b> ${d.resist}</td></tr>`:''}${d.saves?`\n<tr><td colspan="2"><b>Saving Throws:</b> ${d.saves}</td></tr>`:''}</table>
+<tr><td><b>Speed</b> ${d.speed}</td><td class="rightalign">${d.senses||''}</td></tr>${d.regen?`\n<tr><td colspan="2"><b>Regeneration</b> ${d.regen}</td></tr>`:''}
+${d.resist?`\n<tr><td colspan="2"><b>Resist:</b> ${d.resist}</td></tr>`:''}${d.immune?`\n<tr><td colspan="2"><b>Immune:</b> ${d.immune}</td></tr>`:''}${d.vuln&&d.vuln.length?`\n<tr><td colspan="2"><b>Vulnerable:</b> ${d.vuln.map(v=>`${v.value} ${v.note}`).join(', ')}</td></tr>`:''}${d.saves?`\n<tr><td colspan="2"><b>Saving Throws:</b> ${d.saves}</td></tr>`:''}</table>
 ${d.lore ? `<p class="flavorIndent"><i>${d.lore}</i></p>` : ''}
 <h2>Standard Actions</h2>
 <p class="flavor alt"><b>Basic Attack</b> (at-will) · Standard Action<br><i>Attack:</i> ${sign(d.atk)} vs AC — <i>Hit:</i> ${d.dmg} damage<br><span style="font-size:0.82em;color:#7a5a1a;">Encounter/daily power: ~${d.encDmg != null ? d.encDmg : Math.round(d.dmg*1.375)} dmg &nbsp;·&nbsp; Multi-target: ~${d.multiDmg != null ? d.multiDmg : Math.round(d.dmg*0.75)} dmg &nbsp;<em>(reference only)</em></span></p>
@@ -3369,8 +3470,8 @@ function forgeDeleteMonster(id, silent) {
 function forgeReset() {
   document.getElementById('fg-name').value  = '';
   document.getElementById('fg-type').value  = '';
-  document.getElementById('fg-level').value = 5;
-  document.getElementById('fg-role').value  = 'Skirmisher';
+  document.getElementById('fg-level').value = 1;
+  document.getElementById('fg-role').value  = 'Brute';
   document.getElementById('fg-group').value = 'Standard';
   document.getElementById('fg-speed').value = 6;
   document.getElementById('fg-resist').value = '';
@@ -3389,6 +3490,1255 @@ forgeLoadSaved();
 forgeCustomMonsters.forEach(m => { if (!monsters.find(x => x.id === m.id)) monsters.push(m); });
 // Do first render of powers list placeholder
 forgeRenderPowers();
+
+// ═══════════════════════════════════════════════════════════════
+// ──  MONSTER TEMPLATE SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+// ── Template definitions ─────────────────────────────────────
+// To add more templates, push new objects into MONSTER_TEMPLATES.
+// Full format documented in the spec above the data.
+
+const MONSTER_TEMPLATES = [
+
+  // ── DEMONIC ACOLYTE ──────────────────────────────────────────
+  {
+    id: 'tpl-demonic-acolyte',
+    name: 'Demonic Acolyte',
+    prerequisite: 'Humanoid or magical beast',
+    typeAppend: '(demon)',
+    groupRole: 'Elite',
+    role: 'Controller',
+    roleAppend: '(Leader)',
+    defenses: { ac: 1, fort: 2, ref: 0, will: 2 },
+    defenseNotes: '',
+    savingThrows: '+2',
+    actionPoints: 1,
+    hpBonus: '+8 per level + Constitution score',
+    hpBonusFn: (level, con) => 8 * level + (con || 10),
+    resistances: [
+      { tier: 1,  value: 5,  count: 1, note: 'choose one type' },
+      { tier: 11, value: 10, count: 2, note: 'choose two types' },
+      { tier: 21, value: 15, count: 3, note: 'choose three types' },
+    ],
+    powers: [
+      {
+        name: 'Shield of Abyssal Majesty',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: 'Aura 5',
+        attack: '',
+        hit: '',
+        notes: 'Allies in the aura gain the demonic acolyte\'s resistance(s).',
+      },
+      {
+        name: 'Abyssal Might',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: '+2 power bonus to damage rolls with all attacks (+4 at 11th level, +6 at 21st level).',
+      },
+      {
+        name: 'Consume Soul',
+        usage: 'trait',
+        action: 'Immediate Reaction',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: 'Trigger: an ally within 5 squares is reduced to 0 HP. Effect: Regain HP equal to ½ level.',
+      },
+    ],
+    flavour: 'Grim priest of a demon lord — Orcus, Demogorgon, Baphomet, or another. A demon lord must personally invest power in an acolyte, making such foes particularly dangerous.',
+  },
+
+  // ── DEMAGOGUE ────────────────────────────────────────────────
+  {
+    id: 'tpl-demagogue',
+    name: 'Demagogue',
+    prerequisite: 'Humanoid or magical beast',
+    typeAppend: '',
+    groupRole: 'Elite',
+    role: 'Controller',
+    roleAppend: '(Leader)',
+    defenses: { ac: 0, fort: 2, ref: 0, will: 4 },
+    defenseNotes: '+4 to all defenses vs charm and fear effects',
+    savingThrows: '+2',
+    actionPoints: 1,
+    hpBonus: '+8 per level + Constitution score',
+    hpBonusFn: (level, con) => 8 * level + (con || 10),
+    resistances: [],
+    powers: [
+      {
+        name: 'Deathless Fanaticism',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: 'Aura 5',
+        attack: '',
+        hit: '',
+        notes: 'Lower-level allies (not minions) in the aura remain alive when reduced to 0 HP, dying at the end of their next turn if still at 0 HP or below.',
+      },
+      {
+        name: 'Mob Defense',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: '+1 bonus to all defenses for each ally adjacent to the demagogue.',
+      },
+      {
+        name: 'Clever Escape',
+        usage: 'recharge',
+        action: 'Move',
+        keywords: 'Recharge 5–6',
+        attack: '',
+        hit: '',
+        notes: 'Move up to twice speed. Can only move into squares farther from enemies. Does not provoke opportunity attacks.',
+      },
+    ],
+    flavour: 'A villain of overwhelming force of personality who manipulates and exploits others. Followers are utter fanatics — dedicated to the cause at any price, even death or worse.',
+  },
+
+// ── BATTLE CHAMPION ──────────────────────────────────────────
+  {
+    id: 'tpl-battle-champion',
+    name: 'Battle Champion',
+    prerequisite: 'Humanoid',
+    typeAppend: '',
+    groupRole: 'Elite',
+    role: 'Soldier',
+    roleAppend: '(Leader)',
+    defenses: { ac: 2, fort: 2, ref: 0, will: 0 },
+    defenseNotes: '',
+    savingThrows: '+2',
+    actionPoints: 1,
+    hpBonus: '+8 per level + Constitution score',
+    hpBonusFn: (level, con) => 8 * level + (con || 10),
+    resistances: [],
+    powers: [
+      {
+        name: 'Battle Champion Tactics',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: 'The battle champion and its allies deal an extra 1d6 damage against enemies the battle champion flanks (2d6 at 11th level, 3d6 at 21st level).',
+      },
+      {
+        name: 'Battle Talent',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: 'The battle champion can score critical hits on attack rolls of natural 19 and 20.',
+      },
+      {
+        name: 'Inspiring Assault',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: 'Whenever it scores a critical hit, the battle champion and all allies within 5 squares regain HP equal to ½ the battle champion\'s level.',
+      },
+    ],
+    flavour: 'A tougher-than-normal humanoid monster from a civilized tribe or nation — a goblin king, a drow duelist, or a garrison commander. Not only a skilled warrior, but also a rallying point for allies in combat.',
+  },
+
+  // ── BODYGUARD ────────────────────────────────────────────────
+  {
+    id: 'tpl-bodyguard',
+    name: 'Bodyguard',
+    prerequisite: 'Humanoid',
+    typeAppend: '',
+    groupRole: 'Elite',
+    role: 'Soldier',
+    roleAppend: '',
+    defenses: { ac: 2, fort: 2, ref: 1, will: 1 },
+    defenseNotes: '',
+    savingThrows: '+2',
+    actionPoints: 1,
+    hpBonus: '+8 per level + Constitution score',
+    hpBonusFn: (level, con) => 8 * level + (con || 10),
+    resistances: [],
+    powers: [
+      {
+        name: 'Indomitable Presence',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: 'Every attack the bodyguard makes (hit or miss) marks that target until end of the bodyguard\'s next turn (−2 to attacks not including the bodyguard). If a marked adjacent enemy shifts or attacks without including the bodyguard, the bodyguard may make a basic melee attack as an immediate interrupt.',
+      },
+      {
+        name: 'Shieldbearer',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: '',
+        attack: '',
+        hit: '',
+        notes: 'Allies adjacent to the bodyguard gain a +2 power bonus to AC.',
+      },
+    ],
+    flavour: 'A fanatic melee combatant who gladly gives its life to protect its master. The most important follower a villain can have.',
+  },
+
+  // ── DEATH KNIGHT ─────────────────────────────────────────────
+  {
+    id: 'tpl-death-knight',
+    name: 'Death Knight',
+    prerequisite: 'Level 11',
+    typeAppend: '(undead)',
+    groupRole: 'Elite',
+    role: 'Soldier',
+    roleAppend: '(Leader)',
+    defenses: { ac: 2, fort: 4, ref: 0, will: 2 },
+    defenseNotes: '',
+    savingThrows: '+2',
+    actionPoints: 1,
+    hpBonus: '+8 per level + Constitution score',
+    hpBonusFn: (level, con) => 8 * level + (con || 10),
+    senses: ['Darkvision'],
+    immunities: ['disease', 'poison'],
+    resistances: [
+      { tier: 11, value: 10, count: 1, note: 'necrotic' },
+      { tier: 21, value: 15, count: 1, note: 'necrotic' },
+    ],
+    vulnerabilities: [{ value: 10, note: 'radiant' }],
+    powers: [
+      {
+        name: 'Marshal Undead',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: 'Aura 10',
+        attack: '',
+        hit: '',
+        notes: 'Lower-level undead allies in the aura gain a +2 bonus to attack rolls.',
+      },
+      {
+        name: 'Soul Weapon',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: 'Necrotic, Weapon',
+        attack: '',
+        hit: '',
+        notes: 'When attacking with its melee weapon, the death knight deals an additional 5 necrotic damage. The death knight\'s soul is bound to this weapon; if destroyed, it can be restored by touch as a minor action. The death knight is dazed and weakened without possession of its soul weapon.',
+      },
+      {
+        name: 'Unholy Flames',
+        usage: 'recharge',
+        action: 'Standard',
+        keywords: 'Fire, Necrotic; Recharge 5–6',
+        attack: 'Close burst 2; level +2 vs. Reflex',
+        hit: '6d8 + Constitution modifier necrotic and fire damage to living creatures; undead in the burst deal an extra 2d6 fire damage with melee attacks until end of the death knight\'s next turn.',
+        notes: '',
+      },
+    ],
+    flavour: 'Once-powerful warriors granted eternal undeath — whether as punishment for grave betrayal or reward for a lifetime of dark servitude. Their soul is bound to the weapon they wield.',
+  },
+
+  // ── DEATH MASTER ─────────────────────────────────────────────
+  {
+    id: 'tpl-death-master',
+    name: 'Death Master',
+    prerequisite: 'Humanoid',
+    typeAppend: '(shadow)',
+    groupRole: 'Elite',
+    role: 'Controller',
+    roleAppend: '(Leader)',
+    defenses: { ac: 2, fort: 2, ref: 0, will: 2 },
+    defenseNotes: '',
+    savingThrows: '+2',
+    actionPoints: 1,
+    hpBonus: '+8 per level + Constitution score',
+    hpBonusFn: (level, con) => 8 * level + (con || 10),
+    resistances: [
+      { tier: 1,  value: 5,  count: 1, note: 'necrotic' },
+      { tier: 11, value: 10, count: 1, note: 'necrotic' },
+      { tier: 21, value: 15, count: 1, note: 'necrotic' },
+    ],
+    powers: [
+      {
+        name: 'Shroud of the Grave',
+        usage: 'trait',
+        action: 'Trait',
+        keywords: 'Necrotic; Aura 5',
+        attack: '',
+        hit: '',
+        notes: 'All undead within 5 squares of the death master lose any vulnerability to radiant damage.',
+      },
+      {
+        name: 'Call of the Grave',
+        usage: 'encounter',
+        action: 'Standard',
+        keywords: 'Encounter',
+        attack: 'Ranged 10',
+        hit: '',
+        notes: 'Four undead minions of the death master\'s level or lower appear in any unoccupied space within range. These minions take their turns immediately after the death master. A death master is always accompanied by four such undead minions.',
+      },
+    ],
+    flavour: 'The epitome of necromantic power — a spellcaster who has delved into the secrets of necromantic lore to create and control the undead. Always accompanied by four undead minions.',
+  },
+
+// ── DEVASTATOR ───────────────────────────────────────────────
+{
+  id: 'tpl-devastator',
+  name: 'Devastator',
+  prerequisite: 'Humanoid',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Artillery',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 0, ref: 2, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+6 per level + Constitution score',
+  hpBonusFn: (level, con) => 6 * level + (con || 10),
+  resistances: [],
+  powers: [
+    {
+      name: 'Spell Shaper',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Whenever the devastator uses a close burst or area attack power, it can choose up to two allies in the area. Those allies are not targeted by the power.',
+    },
+    {
+      name: 'Endless Power',
+      usage: 'recharge',
+      action: 'Minor',
+      keywords: 'Recharge 6',
+      attack: '',
+      hit: '',
+      notes: 'The devastator regains the use of an expended encounter power.',
+    },
+  ],
+  flavour: 'An expert at battle magic, trained to lay down a continuous fire of destructive spells. Best applied to war-trained spellcasters such as clerics, warlocks, and wizards.',
+},
+
+// ── FEYBORN ──────────────────────────────────────────────────
+{
+  id: 'tpl-feyborn',
+  name: 'Feyborn',
+  prerequisite: 'Beast or humanoid',
+  typeAppend: '(fey)',
+  groupRole: 'Elite',
+  role: 'Skirmisher',
+  roleAppend: '',
+  defenses: { ac: 1, fort: 0, ref: 2, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  resistances: [],
+  powers: [
+    {
+      name: 'Step Through the Mists',
+      usage: 'encounter',
+      action: 'Move',
+      keywords: 'Encounter',
+      attack: '',
+      hit: '',
+      notes: 'The feyborn creature teleports up to 3 squares.',
+    },
+    {
+      name: 'Undeniable Beauty',
+      usage: 'atwill',
+      action: 'Immediate Interrupt',
+      keywords: 'At-Will',
+      attack: 'Level +2 vs. Will against the attacker',
+      hit: 'The attacker must target a different creature or end its attack.',
+      notes: 'Trigger: the feyborn creature is targeted by a melee attack.',
+    },
+    {
+      name: 'Lure of the Wild',
+      usage: 'recharge',
+      action: 'Standard',
+      keywords: 'Recharge 6',
+      attack: 'Ranged 10; level +2 vs. Will',
+      hit: 'The target is pulled 5 squares and is dazed (save ends).',
+      notes: '',
+    },
+  ],
+  flavour: 'Creatures subtly transformed by the Feywild\'s powerful, uncontrolled magic — whether through prolonged exposure or as a boon granted by a fey lord in return for faithful service.',
+},
+
+// ── FROST ADEPT ──────────────────────────────────────────────
+{
+  id: 'tpl-frost-adept',
+  name: 'Frost Adept',
+  prerequisite: 'Humanoid or magical beast',
+  typeAppend: '(elemental)',
+  groupRole: 'Elite',
+  role: 'Controller',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 0, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'cold' },
+    { tier: 11, value: 10, count: 1, note: 'cold' },
+    { tier: 21, value: 15, count: 1, note: 'cold' },
+  ],
+  powers: [
+    {
+      name: 'Body of Ice',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'Any creature that hits the frost adept with a melee attack is slowed until the end of that creature\'s next turn.',
+    },
+    {
+      name: 'Ice Master',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'The frost adept can convert any attack power it has to cold. Change a power\'s energy keyword to cold, or add cold energy to an attack power that doesn\'t normally deal energy damage.',
+    },
+  ],
+  flavour: 'A champion of elemental cold, chosen for strict adherence to its master\'s power. Elemental beings grant the might of ice to especially faithful servants — devoted priests or warriors of unmatched skill.',
+},
+
+// ── LICH ─────────────────────────────────────────────────────
+// NOTE: Role is 'Controller or Artillery' — hpBonusFn below uses controller (+8).
+// For artillery, hp bonus is +6 per level + Con. Consider splitting into two templates
+// or adding a roleAlt field and secondary hpBonusFn if your app needs to handle both.
+{
+  id: 'tpl-lich',
+  name: 'Lich',
+  prerequisite: 'Level 11, Intelligence 13',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Controller',      // or 'Artillery' — see note above
+  roleAppend: '',
+  defenses: { ac: 2, fort: 4, ref: 0, will: 4 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score (Controller) or +6 per level + Constitution score (Artillery)',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  senses: ['Darkvision'],
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 1,  value: '5 + ½ level', count: 1, note: 'necrotic' },
+  ],
+  // NOTE: Lich resistance is '5 + half level necrotic' — not a flat tiered value.
+  // Your resistances array uses numeric `value`; you may want a `valueFn` or `valueExpr` field
+  // for formula-based resistances like this one.
+  regeneration: '10; suppressed by radiant damage (does not function on the turn after taking radiant damage)',
+  powers: [
+    {
+      name: 'Spellmaster',
+      usage: 'recharge',
+      action: 'Minor',
+      keywords: 'Recharge 5–6',
+      attack: '',
+      hit: '',
+      notes: 'The lich regains the use of an expended encounter power.',
+    },
+    {
+      name: 'Necromantic Aura',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Necrotic; Aura 5',
+      attack: '',
+      hit: '',
+      notes: 'Any living creature that enters or starts its turn in the aura takes 5 necrotic damage.',
+    },
+    {
+      name: 'Necrotic Master',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'The lich can convert any attack power it has to necrotic. Change a power\'s energy keyword to necrotic, or add necrotic energy to an attack power that doesn\'t normally deal energy damage.',
+    },
+  ],
+  flavour: 'Evil arcane masterminds that pursue undeath to achieve immortality — cold, scheming creatures who hunger for ever-greater power. Some know a ritual binding their essence to a phylactery, allowing them to reappear within 1d10 days of destruction unless the phylactery is also destroyed.',
+},
+
+// ── MUMMY CHAMPION ───────────────────────────────────────────
+{
+  id: 'tpl-mummy-champion',
+  name: 'Mummy Champion',
+  prerequisite: 'Humanoid, level 11',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Brute',
+  roleAppend: '(Leader)',
+  defenses: { ac: 2, fort: 2, ref: 0, will: 4 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+10 per level + Constitution score',
+  hpBonusFn: (level, con) => 10 * level + (con || 10),
+  senses: ['Darkvision'],
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+  ],
+  regeneration: '10; suppressed by fire damage (does not function on the turn after taking fire damage)',
+  powers: [
+    {
+      name: 'Despair',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Fear; Aura 5',
+      attack: '',
+      hit: '',
+      notes: 'Enemies within the aura take a −2 penalty to attack rolls against the mummy champion.',
+    },
+    {
+      name: 'Rotting Slam',
+      usage: 'atwill',
+      action: 'Standard',
+      keywords: 'At-Will; Necrotic',
+      attack: 'Melee; level +5 vs. AC',
+      hit: '2d8 + Strength modifier necrotic damage, and the target contracts mummy rot (level equal to the mummy champion\'s level).',
+      notes: '',
+    },
+  ],
+  flavour: 'Created through a dark ritual to sustain a creature past its mortal life span — or revive it after death. Typically reserved for important religious champions and warriors, though the ritual can also curse an unfortunate soul to a prison of undeath.',
+},
+
+// ── MUMMY LORD ───────────────────────────────────────────────
+{
+  id: 'tpl-mummy-lord',
+  name: 'Mummy Lord',
+  prerequisite: 'Humanoid, level 11',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Controller',
+  roleAppend: '(Leader)',
+  defenses: { ac: 2, fort: 2, ref: 0, will: 4 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  senses: ['Darkvision'],
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+  ],
+  regeneration: '10; suppressed by fire damage (does not function on the turn after taking fire damage)',
+  powers: [
+    {
+      name: 'Despair',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Fear; Aura 5',
+      attack: '',
+      hit: '',
+      notes: 'Enemies within the aura take a −2 penalty to attack rolls against the mummy lord.',
+    },
+    {
+      name: 'Mummy\'s Curse',
+      usage: 'trait',
+      action: 'Trigger',
+      keywords: 'Close Burst 10',
+      attack: 'Level +2 vs. Will',
+      hit: 'All enemies within burst contract mummy rot (level equal to the mummy lord\'s level).',
+      notes: 'Trigger: the mummy lord is reduced to 0 HP.',
+    },
+  ],
+  flavour: 'Created through a dark ritual to sustain a creature past its mortal life span — typically reserved for important religious leaders. A drow priestess, foulspawn seer, kuo-toa whip, or yuan-ti malison disciple of Zehir are all strong candidates.',
+},
+
+// ── SAVAGE BERSERKER ─────────────────────────────────────────
+{
+  id: 'tpl-savage-berserker',
+  name: 'Savage Berserker',
+  prerequisite: 'Humanoid',
+  typeAppend: '',
+  groupRole: 'Elite',
+  role: 'Brute',
+  roleAppend: '(Leader)',
+  defenses: { ac: 0, fort: 4, ref: 0, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+10 per level + Constitution score',
+  hpBonusFn: (level, con) => 10 * level + (con || 10),
+  resistances: [],
+  regeneration: '5 at 1st level, 10 at 11th level, 15 at 21st level',
+  // NOTE: tiered regeneration like tiered resistances — consider a `regenerationTiers` array
+  // parallel to `resistances` if your app needs to calculate this programmatically.
+  powers: [
+    {
+      name: 'Murderous Frenzy',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'The savage berserker gains 1 action point the first time it reduces a foe to 0 HP in an encounter.',
+    },
+    {
+      name: 'Savage Rebuke',
+      usage: 'atwill',
+      action: 'Immediate Reaction',
+      keywords: 'At-Will',
+      attack: '',
+      hit: '',
+      notes: 'Trigger: the savage berserker is hit by a melee attack. Effect: the savage berserker makes a basic melee attack.',
+    },
+  ],
+  flavour: 'A brutal, vicious champion of battle that draws on its own toughness and savage strength rather than relying on allies. Ideal for orc war leaders, hill giant chieftains, or lizardfolk tribe champions.',
+},
+
+// ── SCION OF FLAME ───────────────────────────────────────────
+{
+  id: 'tpl-scion-of-flame',
+  name: 'Scion of Flame',
+  prerequisite: 'Humanoid or magical beast',
+  typeAppend: '(elemental)',
+  groupRole: 'Elite',
+  role: 'Controller',
+  roleAppend: '',
+  defenses: { ac: 1, fort: 2, ref: 2, will: 0 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'fire' },
+    { tier: 11, value: 10, count: 1, note: 'fire' },
+    { tier: 21, value: 15, count: 1, note: 'fire' },
+  ],
+  powers: [
+    {
+      name: 'Body of Flame',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: 'Fire',
+      attack: '',
+      hit: '',
+      notes: 'Any creature that hits the scion of flame with a melee attack takes fire damage equal to 2 + ½ the scion\'s level.',
+    },
+    {
+      name: 'Fire Master',
+      usage: 'trait',
+      action: 'Trait',
+      keywords: '',
+      attack: '',
+      hit: '',
+      notes: 'The scion of flame can convert any attack power it has to fire. Change a power\'s energy keyword to fire, or add fire energy to an attack power that doesn\'t normally deal energy damage.',
+    },
+  ],
+  flavour: 'A champion of elemental fire, chosen for its devotion to the all-consuming flame. Elemental beings grant the blessings of fire to especially faithful servants.',
+},
+
+// ── SHADOWBORN STALKER ───────────────────────────────────────
+{
+  id: 'tpl-shadowborn-stalker',
+  name: 'Shadowborn Stalker',
+  prerequisite: 'Humanoid',
+  typeAppend: '(shadow)',
+  groupRole: 'Elite',
+  role: 'Lurker',
+  roleAppend: '',
+  defenses: { ac: 2, fort: 0, ref: 2, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+6 per level + Constitution score',
+  hpBonusFn: (level, con) => 6 * level + (con || 10),
+  senses: ['Darkvision'],
+  resistances: [],
+  powers: [
+    {
+      name: 'Cloak of Shadows',
+      usage: 'encounter',
+      action: 'Minor',
+      keywords: 'Encounter',
+      attack: '',
+      hit: '',
+      notes: 'The shadowborn stalker is invisible until the end of its next turn.',
+    },
+    {
+      name: 'Cloud of Darkness',
+      usage: 'encounter',
+      action: 'Minor',
+      keywords: 'Encounter',
+      attack: '',
+      hit: '',
+      notes: 'Close burst 1; creates a zone of darkness lasting until the end of the shadowborn stalker\'s next turn. The zone blocks line of sight for all creatures except the shadowborn stalker. Any creature entirely within the area (except the shadowborn stalker) is blinded.',
+    },
+  ],
+  flavour: 'A humanoid that has drawn the essence of the Shadowfell into its body and soul, gaining light gray skin, jet-black hair, and white pupilless eyes. Suits assassins, thieves, and stealthy beings such as goblins, drow, and shadar-kai who have struck a bargain with the Shadowfell\'s powers.',
+},
+
+// ── VAMPIRE LORD ─────────────────────────────────────────────
+// NOTE: Role is 'Controller or Skirmisher' — same dual-role situation as Lich.
+{
+  id: 'tpl-vampire-lord',
+  name: 'Vampire Lord',
+  prerequisite: 'Humanoid, level 11',
+  typeAppend: '(undead)',
+  groupRole: 'Elite',
+  role: 'Controller',    // or 'Skirmisher' — see note above
+  roleAppend: '',
+  defenses: { ac: 2, fort: 2, ref: 2, will: 2 },
+  defenseNotes: '',
+  savingThrows: '+2',
+  actionPoints: 1,
+  hpBonus: '+8 per level + Constitution score',
+  hpBonusFn: (level, con) => 8 * level + (con || 10),
+  senses: ['Darkvision'],
+  immunities: ['disease', 'poison'],
+  resistances: [
+    { tier: 1,  value: 5,  count: 1, note: 'necrotic' },
+    { tier: 11, value: 10, count: 1, note: 'necrotic' },
+    { tier: 21, value: 15, count: 1, note: 'necrotic' },
+  ],
+  vulnerabilities: [{ value: 10, note: 'radiant' }],
+  regeneration: '10; suppressed while exposed to direct sunlight',
+  powers: [
+    {
+      name: 'Blood Drain',
+      usage: 'encounter',
+      action: 'Standard',
+      keywords: 'Encounter; Healing',
+      attack: 'Level +2 vs. Fortitude',
+      hit: '2d12 + Charisma modifier damage; target is weakened (save ends); vampire lord heals HP equal to ¼ of its normal total.',
+      notes: 'Requires combat advantage. Recharges when an adjacent creature becomes bloodied.',
+    },
+    {
+      name: 'Dominating Gaze',
+      usage: 'recharge',
+      action: 'Minor',
+      keywords: 'Recharge 6; Charm',
+      attack: 'Ranged 5; level +2 vs. Will',
+      hit: 'Target is dominated (save ends, −2 penalty to saving throw). Aftereffect: target is dazed (save ends).',
+      notes: 'The vampire lord can dominate only one creature at a time.',
+    },
+    {
+      name: 'Mist Form',
+      usage: 'encounter',
+      action: 'Standard',
+      keywords: 'Encounter; Polymorph',
+      attack: '',
+      hit: '',
+      notes: 'The vampire lord becomes insubstantial and gains fly speed 12, but cannot make attacks. Can last up to 1 hour or be ended as a minor action.',
+    },
+  ],
+  flavour: 'Powerful undead villains — some former spawn freed by their creator\'s death, others mortals chosen to receive the "gift" of vampiric immortality. They retain their living appearance, though paler, and can create armies of dominated vampire spawn.',
+},
+
+
+
+  // ── ADD YOUR OWN TEMPLATES BELOW ─────────────────────────────
+  // Copy the block above and fill in your values.
+  // Required fields: id, name, prerequisite, groupRole, role, roleAppend,
+  //   defenses {ac,fort,ref,will}, savingThrows, actionPoints,
+  //   hpBonus, hpBonusFn, resistances [], powers [], flavour.
+  // Optional: typeAppend, defenseNotes.
+];
+
+// ── State ────────────────────────────────────────────────────
+let tplSelectedId   = null;   // id of selected template
+let tplResistInputs = [];     // [{tierId, inputs:[inputEl,...]}] — live resist type inputs
+
+// ── Render template grid ─────────────────────────────────────
+function tplRenderGrid() {
+  const grid = document.getElementById('templateGrid');
+  if (!grid) return;
+  if (MONSTER_TEMPLATES.length === 0) {
+    grid.innerHTML = '<div style="color:var(--text-muted);font-style:italic;font-size:0.88rem;padding:0.4rem;">No templates defined yet — add them to the MONSTER_TEMPLATES array in the script.</div>';
+    return;
+  }
+  grid.innerHTML = MONSTER_TEMPLATES.map(tpl => {
+    const tags = [];
+    if (tpl.groupRole && tpl.groupRole !== 'Standard') {
+      tags.push(`<span class="tpl-tag tpl-tag-${tpl.groupRole.toLowerCase()}">${tpl.groupRole}</span>`);
+    }
+    const roleLabel = [tpl.role, tpl.roleAppend].filter(Boolean).join(' ');
+    if (roleLabel) tags.push(`<span class="tpl-tag tpl-tag-role">${roleLabel}</span>`);
+    if (tpl.powers && tpl.powers.length) tags.push(`<span class="tpl-tag tpl-tag-powers">${tpl.powers.length} Power${tpl.powers.length !== 1 ? 's' : ''}</span>`);
+    if (tpl.resistances && tpl.resistances.length) tags.push(`<span class="tpl-tag tpl-tag-powers">Resist</span>`);
+    return `
+      <div class="template-card ${tpl.id === tplSelectedId ? 'selected' : ''}" onclick="tplSelect('${tpl.id}')">
+        <div class="template-card-name">${escHtml(tpl.name)}</div>
+        <div class="template-card-prereq">${escHtml(tpl.prerequisite)}</div>
+        <div class="template-card-tags">${tags.join('')}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── Select a template ────────────────────────────────────────
+function tplSelect(id) {
+  tplSelectedId = (tplSelectedId === id) ? null : id;
+  tplRenderGrid();
+  const bar = document.getElementById('templateApplyBar');
+  if (!tplSelectedId) { bar.style.display = 'none'; return; }
+
+  const tpl = MONSTER_TEMPLATES.find(t => t.id === tplSelectedId);
+  if (!tpl) return;
+  bar.style.display = '';
+  document.getElementById('tplApplyTitle').textContent = `Apply: ${tpl.name}`;
+
+  // Reset search box & hidden value for new template selection
+  const searchEl = document.getElementById('tplMonsterSearch');
+  const hiddenEl = document.getElementById('tplMonsterSelect');
+  if (searchEl) searchEl.value = '';
+  if (hiddenEl) hiddenEl.value = '';
+
+  // Populate monster search list
+  tplPopulateMonsterSelect();
+
+  // Build resistance inputs if needed
+  tplBuildResistInputs(tpl);
+
+  tplUpdatePreview();
+}
+
+function tplClearSelection() {
+  tplSelectedId = null;
+  tplRenderGrid();
+  document.getElementById('templateApplyBar').style.display = 'none';
+}
+
+// ── Searchable monster picker ────────────────────────────────
+let _tplAllMonsters = [];   // sorted master list
+let _tplDropdownIdx = -1;   // keyboard-highlighted row index
+
+function tplPopulateMonsterSelect() {
+  _tplAllMonsters = monsters.slice().sort((a, b) => a.name.localeCompare(b.name));
+  // If a monster was already selected, keep its label in the text box
+  const hiddenId = (document.getElementById('tplMonsterSelect') || {}).value || '';
+  if (hiddenId) {
+    const m = _tplAllMonsters.find(x => x.id === hiddenId);
+    const search = document.getElementById('tplMonsterSearch');
+    if (search && m) search.value = tplMonsterLabel(m);
+  }
+}
+
+function tplMonsterLabel(m) {
+  const grp = m.groupRole !== 'Standard' ? ` [${m.groupRole}]` : '';
+  return `Lvl ${m.level} ${m.role}${grp} — ${m.name}`;
+}
+
+function tplFilterMonsterSearch() {
+  const query = (document.getElementById('tplMonsterSearch').value || '').toLowerCase().trim();
+  const list = query
+    ? _tplAllMonsters.filter(m => tplMonsterLabel(m).toLowerCase().includes(query))
+    : _tplAllMonsters;
+  tplRenderDropdown(list);
+  _tplDropdownIdx = -1;
+  tplOpenDropdown();
+}
+
+function tplRenderDropdown(list) {
+  const dd = document.getElementById('tplMonsterDropdown');
+  if (!dd) return;
+  if (list.length === 0) {
+    dd.innerHTML = `<div style="padding:0.6rem 1rem;color:var(--text-muted);font-style:italic;font-size:0.9rem;">No monsters match</div>`;
+    return;
+  }
+  dd.innerHTML = list.map((m, i) => {
+    const label = escHtml(tplMonsterLabel(m));
+    return `<div class="tpl-dd-item" data-id="${escHtml(m.id)}" data-idx="${i}"
+      onmousedown="tplPickMonster('${escHtml(m.id)}','${escHtml(tplMonsterLabel(m))}')"
+      onmouseover="tplHighlightRow(${i})"
+      style="padding:0.55rem 1rem;cursor:pointer;font-size:0.95rem;color:var(--text);border-bottom:1px solid rgba(60,45,25,0.35);transition:background 0.1s;"
+    >${label}</div>`;
+  }).join('');
+}
+
+function tplHighlightRow(idx) {
+  _tplDropdownIdx = idx;
+  document.querySelectorAll('#tplMonsterDropdown .tpl-dd-item').forEach((el, i) => {
+    el.style.background = i === idx ? 'rgba(200,140,40,0.12)' : '';
+    el.style.color = i === idx ? 'var(--gold-light)' : 'var(--text)';
+  });
+}
+
+function tplOpenDropdown() {
+  const dd = document.getElementById('tplMonsterDropdown');
+  if (!dd) return;
+  const query = (document.getElementById('tplMonsterSearch').value || '').toLowerCase().trim();
+  const list = query
+    ? _tplAllMonsters.filter(m => tplMonsterLabel(m).toLowerCase().includes(query))
+    : _tplAllMonsters;
+  if (_tplAllMonsters.length === 0) {
+    dd.innerHTML = `<div style="padding:0.6rem 1rem;color:var(--text-muted);font-style:italic;font-size:0.9rem;">Load monsters or create custom monsters first</div>`;
+  } else {
+    tplRenderDropdown(list);
+  }
+  dd.style.display = 'block';
+}
+
+function tplCloseDropdown() {
+  const dd = document.getElementById('tplMonsterDropdown');
+  if (dd) dd.style.display = 'none';
+}
+
+function tplPickMonster(id, label) {
+  document.getElementById('tplMonsterSelect').value = id;
+  document.getElementById('tplMonsterSearch').value = label;
+  tplCloseDropdown();
+  tplUpdatePreview();
+}
+
+function tplSearchKeydown(e) {
+  const dd = document.getElementById('tplMonsterDropdown');
+  const items = dd ? dd.querySelectorAll('.tpl-dd-item') : [];
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _tplDropdownIdx = Math.min(_tplDropdownIdx + 1, items.length - 1);
+    tplHighlightRow(_tplDropdownIdx);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _tplDropdownIdx = Math.max(_tplDropdownIdx - 1, 0);
+    tplHighlightRow(_tplDropdownIdx);
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (_tplDropdownIdx >= 0 && items[_tplDropdownIdx]) {
+      const id = items[_tplDropdownIdx].dataset.id;
+      const label = items[_tplDropdownIdx].textContent;
+      tplPickMonster(id, label);
+    }
+  } else if (e.key === 'Escape') {
+    tplCloseDropdown();
+  }
+}
+
+// ── Build resistance type inputs ─────────────────────────────
+function tplBuildResistInputs(tpl) {
+  const section = document.getElementById('tplResistSection');
+  const editor  = document.getElementById('tplResistEditor');
+  tplResistInputs = [];
+
+  if (!tpl.resistances || tpl.resistances.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = '';
+  editor.innerHTML = '';
+
+  tpl.resistances.forEach(r => {
+    const tierLabel = r.tier === 1  ? 'Levels 1–10' :
+                      r.tier === 11 ? 'Levels 11–20' : 'Levels 21+';
+    const inputs = [];
+    for (let i = 0; i < r.count; i++) {
+      const inputId = `tplR_${r.tier}_${i}`;
+      const row = document.createElement('div');
+      row.className = 'tpl-resist-row';
+      row.innerHTML = `<label>${tierLabel} resist ${r.value}${r.count > 1 ? ` (type ${i+1})` : ''}:</label>
+        <input type="text" id="${inputId}" placeholder="e.g. fire, lightning, cold…"
+               oninput="tplUpdatePreview()" />`;
+      editor.appendChild(row);
+      inputs.push(inputId);
+    }
+    tplResistInputs.push({ tier: r.tier, value: r.value, inputIds: inputs });
+  });
+}
+
+// ── Get current resist string from inputs ────────────────────
+function tplGetResistString(tpl, level) {
+  if (!tpl.resistances || tpl.resistances.length === 0) return '';
+  const applicableTiers = tpl.resistances.filter(r => r.tier <= level);
+  if (applicableTiers.length === 0) return '';
+  const parts = [];
+  for (const tierData of applicableTiers) {
+    const resistGroup = tplResistInputs.find(g => g.tier === tierData.tier);
+    const count = tierData.count || 1;
+    const note = tierData.note || 'choose type';
+    if (!resistGroup) {
+      parts.push(`Resist ${tierData.value} x${count} (${note})`);
+      continue;
+    }
+    const types = resistGroup.inputIds
+      .map(id => (document.getElementById(id)?.value || '').trim())
+      .filter(Boolean);
+    if (types.length === 0) {
+      parts.push(`Resist ${tierData.value} x${count} (${note})`);
+    } else {
+      const usedTypes = types.slice(0, count);
+      const filled = usedTypes.map(t => `Resist ${tierData.value} ${t}`).join('\n');
+      const remaining = count - usedTypes.length;
+      if (remaining > 0) {
+        parts.push(`${filled}\nResist ${tierData.value} x${remaining} (${note})`);
+      } else {
+        parts.push(filled);
+      }
+    }
+  }
+  return parts.join('\n');
+}
+
+
+// ── Preview changes ──────────────────────────────────────────
+function tplUpdatePreview() {
+  const preview = document.getElementById('tplPreviewChanges');
+  if (!preview) return;
+  const monsterId = document.getElementById('tplMonsterSelect')?.value;
+  const tpl = MONSTER_TEMPLATES.find(t => t.id === tplSelectedId);
+  if (!tpl || !monsterId) {
+    preview.innerHTML = 'Select a monster above to preview changes.';
+    return;
+  }
+  const m = monsters.find(x => x.id === monsterId);
+  if (!m) { preview.innerHTML = 'Monster not found.'; return; }
+
+  const con   = parseInt(document.getElementById('tplConScore')?.value) || 10;
+  const level = m.level || 1;
+  const hpAdd = tpl.hpBonusFn ? tpl.hpBonusFn(level, con) : 0;
+  const newHp = (m.hp || 0) + hpAdd;
+
+  const lines = [];
+  lines.push(`<b>Base monster:</b> ${escHtml(m.name)} — Level ${level} ${m.groupRole !== 'Standard' ? m.groupRole + ' ' : ''}${m.role}`);
+
+  if (tpl.groupRole) lines.push(`<span class="tpl-change-mod">Group Role → ${tpl.groupRole}</span>`);
+  const newRole = [tpl.role || m.role, tpl.roleAppend].filter(Boolean).join(' ');
+  lines.push(`<span class="tpl-change-mod">Role → ${newRole}</span>`);
+
+  if (tpl.typeAppend) lines.push(`<span class="tpl-change-mod">Type → ${escHtml(m.type || '')} ${escHtml(tpl.typeAppend)}</span>`);
+
+  const defs = tpl.defenses || {};
+  const defParts = [];
+  if (defs.ac)   defParts.push(`AC +${defs.ac}`);
+  if (defs.fort) defParts.push(`Fort +${defs.fort}`);
+  if (defs.ref)  defParts.push(`Ref +${defs.ref}`);
+  if (defs.will) defParts.push(`Will +${defs.will}`);
+  if (defParts.length) lines.push(`<span class="tpl-change-mod">Defenses: ${defParts.join(', ')}</span>`);
+  if (tpl.defenseNotes) lines.push(`<span class="tpl-change-mod">Defense note: ${escHtml(tpl.defenseNotes)}</span>`);
+
+  if (tpl.savingThrows) lines.push(`<span class="tpl-change-mod">Saving Throws: ${escHtml(tpl.savingThrows)}</span>`);
+  if (tpl.actionPoints) lines.push(`<span class="tpl-change-mod">Action Points: ${tpl.actionPoints}</span>`);
+
+  lines.push(`<span class="tpl-change-mod">HP: ${m.hp} → ${newHp} (${escHtml(tpl.hpBonus)})</span>`);
+
+const resistStr = tplGetResistString(tpl, level);
+if (resistStr) {
+  resistStr.split('\n').forEach(line => {
+    lines.push(`<span class="tpl-change-add">+ ${escHtml(line)}</span>`);
+  });
+}
+
+if (tpl.immunities && tpl.immunities.length) {
+  lines.push(`<span class="tpl-change-add">+ Immune: ${escHtml(tpl.immunities.join(', '))}</span>`);
+}
+if (tpl.vulnerabilities && tpl.vulnerabilities.length) {
+  tpl.vulnerabilities.forEach(v => {
+    lines.push(`<span class="tpl-change-add">+ Vulnerable ${v.value} ${escHtml(v.note)}</span>`);
+  });
+}
+if (tpl.senses && tpl.senses.length) {
+  lines.push(`<span class="tpl-change-add">+ Senses: ${escHtml(tpl.senses.join(', '))}</span>`);
+}
+if (tpl.regeneration) {
+  lines.push(`<span class="tpl-change-add">+ Regeneration: ${escHtml(tpl.regeneration)}</span>`);
+}
+  if (tpl.powers && tpl.powers.length) {
+    tpl.powers.forEach(p => {
+      lines.push(`<span class="tpl-change-add">+ Power: ${escHtml(p.name)}</span>`);
+    });
+  }
+
+  lines.push(`<span class="tpl-change-add">+ New name: ${escHtml(m.name)} (${escHtml(tpl.name)})</span>`);
+
+  preview.innerHTML = lines.join('<br>');
+}
+
+// ── Apply template & save ────────────────────────────────────
+function tplApply() {
+  const monsterId = document.getElementById('tplMonsterSelect')?.value;
+  const tpl = MONSTER_TEMPLATES.find(t => t.id === tplSelectedId);
+  if (!tpl) { alert('No template selected.'); return; }
+  if (!monsterId) { alert('Choose a target monster first.'); return; }
+
+  const baseM = monsters.find(x => x.id === monsterId);
+  if (!baseM) { alert('Monster not found.'); return; }
+
+  const con   = parseInt(document.getElementById('tplConScore')?.value) || 10;
+  const level = baseM.level || 1;
+  const defs  = tpl.defenses || {};
+
+  // Build existing powers from rawHtml if available, or from _customData
+  let existingPowers = [];
+  if (baseM._customData && baseM._customData.powers) {
+    existingPowers = JSON.parse(JSON.stringify(baseM._customData.powers));
+  }
+
+  // Build the resist string for the current level
+  const resistStr = tplGetResistString(tpl, level);
+
+  // Compute base defence values from rawHtml if we have them, else use stored values
+  let baseAc = 0, baseFort = 0, baseRef = 0, baseWill = 0;
+  if (baseM._customData) {
+    baseAc   = parseInt(baseM._customData.ac)   || 0;
+    baseFort = parseInt(baseM._customData.fort) || 0;
+    baseRef  = parseInt(baseM._customData.ref)  || 0;
+    baseWill = parseInt(baseM._customData.will) || 0;
+  } else {
+    // Parse from rawHtml
+    const acM    = (baseM.rawHtml || '').match(/<b>AC<\/b>\s*(\d+)/i);
+    const fortM  = (baseM.rawHtml || '').match(/Fortitude\s*(\d+)/i);
+    const refM   = (baseM.rawHtml || '').match(/Reflex\s*(\d+)/i);
+    const willM  = (baseM.rawHtml || '').match(/Will\s*(\d+)/i);
+    baseAc   = acM   ? parseInt(acM[1])   : (14 + level);
+    baseFort = fortM ? parseInt(fortM[1]) : (12 + level);
+    baseRef  = refM  ? parseInt(refM[1])  : (12 + level);
+    baseWill = willM ? parseInt(willM[1]) : (12 + level);
+  }
+
+  const hpAdd = tpl.hpBonusFn ? tpl.hpBonusFn(level, con) : 0;
+  const newHp = (baseM.hp || 0) + hpAdd;
+
+  // Build existing saves / resist strings
+  let existingSaves  = (baseM._customData ? baseM._customData.saves  : '') || '';
+  let existingResist = (baseM._customData ? baseM._customData.resist : '') || '';
+  if (tpl.savingThrows) {
+    existingSaves = existingSaves
+      ? existingSaves + ', ' + tpl.savingThrows
+      : tpl.savingThrows;
+  }
+  if (resistStr) {
+    existingResist = existingResist
+      ? existingResist + ', ' + resistStr
+      : resistStr;
+  }
+
+  // Notes
+  let existingLore = (baseM._customData ? baseM._customData.lore : '') || '';
+  let defenseNoteStr = '';
+  if (tpl.defenseNotes) defenseNoteStr = `[Template: ${tpl.defenseNotes}] `;
+  if (tpl.actionPoints) defenseNoteStr += `[Action Points: ${tpl.actionPoints}] `;
+  if (defenseNoteStr || tpl.flavour) {
+    existingLore = [tpl.flavour, defenseNoteStr, existingLore].filter(Boolean).join(' ');
+  }
+
+  // New role label
+  const newRole = tpl.role || baseM.role || 'Controller';
+  const newRoleDisplay = [newRole, tpl.roleAppend].filter(Boolean).join(' ');
+
+  // New type
+  const newType = tpl.typeAppend
+    ? ((baseM.type || '') + ' ' + tpl.typeAppend).trim()
+    : (baseM.type || '');
+
+  // XP: elite doubles the base XP if base is Standard; solo x5
+  let newXp = baseM.xp || 0;
+  if (tpl.groupRole === 'Elite'  && baseM.groupRole === 'Standard') newXp = newXp * 2;
+  if (tpl.groupRole === 'Solo'   && baseM.groupRole === 'Standard') newXp = newXp * 5;
+  if (tpl.groupRole === 'Minion' && baseM.groupRole === 'Standard') newXp = Math.round(newXp / 4);
+
+  // New name
+  const newName = `${baseM.name} (${tpl.name})`;
+
+  // Build _customData compatible object
+  const newCustomData = {
+    name:   newName,
+    type:   newType,
+    level:  level,
+    role:   newRoleDisplay,
+    group:  tpl.groupRole || baseM.groupRole || 'Standard',
+    xp:     newXp,
+    hp:     newHp,
+    ac:     baseAc   + (defs.ac   || 0),
+    fort:   baseFort + (defs.fort || 0),
+    ref:    baseRef  + (defs.ref  || 0),
+    will:   baseWill + (defs.will || 0),
+    init:   baseM.initiative || 0,
+    speed:  parseInt((baseM._customData || {}).speed) || 6,
+    atk:    parseInt((baseM._customData || {}).atk)   || (5 + level),
+    dmg:    parseInt((baseM._customData || {}).dmg)   || (8 + level),
+    resist: existingResist,
+    saves:  existingSaves,
+    immune: [
+      ...((baseM._customData || {}).immune
+          ? [(baseM._customData || {}).immune] : []),
+      ...(tpl.immunities || []),
+    ].join(', ') || '',
+    vuln: [
+      ...((baseM._customData || {}).vuln || []),
+      ...(tpl.vulnerabilities || []),
+    ],
+    senses: (baseM._customData || {}).senses || '',
+    regen: tpl.regeneration || (baseM._customData || {}).regen || '',
+    lore:   existingLore,
+    powers: [
+      ...existingPowers,
+      ...tpl.powers.map(p => ({ ...p, id: ++forgePowerIdCounter })),
+    ],
+  };
+  // Recompute derived fields
+  newCustomData.encDmg   = Math.round(newCustomData.dmg * 1.375);
+  newCustomData.multiDmg = Math.round(newCustomData.dmg * 0.75);
+
+  // Build the monster object
+  const uid = crypto.randomUUID();
+  const templatedM = {
+    id: 'custom-' + uid,
+    name: newName,
+    level: level,
+    xp: newXp,
+    role: newRoleDisplay,
+    groupRole: tpl.groupRole || baseM.groupRole || 'Standard',
+    hp: newHp,
+    initiative: baseM.initiative || 0,
+    type: newType,
+    origin: baseM.origin || '',
+    keywords: baseM.keywords || [],
+    source: `Template: ${tpl.name} applied to ${baseM.name}`,
+    folder: '',
+    file: '',
+    rawHtml: null,
+    _customData: newCustomData,
+    _isCustom: true,
+    _templateId: tpl.id,
+  };
+  templatedM.rawHtml = forgeGenerateRawHtml(newCustomData);
+
+  forgeCustomMonsters.push(templatedM);
+  monsters.push(templatedM);
+  forgePersist();
+  forgeRenderSaved();
+  filterMonsterList();
+  tplPopulateMonsterSelect();
+
+  // Flash confirmation
+  const btn = document.querySelector('#templateApplyBar .action-btn');
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = `✓ Saved: ${newName}`;
+    setTimeout(() => btn.textContent = orig, 2500);
+  }
+  document.getElementById('tplPreviewChanges').innerHTML =
+    `<b style="color:#6abf6a;">✓ Created:</b> ${escHtml(newName)} — Level ${level} ${escHtml(tpl.groupRole || '')} ${escHtml(newRoleDisplay)}, HP ${newHp}, XP ${newXp.toLocaleString()}. Find it in the Monster Browser and Your Custom Monsters.`;
+}
+
+// ── Hook: re-populate monster select whenever monsters list changes ─
+const _origFilterMonsterList = filterMonsterList;
+filterMonsterList = function() {
+  _origFilterMonsterList();
+  if (tplSelectedId) tplPopulateMonsterSelect();
+};
+
+// ── Init ─────────────────────────────────────────────────────
+tplRenderGrid();
 </script>
 </body>
 </html>
