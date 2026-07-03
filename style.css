@@ -1,41 +1,113 @@
-@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+/* ==========================================================
+   D&D 4th Edition inspired stylesheet
+   Drop-in replacement — all original class names preserved.
+   Palette drawn from the 4e core books: charcoal slate,
+   deep crimson, bronze rules, and pale parchment pages.
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* Core 4e palette */
+  --slate-black:   #1c1712;   /* page background, like the book covers */
+  --slate-steel:   #35302b;
+  --crimson:       #8c1f13;   /* 4e signature deep red */
+  --crimson-dark:  #5e120a;
+  --crimson-lite:  #a83325;
+  --bronze:        #b08d3e;   /* gold/bronze section rules */
+  --bronze-lite:   #d9bc7a;
+  --page:          #f3ede0;   /* interior page tone */
+  --page-soft:     #ece2cd;
+  --ink:           #241c14;
+
+  /* Power card colors */
+  --atwill:        #619869;
+  --encounter:     #961a1d;
+  --daily:         #4d4d4f;
+  --utility:       #1c3f76;
+}
+
+/* ---------- Base ---------- */
 
 body {
-  background-color: #F5F0E1;
-  color: #2B1A0E;
-  font-family: 'Arial', sans-serif;
+  background-color: var(--slate-black);
+  /* subtle diagonal texture, like the 4e cover finish */
+  background-image:
+    linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%,
+      transparent 50%, rgba(255,255,255,0.02) 50%,
+      rgba(255,255,255,0.02) 75%, transparent 75%);
+  background-size: 6px 6px;
+  color: var(--ink);
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.55;
   margin: 0;
   padding: 0;
 }
 
 h1, h2, h3 {
-  font-family: 'MedievalSharp', cursive;
-  color: #8B0000;
+  font-family: 'Marcellus', 'Trajan Pro', serif;
+  color: var(--crimson);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+/* 4e chapter-header treatment: small caps over a bronze rule */
+h1 {
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  border-bottom: 3px double var(--bronze);
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--bronze);
+  padding-bottom: 0.2em;
+}
+
+h3 {
+  font-size: 1.2rem;
+  color: var(--crimson-dark);
 }
 
 a {
-  color: #8B0000;
+  color: var(--crimson);
   text-decoration: none;
+  border-bottom: 1px dotted rgba(140, 31, 19, 0.45);
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-a:hover {
-  color: #D4AF37;
+a:hover,
+a:focus-visible {
+  color: var(--bronze);
+  border-bottom-color: var(--bronze);
 }
 
-/* Navbar styling */
+a:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
+
+/* ---------- Navbar ---------- */
+
 .navbar {
-  background-color: #8B0000;
-  padding: 20px;
+  background: linear-gradient(180deg, #241d17 0%, var(--slate-black) 100%);
+  border-bottom: 4px solid var(--crimson);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  padding: 24px 20px 0;
   display: flex;
-  flex-direction: column; /* stack image and links */
-  align-items: center; /* center image and links */
+  flex-direction: column;
+  align-items: center;
 }
 
 .navbar-logo {
-  height: auto;       /* maintain aspect ratio */
-  max-height: 200px;  /* bigger image height */
-  max-width: 100%;    /* don’t overflow navbar */
-  margin-bottom: 15px;
+  height: auto;
+  max-height: 200px;
+  max-width: 100%;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
 }
 
 .navbar ul {
@@ -43,57 +115,174 @@ a:hover {
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 30px; /* spacing between links */
-  justify-content: center; /* center links horizontally */
+  flex-wrap: wrap;
+  gap: 0;
+  justify-content: center;
+  width: 100%;
 }
 
 .navbar li {
-  margin: 0; /* spacing handled by gap */
+  margin: 0;
 }
 
+/* Nav links as angular "tabs" that light up crimson */
 .navbar a {
-  color: #F5F0E1;
-  font-weight: bold;
-  text-decoration: none;
-  font-size: 16px;
+  display: block;
+  padding: 12px 22px;
+  color: var(--page-soft);
+  font-family: 'Marcellus', serif;
+  font-size: 15px;
+  font-weight: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  border-top: 3px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.navbar a:hover {
-  color: #D4AF37;
+.navbar a:hover,
+.navbar a:focus-visible {
+  color: #fff;
+  background: linear-gradient(180deg, var(--crimson) 0%, var(--crimson-dark) 100%);
+  border-top-color: var(--bronze);
 }
 
-/* Page content styling */
+/* ---------- Page content ---------- */
+
 .container {
   max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff8e1;
-  border: 2px solid #D4AF37;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  margin: 32px auto;
+  padding: 28px 36px;
+  background-color: var(--page);
+  /* faint page-edge vignette, like scanned 4e book pages */
+  background-image: radial-gradient(ellipse at center,
+    rgba(255,255,255,0.35) 0%, transparent 70%);
+  border: 1px solid var(--bronze);
+  border-top: 6px solid var(--crimson);
+  border-radius: 2px;   /* 4e is angular — barely rounded */
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 6px 24px rgba(0, 0, 0, 0.5);
 }
 
-/* Lists for downloads or links */
-ul.download-list, ul.links-list {
-  padding-left: 20px;
+/* ---------- Download / link lists ---------- */
+
+ul.download-list,
+ul.links-list {
+  list-style: none;
+  padding-left: 0;
 }
 
-ul.download-list li, ul.links-list li {
+ul.download-list li,
+ul.links-list li {
   margin-bottom: 10px;
+  padding: 8px 12px 8px 16px;
+  background: rgba(255, 255, 255, 0.45);
+  border-left: 4px solid var(--bronze);
+}
+
+ul.download-list li:hover,
+ul.links-list li:hover {
+  border-left-color: var(--crimson);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 /* ---------------------------------------------------------- */
-/* Boxes for link categories                                   */
+/* Link category boxes — styled like 4e power cards            */
 /* ---------------------------------------------------------- */
+
 .link-box {
-  background-color: #fffaf0;              /* parchment-like */
-  border: 2px solid #D4AF37;             /* gold border */
-  border-radius: 8px;
-  padding: 15px 20px;
-  margin: 20px 0;
-  box-shadow: 0 0 6px rgba(0,0,0,0.15);
+  background-color: #faf6ea;
+  border: 1px solid var(--slate-steel);
+  border-radius: 3px;
+  padding: 0 20px 16px;
+  margin: 24px 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
 }
 
+/* The heading becomes the card's title bar, full-bleed,
+   with the metallic gradient from the 4e power blocks */
 .link-box h2 {
-  margin-top: 0;
+  margin: 0 -20px 14px;
+  padding: 10px 20px;
+  background: linear-gradient(180deg,
+    var(--crimson-lite) 0%,
+    var(--crimson) 45%,
+    var(--crimson-dark) 100%);
+  color: var(--page);
+  border-bottom: 2px solid var(--bronze);
+  font-size: 1.15rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Optional power-type variants — add the class to a .link-box:
+   <div class="link-box atwill"> etc. */
+.link-box.atwill h2 {
+  background: linear-gradient(180deg, #7bb283 0%, var(--atwill) 45%, #47724d 100%);
+}
+.link-box.encounter h2 {
+  background: linear-gradient(180deg, #b23f42 0%, var(--encounter) 45%, #6d1315 100%);
+}
+.link-box.daily h2 {
+  background: linear-gradient(180deg, #6a6a6d 0%, var(--daily) 45%, #333335 100%);
+}
+.link-box.utility h2 {
+  background: linear-gradient(180deg, #35598f 0%, var(--utility) 45%, #142c53 100%);
+}
+
+/* ---------- Tables (bonus: 4e stat-block striping) ---------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.95em;
+}
+
+th {
+  background: var(--crimson);
+  color: var(--page);
+  font-family: 'Marcellus', serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+td {
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(176, 141, 62, 0.35);
+}
+
+tr:nth-child(even) td {
+  background: var(--page-soft);   /* the classic 4e alternating rows */
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 600px) {
+  .container {
+    margin: 16px 10px;
+    padding: 20px 16px;
+  }
+  .link-box {
+    padding: 0 14px 12px;
+  }
+  .link-box h2 {
+    margin: 0 -14px 12px;
+    padding: 10px 14px;
+  }
+  .navbar a {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }
